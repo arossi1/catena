@@ -1,0 +1,3 @@
+from Sift import Sift
+from KeypointDescriptors import KeypointDescriptors
+from SiftWin32KeypointDescriptorFile import SiftWin32KeypointDescriptorFile
