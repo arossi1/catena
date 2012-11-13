@@ -4,10 +4,8 @@ sys.path.append(os.path.abspath("."))
 import Chain # Chain must be imported first, requirement of registry
 import Sources, FeatureExtraction, FeatureMatch, BundleAdjustment, Cluster
 
-
-
 # path to images
-imagePath = r"E:\Sources\thesis\Datasets\ETsub"
+imagePath = r"C:\Datasets\ETsub"
 
 # PMVS path
 pmvsPath = os.path.join(imagePath,"pmvs")
