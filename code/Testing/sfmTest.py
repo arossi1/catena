@@ -21,11 +21,13 @@ keyMatch = FeatureMatch.KeyMatch(sift, parseKDF, "KeyMatchFull")
 bundler = BundleAdjustment.Bundler([keyMatch, imageSource])
 radialUndistort = Cluster.RadialUndistort([bundler, imageSource])
 prepCmvsPmvs = Cluster.PrepCmvsPmvs(radialUndistort, pmvsPath)
-cmvs = Cluster.CMVS(prepCmvsPmvs)
-pmvs = Cluster.PMVS(cmvs)
+#cmvs = Cluster.CMVS(prepCmvsPmvs)
+pmvs = Cluster.PMVS(prepCmvsPmvs)
 
 # render chain
 print Chain.Render(pmvs,logPath)
 
 # persist chain
 Chain.StageRegistry.Save("sfmChain.dat")
+
+

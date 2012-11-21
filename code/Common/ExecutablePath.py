@@ -8,9 +8,11 @@ ROOT = os.path.join(os.path.abspath("."), "3rdParty/%s/bin" % platName)
 
 if (osName=="Windows" and archName=="32bit"):    
     EXE_Bundler = os.path.join(ROOT, "Bundler")
+    EXE_SiftWin32 = os.path.join(ROOT, "siftWin32")
 
 elif (osName=="Linux" and archName=="32bit"):
     EXE_Bundler = os.path.join(ROOT, "bundler")
+    EXE_SiftWin32 = os.path.join(ROOT, "siftLowe")
 
     if (not os.environ.has_key("LD_LIBRARY_PATH")):
         os.environ["LD_LIBRARY_PATH"] = ""
@@ -18,13 +20,11 @@ elif (osName=="Linux" and archName=="32bit"):
 
 elif (osName=="Linux" and archName=="64bit"):
     EXE_Bundler = os.path.join(ROOT, "bundler")
+    EXE_SiftWin32 = os.path.join(ROOT, "siftLowe")
     
     if (not os.environ.has_key("LD_LIBRARY_PATH")):
         os.environ["LD_LIBRARY_PATH"] = ""
     os.environ["LD_LIBRARY_PATH"] += ".:%s" % os.path.join(os.path.abspath("."), "3rdParty/%s/lib" % platName)
-
-
-    
 
 else:
     raise Exception("Unhandled platform: %s %s" % (archName,osName))
@@ -41,6 +41,5 @@ EXE_JHead = os.path.join(ROOT, "jhead")
 EXE_Daisy = os.path.join(ROOT, "daisy")
 EXE_KeypointCombine = os.path.join(ROOT, "keypointCombine")
 EXE_SiftVLFeat = os.path.join(ROOT, "sift")
-EXE_SiftWin32 = os.path.join(ROOT, "siftWin32")
 EXE_SiftHess = os.path.join(ROOT, "sifthess")
 EXE_SiftGPU = os.path.join(ROOT, "SiftGPUKeypoint")
