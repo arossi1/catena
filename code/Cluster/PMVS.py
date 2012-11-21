@@ -114,7 +114,6 @@ class PMVS(Chain.StageBase):
         cmd = "\"%s\" \"%s/\" %s" % (Common.Utility.GetAbsoluteFilePath(__file__, Common.ExecutablePath.EXE_PMVS2),
                                      path, optionFileName)
         Common.Utility.RunCommand(cmd)
-# unix: shell=True
     
     def WriteOptionsFile(self, outputPath, numImages):
         

@@ -15,7 +15,7 @@ def Process(keylist, matchesFile="", forceRun=False):
         cmd = "\"%s\" \"%s\" \"%s\"" % \
         (Common.Utility.GetAbsoluteFilePath(__file__, Common.ExecutablePath.EXE_KeyMatchGPU), 
          keylist, matchesFile)
-# unix: shell=True
+        
         Common.Utility.RunCommand(cmd, cwd=os.path.split(keylist)[0])
         
     return matchesFile

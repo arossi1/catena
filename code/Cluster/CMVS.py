@@ -29,9 +29,7 @@ class CMVS(Chain.StageBase):
         cmd = "\"%s\" ./%s/ %d %d" % \
             (Common.Utility.GetAbsoluteFilePath(__file__, Common.ExecutablePath.EXE_CMVS), 
              pmvsDir, numImages, self._properties["CPUs"])        
-        Common.Utility.RunCommand(cmd, cwd=pmvsPathParent)
-# unix: shell=True
-        
+        Common.Utility.RunCommand(cmd, cwd=pmvsPathParent)        
     
     def Execute(self):
         bundleFile = self.GetInputStageValue(0, "bundleFile")

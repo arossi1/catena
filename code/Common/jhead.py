@@ -10,7 +10,7 @@ class jheadInfo:
         self._fillInfo()
         
     def _fillInfo(self):
-# unix: shell=True
+
         for l in Utility.RunCommand("\"%s\" \"%s\"" % (Utility.GetAbsoluteFilePath(__file__, ExecutablePath.EXE_JHead), self._imagePath),
                                            cwd=os.path.split(ExecutablePath.EXE_JHead)[0], printStdout=False, captureCout=True):
             if (len(l.strip())==0): continue

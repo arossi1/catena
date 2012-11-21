@@ -36,7 +36,7 @@ class PrepCmvsPmvs(Chain.StageBase):
                                                imagelist, bundleFile, outputPath)
         
         Common.Utility.RunCommand(cmd, cwd=os.path.split(imagelist)[0])
-# unix: shell=True
+
         return paths
     
     def Bundle2Vis(self, outputPath, bundleFile):

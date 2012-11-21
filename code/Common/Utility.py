@@ -46,7 +46,7 @@ def InvalidString(): return ""
 def InvalidInt():    return -sys.maxint
 def InvalidFloat():  return float(-sys.maxint)
 
-def RunCommand(cmd, cwd=None, shell=False, printStdout=False, captureCout=False):
+def RunCommand(cmd, cwd=None, shell=(not IsWindows()), printStdout=False, captureCout=False):
     
 #    p = None
 #    if (captureCout):

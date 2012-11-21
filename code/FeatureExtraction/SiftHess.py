@@ -17,6 +17,6 @@ def Process(imagePath, keypointDescriptorFile="", parseKDF=True, forceRun=False)
         
         Common.Utility.RunCommand("\"%s\" \"%s\" \"%s\"" % \
                                   (Common.Utility.GetAbsoluteFilePath(__file__, Common.ExecutablePath.EXE_SiftHess),
-                                  imagePath, keypointDescriptorFile), shell=True)
+                                  imagePath, keypointDescriptorFile))
     
     return SiftWin32KeypointDescriptorFile(keypointDescriptorFile, parseKDF)

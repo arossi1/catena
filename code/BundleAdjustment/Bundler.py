@@ -153,8 +153,7 @@ class Bundler(Chain.StageBase):
              images.GetImageListPath(), bundlerOptionsFilePath)
         
         if (not os.path.exists(bundlerOutputFilePath)):            
-# unix: shell=True
-            Common.Utility.RunCommand(cmd, cwd=os.path.split(images.GetImageListPath())[0], shell=False)
+            Common.Utility.RunCommand(cmd, cwd=os.path.split(images.GetImageListPath())[0])
         
         return BundleAdjustment.BundleFile(bundlerOutputFilePath, images.GetImages())
     

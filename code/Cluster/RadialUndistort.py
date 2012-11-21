@@ -25,7 +25,6 @@ class RadialUndistort(Chain.StageBase):
         (Common.Utility.GetAbsoluteFilePath(__file__, Common.ExecutablePath.EXE_RadialUndistort), 
          imageListPath, bundlerOutputFilePath, outputPath)
         
-# unix: shell=True
         Common.Utility.RunCommand(cmd, cwd=os.path.split(imageListPath)[0])
         
         # not actual files in list: list.rd.txt, delete to avoid confusion

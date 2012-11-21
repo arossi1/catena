@@ -15,6 +15,6 @@ def Process(imagePath, keypointDescriptorFile="", parseKDF=True, forceRun=False)
         
         Common.Utility.RunCommand("\"%s\" --orientations \"%s\" -o \"%s\"" % \
                                   (Common.Utility.GetAbsoluteFilePath(__file__, Common.ExecutablePath.EXE_SiftVLFeat),
-                                  imagePath, keypointDescriptorFile), shell=True)
+                                  imagePath, keypointDescriptorFile))
         
     return SiftVLFeatKeypointDescriptorFile(keypointDescriptorFile, parseKDF)

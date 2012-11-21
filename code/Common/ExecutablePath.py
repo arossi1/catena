@@ -1,27 +1,34 @@
 # Copyright (c) 2012, Adam J. Rossi. All rights reserved. See README for licensing details.
-import os, sys
+import os, sys, platform
 
-if (sys.platform=="win32"):
-    ROOT = os.path.join(os.path.abspath("."), "3rdParty/winxp32/bin")
+osName = platform.system()
+archName = platform.architecture()[0]
+platName = "%s%s"%(osName,archName)
+ROOT = os.path.join(os.path.abspath("."), "3rdParty/%s/bin" % platName)
 
-    EXE_IvaInfo = os.path.join(r"C:\svn\Iva\winxp_vs100\bin", "ivaInfo")
-    EXE_IvaMath = os.path.join(r"C:\svn\Iva\winxp_vs100\bin", "ivaMath")
-    EXE_IvaCopy = os.path.join(r"C:\svn\Iva\winxp_vs100\bin", "ivaCopy")    
+if (osName=="Windows" and archName=="32bit"):    
     EXE_Bundler = os.path.join(ROOT, "Bundler")
 
-elif (sys.platform=="linux2"): 
-    ROOT = os.path.join(os.path.abspath("."), "3rdParty/linux2/bin")
-
-    EXE_IvaInfo = os.path.join("/home/ajrossi/Source/Iva/linux_x64_gcc434/bin", "ivaInfo")
-    EXE_IvaMath = os.path.join("/home/ajrossi/Source/Iva/linux_x64_gcc434/bin", "ivaMath")
-    EXE_IvaCopy = os.path.join("/home/ajrossi/Source/Iva/linux_x64_gcc434/bin", "ivaCopy")
+elif (osName=="Linux" and archName=="32bit"):
     EXE_Bundler = os.path.join(ROOT, "bundler")
 
+    if (not os.environ.has_key("LD_LIBRARY_PATH")):
+        os.environ["LD_LIBRARY_PATH"] = ""
+    os.environ["LD_LIBRARY_PATH"] += ".:%s" % os.path.join(os.path.abspath("."), "3rdParty/%s/lib" % platName)
+
+elif (osName=="Linux" and archName=="64bit"):
+    EXE_Bundler = os.path.join(ROOT, "bundler")
+    
+    if (not os.environ.has_key("LD_LIBRARY_PATH")):
+        os.environ["LD_LIBRARY_PATH"] = ""
+    os.environ["LD_LIBRARY_PATH"] += ".:%s" % os.path.join(os.path.abspath("."), "3rdParty/%s/lib" % platName)
+
+
+    
+
 else:
-    raise Exception("Unhandled platform: " + sys.platform)
+    raise Exception("Unhandled platform: %s %s" % (archName,osName))
 
-
-IVA_JPEG_OCF = os.path.join(os.path.abspath("."), "3rdParty/config", "jpeg.ocf")
 
 EXE_Bundle2PMVS = os.path.join(ROOT, "Bundle2PMVS")
 EXE_Bundle2Vis = os.path.join(ROOT, "Bundle2Vis")
@@ -37,4 +44,3 @@ EXE_SiftVLFeat = os.path.join(ROOT, "sift")
 EXE_SiftWin32 = os.path.join(ROOT, "siftWin32")
 EXE_SiftHess = os.path.join(ROOT, "sifthess")
 EXE_SiftGPU = os.path.join(ROOT, "SiftGPUKeypoint")
-
