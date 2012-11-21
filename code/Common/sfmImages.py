@@ -37,7 +37,7 @@ class sfmImages:
         return None
     
     def _fillImages(self):        
-        for p in glob.glob(os.path.join(self._path,"*."+self._extension)):
+        for p in sorted(glob.glob(os.path.join(self._path,"*."+self._extension))):
             self._images.append(Common.sfmImage(p))    
     
     
