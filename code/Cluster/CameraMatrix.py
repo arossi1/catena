@@ -1,4 +1,4 @@
-# Copyright (c) 2012, Adam J. Rossi. All rights reserved. See README for licensing for details.
+# Copyright (c) 2012, Adam J. Rossi. All rights reserved. See README for licensing details.
 
 import os, glob
 

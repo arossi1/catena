@@ -1,4 +1,4 @@
-# Copyright (c) 2012, Adam J. Rossi. All rights reserved. See README for licensing for details.
+# Copyright (c) 2012, Adam J. Rossi. All rights reserved. See README for licensing details.
 
 from KeypointDescriptor import KeypointDescriptor
 import sys, os, string, copy
