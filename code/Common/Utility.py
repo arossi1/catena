@@ -8,7 +8,7 @@ def IsWindows():
 
 def WriteFileList(path, pattern, fileListName):    
     f = open(os.path.join(path, fileListName),"w")
-    for p in glob.glob(os.path.join(path,pattern)):
+    for p in sorted(glob.glob(os.path.join(path,pattern))):
         f.write(os.path.split(p)[1]+"\n")
     f.close()
     
