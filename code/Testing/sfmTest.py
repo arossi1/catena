@@ -5,7 +5,7 @@ import Chain # Chain must be imported first, requirement of registry
 import Sources, FeatureExtraction, FeatureMatch, BundleAdjustment, Cluster
 
 # path to images
-imagePath = r"C:\Datasets\ETsub"
+imagePath = r"/Datasets/ET"
 
 # PMVS path
 pmvsPath = os.path.join(imagePath,"pmvs")
@@ -21,8 +21,8 @@ keyMatch = FeatureMatch.KeyMatch(sift, parseKDF, "KeyMatchFull")
 bundler = BundleAdjustment.Bundler([keyMatch, imageSource])
 radialUndistort = Cluster.RadialUndistort([bundler, imageSource])
 prepCmvsPmvs = Cluster.PrepCmvsPmvs(radialUndistort, pmvsPath)
-#cmvs = Cluster.CMVS(prepCmvsPmvs)
-pmvs = Cluster.PMVS(prepCmvsPmvs)
+cmvs = Cluster.CMVS(prepCmvsPmvs)
+pmvs = Cluster.PMVS(cmvs) #prepCmvsPmvs)
 
 # render chain
 print Chain.Render(pmvs,logPath)
