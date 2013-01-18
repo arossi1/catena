@@ -28,6 +28,11 @@ class PlyFile:
     def toInteger(v): return int(v)
     @staticmethod
     def toFloat(v): return float(v)
+    @staticmethod
+    def toList(v,cfs):
+        vs = v.split(" ")
+        numElements = cfs[0](vs[0])
+        return tuple([cfs[1](x) for x in vs[1:]])
     
     @staticmethod
     def getConvFunctor(t):
@@ -39,6 +44,7 @@ class PlyFile:
         elif (t=="uint"):   return PlyFile.toInteger
         elif (t=="float"):  return PlyFile.toFloat
         elif (t=="double"): return PlyFile.toFloat
+        elif (t=="list"):   return PlyFile.toList
         else: raise Exception("Unknown type: " + t)
         
     
@@ -69,17 +75,24 @@ class PlyFile:
                 
         if (elementIndex==-1): 
             raise Exception("Unknown element: " + elementName)
-        
-        propIndices = []
-        for i,p in enumerate(elementProps):
-            if (p[1] in properties):
-                propIndices.append(i)
+
+        if (elementProps[0][0]=="list"):
+            data = []
+            for d in self.__data[elementIndex]:
+                data.append(d)
                 
-        data = []
-        for d in self.__data[elementIndex]:
-            data.append([d[i] for i in propIndices])
+            return data
+        else:        
+            propIndices = []
+            for i,p in enumerate(elementProps):
+                if (p[1] in properties):
+                    propIndices.append(i)
             
-        return data
+            data = []
+            for d in self.__data[elementIndex]:
+                data.append([d[i] for i in propIndices])
+                
+            return data
         
         
     def __parse(self):
@@ -119,20 +132,35 @@ class PlyFile:
             if (t[0]=="element"):
                 self.__elements.append((t[1],int(t[2]),[]))
             elif (t[0]=="property"):
-                self.__elements[-1][2].append(tuple(t[1:3]))
+                self.__elements[-1][2].append(tuple(t[1:]))
+            elif (t[0]=="comment"):
+                pass
             else:
                 f.close()
                 raise Exception("Unknown header string: " + l)
             l = PlyFile.readLine(f)
-            
+
         # create conversion functors
         convFunctorsList = [[PlyFile.getConvFunctor(prop[0]) for prop in el[2]] for el in self.__elements]
         
         # parse data
         for iElement, element in enumerate(self.__elements):
-            self.__data.append([[func(x) for func,x in zip(convFunctorsList[iElement], 
-                                                           PlyFile.readLine(f).split(" "))] for i in range(element[1])])
+            if (element[2][0][0]=="list"):
+                cfs = (PlyFile.getConvFunctor(element[2][0][1]),PlyFile.getConvFunctor(element[2][0][2]))
+                listData = []
+                for i in range(element[1]):
+                    listData.append(convFunctorsList[iElement][0](PlyFile.readLine(f),cfs))
+                self.__data.append(listData)
+
+                # modify element description
+                self.__elements[iElement] = (self.__elements[iElement][0],
+                                             self.__elements[iElement][1],
+                                             [(self.__elements[iElement][2][0][0],self.__elements[iElement][2][0][3])])
+            else:
+                self.__data.append([[func(x) for func,x in zip(convFunctorsList[iElement], 
+                                                               PlyFile.readLine(f).split(" "))] for i in range(element[1])])
         f.close()
+                
 
     @staticmethod
     def getFormatString(t):
