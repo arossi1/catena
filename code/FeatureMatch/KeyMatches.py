@@ -63,7 +63,7 @@ class KeyMatches:
             matchIndices = []
             for i in range(numMatches):
                 matchIndices.append( KeyMatches.ReadIntPair(f) )
-            
+                
             km = KeyMatch(self.__keypointDescriptors.GetDescriptors()[idxIm1],
                           self.__keypointDescriptors.GetDescriptors()[idxIm2],
                           idxIm1,idxIm2,
