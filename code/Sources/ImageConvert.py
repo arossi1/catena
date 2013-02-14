@@ -56,7 +56,7 @@ class ImageConvert(Chain.StageBase):
                     if (self._properties["Image Extension"]=="jpg"):
                         cmd += " -ocf \"%s\"" % Common.ExecutablePath.IVA_JPEG_OCF
 
-                    Common.Utility.RunCommand(cmd, shell=True)
+                    Common.Utility.RunCommand(cmd)
                     
                 cImages.append(Common.sfmImage(outputFilePath))
             
@@ -83,7 +83,7 @@ class ImageConvert(Chain.StageBase):
                          outputFilePath,
                          Common.ExecutablePath.IVA_JPEG_OCF)
                     print cmd
-                    Common.Utility.RunCommand(cmd, shell=True)
+                    Common.Utility.RunCommand(cmd)
                     
                 cImages.append(Common.sfmImage(outputFilePath))
             
