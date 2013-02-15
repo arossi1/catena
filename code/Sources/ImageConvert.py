@@ -77,11 +77,14 @@ class ImageConvert(Chain.StageBase):
                 if (not os.path.exists(outputFilePath) or
                     Common.Utility.GetFileSize(outputFilePath)==0):
                     
-                    cmd = "\"%s\" -formula \"i0*255/4096\" -i0 \"%s\" -o \"%s\" -dt U8 -ocf \"%s\"" % \
+                    cmd = "\"%s\" -formula \"i0*255/4096\" -i0 \"%s\" -o \"%s\" -dt U8 " % \
                         (Common.ExecutablePath.EXE_IvaMath,
                          im.GetFilePath(),
-                         outputFilePath,
-                         Common.ExecutablePath.IVA_JPEG_OCF)
+                         outputFilePath)
+                        
+                    if (self._properties["Image Extension"]=="jpg"):
+                        cmd += "-ocf \"%s\"" % Common.ExecutablePath.IVA_JPEG_OCF
+                        
                     print cmd
                     Common.Utility.RunCommand(cmd)
                     

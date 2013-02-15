@@ -121,15 +121,15 @@ class ImagesAndTiepointsDialog(QtGui.QDialog):
         
 
     def browseTestImage(self):
-        ret = QtGui.QFileDialog.getExistingDirectory(self, "Choose Test Image")
-        if (ret != ""): self._image1Text.setText(ret)
+        ret = QtGui.QFileDialog.getOpenFileName(self, "Choose Test Image")
+        if (ret != ""): self._testImageText.setText(ret)
         
     def browseRefImage(self):
-        ret = QtGui.QFileDialog.getExistingDirectory(self, "Choose Reference Image")
-        if (ret != ""): self._image2Text.setText(ret)
+        ret = QtGui.QFileDialog.getOpenFileName(self, "Choose Reference Image")
+        if (ret != ""): self._refImageText.setText(ret)
         
     def browseTP(self):
-        ret = QtGui.QFileDialog.getExistingDirectory(self, "Choose Tiepoints")
+        ret = QtGui.QFileDialog.getOpenFileName(self, "Choose Tiepoints")
         if (ret != ""): self._tpText.setText(ret)
         
     def GetTestImage(self):     return str(self._testImageText.text())
