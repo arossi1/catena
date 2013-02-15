@@ -9,14 +9,15 @@ class TapPoint(Chain.StageBase):
                                  "Generic tap point stage for inspecting output values of a stage",
                                  {"Print Functions":"Dictionary of functions used to print parameters, keyed by type"})
 
-        if (len(self.GetInputStages())!=1):
-            raise Exception("TapPoint stage must have only one input stage")
-
         self._properties["Print Functions"] = {}
         if (printFunctionsDict!=None):
             self._properties["Print Functions"] = printFunctionsDict
 
     def GetInputInterface(self):
+        
+        if (len(self.GetInputStages())!=1):
+            raise Exception("TapPoint stage must have only one input stage")
+
         inputInterface = {}
         for valName,valType in self.GetInputStages()[0].GetOutputInterface().items():
             inputInterface[valName] = (0,valType)
