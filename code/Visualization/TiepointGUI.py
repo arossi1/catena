@@ -204,7 +204,7 @@ class TiepointGUI(QtGui.QMainWindow):
             iw.clearHighlight()
             iw.removePoints()
         
-        print point
+        print "(%f,%f) -> (%f,%f)" % tuple(point)
         self._imageWidgets[self._images.GetImages()[0]].addPoint((point[0],point[1]))
         #self._imageWidgets[self._images.GetImages()[0]].setHighlight()
         
