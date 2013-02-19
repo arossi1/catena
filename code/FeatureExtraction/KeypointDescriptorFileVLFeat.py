@@ -5,7 +5,7 @@ from KeypointDescriptorFile import KeypointDescriptorFile
 from KeypointDescriptor import KeypointDescriptor
 
 
-class SiftVLFeatKeypointDescriptorFile(KeypointDescriptorFile):
+class KeypointDescriptorFileVLFeat(KeypointDescriptorFile):
 
     def __init__(self, keypointDescriptorFile, parse=True):
         KeypointDescriptorFile.__init__(self, keypointDescriptorFile)
@@ -25,7 +25,7 @@ class SiftVLFeatKeypointDescriptorFile(KeypointDescriptorFile):
             if (self._keypointDescriptorLength==None): 
                 self._keypointDescriptorLength = len(vector)
             elif (len(vector)!=self._keypointDescriptorLength): 
-                raise Exception("[SiftVLFeatKeypointDescriptorFile] Inconsistent descriptor length")
+                raise Exception("[KeypointDescriptorFileVLFeat] Inconsistent descriptor length")
             
             kpd = KeypointDescriptor(float(row)+offsetY, float(column)+offsetX,
                                      float(scale), float(orientation), vector)

@@ -5,7 +5,7 @@ from KeypointDescriptorFile import KeypointDescriptorFile
 from KeypointDescriptor import KeypointDescriptor
 
 
-class SiftWin32KeypointDescriptorFile(KeypointDescriptorFile):
+class KeypointDescriptorFileLowe(KeypointDescriptorFile):
 
     def __init__(self, fpOrkdfOrList, parse=True):
         if (type(fpOrkdfOrList)==str):

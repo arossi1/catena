@@ -3,17 +3,18 @@ import PackagePath
 from StageBase import StageBase
 from sfmImages import sfmImages
 from KeypointDescriptors import KeypointDescriptors
-from SiftWin32KeypointDescriptorFile import SiftWin32KeypointDescriptorFile
-import KeypointCombineCpp
+from KeypointDescriptorFileLowe import KeypointDescriptorFileLowe
 
 import Utility
 import os
 
 class KeypointCombine(StageBase):
 
-    def __init__(self, inputStages, cppver=False):
-        StageBase.__init__(self, inputStages)
-        self._cppver = cppver
+    def __init__(self, inputStages=None): #, cppver=False):
+        StageBase.__init__(self,
+                           inputStages,
+                           "Combines 2 sets of keypoint descriptors")
+        #self._cppver = cppver
 
     def GetInputInterface(self):
         return {"keypointDescriptors"   :(0,KeypointDescriptors),
@@ -24,24 +25,27 @@ class KeypointCombine(StageBase):
         return {"keypointDescriptors":KeypointDescriptors}
 
     def Execute(self):
-        if (self._cppver): self.CppVer()
-        else:              self.PythonVer() 
+        #if (self._cppver): self.CppVer()
+        #else:              
+        self.PythonVer() 
     
-    def CppVer(self):
-        keypointDescriptors = self.GetInputStageValue(0, "keypointDescriptors")
-        images = self.GetInputStageValue(1, "images")
-        imageTiles = self.GetInputStageValue(2, "images")
-        
-        self.StartProcess()
-        
-        KeypointCombineCpp.Process(images.GetTileListPath())
-        kdList = []
-        for im in images.GetImages():
-            path,fn = os.path.split(im.GetFilePath())
-            kpPath = os.path.join(path, os.path.splitext(fn)[0]+".key")
-            kdList.append(SiftWin32KeypointDescriptorFile(kpPath, False))
-        
-        self.SetOutputValue("keypointDescriptors", KeypointDescriptors(images.GetPath(), kdList))
+#    def CppVer(self):
+#        keypointDescriptors = self.GetInputStageValue(0, "keypointDescriptors")
+#        images = self.GetInputStageValue(1, "images")
+#        imageTiles = self.GetInputStageValue(2, "images")
+#        
+#        self.StartProcess()
+#        
+#        Utility.RunCommand("\"%s\" \"%s\"" % (Utility.GetAbsoluteFilePath(__file__, ExecutablePath.EXE_KeypointCombine), 
+#                                              images.GetTileListPath()),
+#                           cwd=os.path.split(tileListPath)[0], shell=True)
+#        kdList = []
+#        for im in images.GetImages():
+#            path,fn = os.path.split(im.GetFilePath())
+#            kpPath = os.path.join(path, os.path.splitext(fn)[0]+".key")
+#            kdList.append(KeypointDescriptorFileLowe(kpPath, False))
+#        
+#        self.SetOutputValue("keypointDescriptors", KeypointDescriptors(images.GetPath(), kdList))
         
     def PythonVer(self):
         
@@ -60,7 +64,7 @@ class KeypointCombine(StageBase):
                 kd = keypointDescriptors.GetDescriptor(fn+".key")
                 kd.Parse(tdim[0],tdim[1])
                 descriptors += kd.GetDescriptors()
-            kdf = SiftWin32KeypointDescriptorFile(descriptors)
+            kdf = KeypointDescriptorFileLowe(descriptors)
             kdf.SortDescriptors()
             baseDir, fileName = os.path.split(im.GetFilePath())
             fn,ext = os.path.splitext(fileName)

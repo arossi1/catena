@@ -1,19 +1,25 @@
 # Copyright (c) 2012, Adam J. Rossi. All rights reserved. See README for licensing details.
 import Chain, Common, FeatureExtraction
-import SiftWin32, SiftVLFeat, Daisy, SiftHess, SiftGPU
+from KeypointDescriptorFileVLFeat import KeypointDescriptorFileVLFeat
 import os
 
 class Sift(Chain.StageBase):
 
-    def __init__(self, inputStages=None, parseKDF=False, method="SiftWin32"):
+    def __init__(self, 
+                 inputStages=None, 
+                 parseKDF=False, 
+                 method="SiftWin32",
+                 forceRun=False):
         Chain.StageBase.__init__(self,
                                  inputStages,
                                  "Generates Sift descriptors for images",
                                  {"Parse Descriptors":"Whether to parse the keypoint descriptors after generation",
-                                  "Sift Method":"Sift implementation to use {SiftWin32, SiftHess, SiftGPU, VLFeat, Daisy}"})
+                                  "Sift Method":"Sift implementation to use {SiftWin32, SiftHess, SiftGPU, VLFeat}",
+                                  "Force Run":"Force run if outputs already exist"})
         
         self._properties["Parse Descriptors"] = parseKDF
         self._properties["Sift Method"] = method
+        self._properties["Force Run"] = forceRun
 
     def GetInputInterface(self):
         return {"images":(0,Common.sfmImages)}
@@ -25,47 +31,58 @@ class Sift(Chain.StageBase):
         images = self.GetInputStageValue(0, "images")
         
         self.StartProcess()
-        
+    
         kds = []
         
-        if (self._properties["Sift Method"] == "SiftWin32"):
+        # special case
+        if (self._properties["Sift Method"] == "VLFeat"):
+            
+            exeName = "sift"
+            argsPattern = "--orientations \"%s\" -o \"%s\""
+            
             for im in images.GetImages():
-                kds.append(SiftWin32.Process(im.GetFilePath(),
-                                             parseKDF=self._properties["Parse Descriptors"],
-                                             forceRun=False))
-
-        elif (self._properties["Sift Method"] == "SiftHess"):
-            for im in images.GetImages():
-                kds.append(SiftHess.Process(im.GetFilePath(),
-                                            parseKDF=self._properties["Parse Descriptors"],
-                                            forceRun=False))
+                keypointDescriptorFile = os.path.join(os.path.splitext(im.GetFilePath())[0]+".key")
                 
-        elif (self._properties["Sift Method"] == "SiftGPU"):
-            for im in images.GetImages():
-                kds.append(SiftGPU.Process(im.GetFilePath(),
-                                            parseKDF=self._properties["Parse Descriptors"],
-                                            forceRun=False))
-        
-	elif (self._properties["Sift Method"] == "VLFeat"):
-            for im in images.GetImages():
-                vlkd = SiftVLFeat.Process(im.GetFilePath(),
-                                          parseKDF=True, #self._properties["Parse Descriptors"],
-                                          forceRun=True)
-                kd = FeatureExtraction.SiftWin32KeypointDescriptorFile(vlkd)
-                kd.Write(vlkd.GetFilePath())
+                if (Common.Utility.ShouldRun(self._properties["Force Run"], keypointDescriptorFile)):
+                    
+                    self.RunCommand(exeName,
+                                    argsPattern % (im.GetFilePath(),keypointDescriptorFile))
+                    
+                    vlkd = KeypointDescriptorFileVLFeat(keypointDescriptorFile, True)
+                    kd = FeatureExtraction.KeypointDescriptorFileLowe(vlkd)
+                    kd.Write(vlkd.GetFilePath())
+                    
+                else:
+                    kd = FeatureExtraction.KeypointDescriptorFileLowe(keypointDescriptorFile, 
+                                                                      self._properties["Parse Descriptors"])
                 kds.append(kd)
                 
-        elif (self._properties["Sift Method"] == "Daisy"):
+        else:    
+            
+            if (self._properties["Sift Method"] == "SiftWin32"):
+                exeName = "siftWin32"
+                argsPattern = "<\"%s\"> \"%s\""
+            elif (self._properties["Sift Method"] == "SiftHess"):
+                exeName = "sifthess"
+                argsPattern = "\"%s\" \"%s\""
+            elif (self._properties["Sift Method"] == "SiftGPU"):
+                exeName = "SiftGPUKeypoint"
+                argsPattern = "\"%s\" \"%s\""
+            else:
+                raise Exception("Unknown Sift method: " + self._properties["Sift Method"])
+            
             for im in images.GetImages():
-                daisyKD = Daisy.Process(im.GetFilePath(),
-                                        parseKDF=self._properties["Parse Descriptors"],
-                                        forceRun=False)
-                kd = FeatureExtraction.SiftWin32KeypointDescriptorFile(daisyKD)
-                kd.Write(os.path.splitext(daisyKD.GetFilePath())[0]+".key")
+                keypointDescriptorFile = os.path.join(os.path.splitext(im.GetFilePath())[0]+".key")
+                
+                if (Common.Utility.ShouldRun(self._properties["Force Run"], keypointDescriptorFile)):
+                    
+                    self.RunCommand(exeName,
+                                    argsPattern % (im.GetFilePath(),keypointDescriptorFile))
+                
+                kd = FeatureExtraction.KeypointDescriptorFileLowe(keypointDescriptorFile, 
+                                                                  self._properties["Parse Descriptors"])
                 kds.append(kd)
-        
-        else:
-            raise Exception("Unknown Sift method: " + self._properties["Sift Method"])
+                
         
         kds = FeatureExtraction.KeypointDescriptors(images.GetPath(), kds)
         self.SetOutputValue("keypointDescriptors", kds)

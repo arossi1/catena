@@ -1,3 +1,4 @@
 from Sift import Sift
+from Daisy import Daisy
 from KeypointDescriptors import KeypointDescriptors
-from SiftWin32KeypointDescriptorFile import SiftWin32KeypointDescriptorFile
+from KeypointDescriptorFileLowe import KeypointDescriptorFileLowe
