@@ -5,7 +5,7 @@ import Chain # Chain must be imported first, requirement of registry
 import Sources, FeatureExtraction, FeatureMatch, BundleAdjustment, Cluster
 
 # path to images
-imagePath = r"/Datasets/ET"
+imagePath = r"E:\Sources\thesis\Datasets\ETsub"
 
 # PMVS path
 pmvsPath = os.path.join(imagePath,"pmvs")
@@ -16,18 +16,17 @@ parseKDF = False
 
 # build chain
 imageSource = Sources.ImageSource(imagePath, "jpg")
-sift = FeatureExtraction.Sift(imageSource, parseKDF, "SiftHess")
+imageConvert = Sources.ImageConvert(imageSource, imagePath, "pgm")
+sift = FeatureExtraction.Sift(imageConvert, parseKDF, "SiftHess", forceRun=True) #SiftWin32, SiftHess, SiftGPU, VLFeat
 keyMatch = FeatureMatch.KeyMatch(sift, parseKDF, "KeyMatchFull")
-bundler = BundleAdjustment.Bundler([keyMatch, imageSource])
+bundler = BundleAdjustment.Bundler([keyMatch, imageSource], forceRun=True)
 radialUndistort = Cluster.RadialUndistort([bundler, imageSource])
 prepCmvsPmvs = Cluster.PrepCmvsPmvs(radialUndistort, pmvsPath)
 cmvs = Cluster.CMVS(prepCmvsPmvs)
-pmvs = Cluster.PMVS(cmvs) #prepCmvsPmvs)
+pmvs = Cluster.PMVS(cmvs)
 
 # render chain
-print Chain.Render(pmvs,logPath)
+print Chain.Render(sift,logPath)
 
 # persist chain
-Chain.StageRegistry.Save("sfmChain.dat")
-
-
+#Chain.StageRegistry.Save("sfmChain.dat")

@@ -48,8 +48,8 @@ def sfmChainPersist(chainFilePath):
 
     # render the tail stage (pmvs)
     print Chain.Render(tailStages[0],logPath)
-
-
+    
+    
 if __name__=="__main__":
     
     #sfmSbaChainProgrammatic("sbaChain.dat")
