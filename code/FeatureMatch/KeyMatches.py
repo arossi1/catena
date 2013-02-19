@@ -41,7 +41,7 @@ class KeyMatches:
     
     def GetKeyMatchFiles(self):
         if (len(self.__keyMatches)==0): 
-            self.__parse(False)
+            self.__parse()
         return self.__keyMatches
 
     @staticmethod
@@ -63,7 +63,7 @@ class KeyMatches:
             matchIndices = []
             for i in range(numMatches):
                 matchIndices.append( KeyMatches.ReadIntPair(f) )
-                
+            
             km = KeyMatch(self.__keypointDescriptors.GetDescriptors()[idxIm1],
                           self.__keypointDescriptors.GetDescriptors()[idxIm2],
                           idxIm1,idxIm2,
