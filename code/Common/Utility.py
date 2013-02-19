@@ -1,7 +1,7 @@
 # Copyright (c) 2012, Adam J. Rossi. All rights reserved. See README for licensing details.
 
 import Chain
-import glob, os, shutil, sys, stat, time, subprocess
+import glob, os, shutil, sys, stat, time, subprocess, platform, string
 
 def IsWindows():
     return (sys.platform=="win32")
@@ -46,7 +46,42 @@ def InvalidString(): return ""
 def InvalidInt():    return -sys.maxint
 def InvalidFloat():  return float(-sys.maxint)
 
-def RunCommand(cmd, cwd=None, shell=(not IsWindows()), printStdout=False, captureCout=False):
+def Quoted(s):          return "\"%s\""%s    
+def CommandArgs(*args): return string.join(args, " ")
+
+def ShouldRun(forceRun, *args):
+    if (forceRun): return True
+    for f in args:
+        if (not os.path.exists(f) or GetFileSize(f)==0):
+            return True
+    return False
+
+def GetExePath(moduleFile, exe):
+    
+    exe = GetAbsoluteFilePath(moduleFile, os.path.join(PlatformName,"bin",exe))
+        
+    if (IsWindows() and not exe.lower().endswith(".exe")):
+        exe += ".exe"
+    
+    if (not os.path.exists(exe)):
+        raise Exception("Executable does not exist: " + exe)
+    
+    # add lib to LD_LIBRARY_PATH
+    if (not IsWindows()):
+        libDir = GetAbsoluteFilePath(moduleFile,
+                                     os.path.join(PlatformName,"lib"))
+        if (os.path.exists(libDir)):
+            if (not os.environ.has_key("LD_LIBRARY_PATH") or os.environ["LD_LIBRARY_PATH"]==""):
+                os.environ["LD_LIBRARY_PATH"] = "."
+            
+            if (libDir not in os.environ["LD_LIBRARY_PATH"]):
+                os.environ["LD_LIBRARY_PATH"] += ":%s" % libDir
+    
+    return exe
+    
+
+#def RunCommand(cmd, cwd=None, shell=(not IsWindows()), printStdout=False, captureCout=False):
+def RunCommand(cmd, cwd=None, shell=True, printStdout=False, captureCout=False):
     
 #    p = None
 #    if (captureCout):
@@ -158,5 +193,8 @@ def ConvertImagesToGrayscalePGM(imagePath, extension):
         
         
         
-        
+OSName = platform.system()
+ArchitectureName = platform.architecture()[0]
+PlatformName = "%s%s"%(OSName,ArchitectureName)
+
         

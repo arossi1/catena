@@ -53,17 +53,6 @@ class sfmImage:
                 tiles.append((tx,ty,tw,th))                
         return tiles
     
-    def ConvertKDFToSiftWin32(self, kdf, parseKDF):
-        keyFile = os.path.splitext(self._filePath)[0] +".key"
-        if (not os.path.exists(keyFile)):
-            kdf.Parse()
-            swKDF = SiftWin32KeypointDescriptorFile(kdf)
-            swKDF.Write(keyFile)
-            if (not parseKDF): swKDF.ClearKeypointDescriptors()
-        else:
-            swKDF = SiftWin32KeypointDescriptorFile(keyFile, parseKDF)
-        return swKDF
-    
     def _getMetadata(self):
         if (not self._metadata):
             try:    self._metadata = jhead.jheadInfo(self._filePath)  # try jhead (EXIF tags)

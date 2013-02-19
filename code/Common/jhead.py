@@ -1,7 +1,6 @@
 # Copyright (c) 2012, Adam J. Rossi. All rights reserved. See README for licensing details.
-import os
+import os, sys
 import Utility
-import ExecutablePath
 
 class jheadInfo:
     
@@ -10,9 +9,11 @@ class jheadInfo:
         self._fillInfo()
         
     def _fillInfo(self):
-
-        for l in Utility.RunCommand("\"%s\" \"%s\"" % (Utility.GetAbsoluteFilePath(__file__, ExecutablePath.EXE_JHead), self._imagePath),
-                                           cwd=os.path.split(ExecutablePath.EXE_JHead)[0], printStdout=False, captureCout=True):
+        
+        exe = Utility.GetExePath(sys.modules[self.__class__.__module__].__file__, "jhead")
+        
+        for l in Utility.RunCommand(Utility.CommandArgs(Utility.Quoted(exe),Utility.Quoted(self._imagePath)),
+                                    cwd=os.path.split(exe)[0], printStdout=False, captureCout=True):
             if (len(l.strip())==0): continue
             x = l.split(":")
             self.__dict__[x[0].strip()] = x[1].strip()

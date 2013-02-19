@@ -1,16 +1,6 @@
 # Copyright (c) 2012, Adam J. Rossi. All rights reserved. See README for licensing details.
 import os, glob, string
-from multiprocessing import Pool
 import Common
-
-_multiThreaded = True
-__parseSift = False
-def RunSiftSingle(im):          return im.RunSift(__parseSift)
-def RunDaisySingle(im):         return im.RunDaisy(__parseSift)
-def RunVLFeatSiftSingle(im):    return im.ConvertKDFToSiftWin32(im.RunVLFeatSift(__parseSift), __parseSift)
-def ConvertToPGMSingle((im, path)):  return im.ConvertToPGM(path)
-def ConvertSingle((im, path, type)): return im.Convert(path, type)
-
 
 
 class sfmImages:
@@ -45,13 +35,10 @@ class sfmImages:
         Common.Utility.MakeDir(outputPath)
         images = sfmImages(outputPath, "pgm")
 
-        # single threaded
         images._images = []
         for im in self._images: 
             images._images.append(im.ConvertToPGM(outputPath))
         
-        # multi-threaded
-#        images._images = Pool().map(ConvertToPGMSingle, [(im, outputPath) for im in self._images])        
         return images
     
     def Convert(self, outputPath, type):
@@ -60,7 +47,6 @@ class sfmImages:
         else:
             Common.Utility.MakeDir(outputPath)
             images = sfmImages(outputPath, type)
-            #images._images = Pool().map(ConvertSingle, [(im, outputPath, type) for im in self._images])   
             
             images._images = []
             for im in self._images: 
@@ -89,10 +75,10 @@ class sfmImages:
         self._imageListPath = os.path.join(self._path, "imagelist.txt")
         f = open(self._imageListPath,"w")
         for im in self._images:
-            if (includeFocalPixels and im.GetFocalPixels()):
-                f.write("%s 0 %0.5f\n" % (im.GetFileName(), im.GetFocalPixels()))
-            elif (includeFocalPixels and self._focalPixelOverride>0):
+            if (includeFocalPixels and self._focalPixelOverride>0):
                 f.write("%s 0 %0.5f\n" % (im.GetFileName(), self._focalPixelOverride))
+            elif (includeFocalPixels and im.GetFocalPixels()):
+                f.write("%s 0 %0.5f\n" % (im.GetFileName(), im.GetFocalPixels()))
             elif (includeFocalPixels):
                 raise Exception("Unknown focal pixels")
             else:
