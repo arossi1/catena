@@ -1,5 +1,5 @@
 # Copyright (c) 2012, Adam J. Rossi. All rights reserved. See README for licensing details.
-import sys, uuid, string
+import sys, uuid, string, os
 import Chain, Analyze
 
 class StageBase:
@@ -90,7 +90,7 @@ class StageBase:
     
     def Reset(self):        
         self.__prepared = False
-        for stage in self.GetInputStages(): stage.Reset()        
+        for stage in self.GetInputStages(): stage.Reset()
         
     def Prepare(self):
         # check:
@@ -215,6 +215,13 @@ class StageBase:
             name = "%s [%s]" % (name, string.join(sargs,", "))
         Analyze.StartProcess(name)
         
+    def RunCommand(self, exe, args="", cwd=None, shell=True): #(sys.platform!="win32")):
+        import Common
+        
+        # find executable for given platform
+        exe = Common.Utility.GetExePath(sys.modules[self.__class__.__module__].__file__, exe)
+        cmd = "\"%s\" %s" % (exe, args)
+        Common.Utility.RunCommand(cmd, cwd=cwd, shell=shell)
     
     # pure virtual methods...
     def GetInputInterface(self):
