@@ -30,7 +30,8 @@ class PMVS(Chain.StageBase):
                  useVisData=1,
                  sequence=-1,
                  quad=2.5,
-                 maxAngle=10):
+                 maxAngle=10,
+                 forceRun=False):
         Chain.StageBase.__init__(self,
                                  inputStages,
                                  "Runs PMVS",
@@ -84,7 +85,8 @@ class PMVS(Chain.StageBase):
                                     "We measure baseline by angles between directions of visible cameras from each 3D point. More concretely, a 3D point is " + 
                                     "not reconstructed if the maximum angle between directions of 2 visible cameras is below this threshold. The unit is " + 
                                     "in degrees. Decreasing this threshold allows more reconstructions for scenes far from cameras, but results tend to " + 
-                                    "be pretty noisy at such places."})
+                                    "be pretty noisy at such places.",
+                                  "Force Run":"Force run if outputs already exist"})
         
         self._properties["Target Images"] = timages
         self._properties["Other Images"] = oimages
@@ -98,6 +100,7 @@ class PMVS(Chain.StageBase):
         self._properties["Maximum Image Sequence"] = sequence
         self._properties["Spurious 3D Point Threshold"] = quad
         self._properties["Maximum Camera Angle Threshold"] = maxAngle
+        self._properties["Force Run"] = forceRun
                  
 
     def GetInputInterface(self):
@@ -107,14 +110,9 @@ class PMVS(Chain.StageBase):
     def GetOutputInterface(self):
         return {"model":Cluster.PlyFile,
                 "patch":Cluster.PatchFile,
-                "pset":Cluster.PsetFile}    
-
-    def Process(self, path, optionFileName):    
-    
-        cmd = "\"%s\" \"%s/\" %s" % (Common.Utility.GetAbsoluteFilePath(__file__, Common.ExecutablePath.EXE_PMVS2),
-                                     path, optionFileName)
-        Common.Utility.RunCommand(cmd)
-    
+                "pset":Cluster.PsetFile}
+                
+        
     def WriteOptionsFile(self, outputPath, numImages):
         
         f = open(outputPath,"w")
@@ -124,11 +122,12 @@ class PMVS(Chain.StageBase):
         f.write("useBound 0\n")
         if (self._properties["Target Images"]==""):
             f.write("timages -1 0 %d\n" % numImages)
-        
-        
+            
         
         # options based on stage properties
         for propName in self._properties.keys():
+            if (propName=="Force Run"):continue
+            
             if (self._properties[propName] != None):
                 
                 if (isinstance(self._properties[propName],bool)):
@@ -156,18 +155,26 @@ class PMVS(Chain.StageBase):
         
         self.StartProcess()
         
+        numImages = len(images.GetImages())
         pmvsPath = os.path.split(bundleFile.GetBundleFilePath())[0]
         optionsFileName = "pmvs_options.txt"
-        numImages = len(images.GetImages())
-        self.WriteOptionsFile(os.path.join(pmvsPath, optionsFileName), numImages)
-        self.Process(pmvsPath, optionsFileName)        
         
-        modelFile = Cluster.PlyFile(os.path.join(pmvsPath, "models", optionsFileName+".ply"))
-        patchFile = Cluster.PatchFile(os.path.join(pmvsPath, "models", optionsFileName+".patch"))
-        psetFile = Cluster.PsetFile(os.path.join(pmvsPath, "models", optionsFileName+".pset"))
-                
+        optionsFilePath = os.path.join(pmvsPath, optionsFileName)
+        modelFile = os.path.join(pmvsPath, "models", optionsFileName+".ply")
+        patchFile = os.path.join(pmvsPath, "models", optionsFileName+".patch")
+        psetFile = os.path.join(pmvsPath, "models", optionsFileName+".pset")
         
-        self.SetOutputValue("model", modelFile)
-        self.SetOutputValue("patch", patchFile)
-        self.SetOutputValue("pset", psetFile)
+        if (Common.Utility.ShouldRun(self._properties["Force Run"],
+                                     optionsFilePath,modelFile,patchFile,psetFile)):
+
+            self.WriteOptionsFile(optionsFilePath, numImages)
+        
+            self.RunCommand("pmvs2", 
+                            Common.Utility.CommandArgs("\"%s/\"" % pmvsPath,
+                                                       optionsFileName))
+        
+        
+        self.SetOutputValue("model", Cluster.PlyFile(modelFile))
+        self.SetOutputValue("patch", Cluster.PatchFile(patchFile))
+        self.SetOutputValue("pset", Cluster.PsetFile(psetFile))
 

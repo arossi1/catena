@@ -4,10 +4,13 @@ import os
 
 class RadialUndistort(Chain.StageBase):
 
-    def __init__(self, inputStages=None):
+    def __init__(self, inputStages=None, forceRun=False):
         Chain.StageBase.__init__(self,
                                  inputStages,
-                                 "Radially undistorts images")        
+                                 "Radially undistorts images",
+                                 {"Force Run":"Force run if outputs already exist"})
+        
+        self._properties["Force Run"] = forceRun
 
     def GetInputInterface(self):
         return {"bundleFile":(0,BundleAdjustment.BundleFile),
@@ -20,12 +23,14 @@ class RadialUndistort(Chain.StageBase):
     def RunRadialUndistort(self, imagePath, imageListPath, bundlerOutputFilePath):
         outputPath = os.path.join(imagePath, "rd")
         Common.Utility.MakeDir(outputPath)
+        rdBundleFile = os.path.join(outputPath, "bundle.rd.out")
         
-        cmd = "\"%s\" \"%s\" \"%s\" \"%s\"" % \
-        (Common.Utility.GetAbsoluteFilePath(__file__, Common.ExecutablePath.EXE_RadialUndistort), 
-         imageListPath, bundlerOutputFilePath, outputPath)
-        
-        Common.Utility.RunCommand(cmd, cwd=os.path.split(imageListPath)[0])
+        if (Common.Utility.ShouldRun(self._properties["Force Run"], rdBundleFile)):
+            self.RunCommand("RadialUndistort", 
+                            Common.Utility.CommandArgs(Common.Utility.Quoted(imageListPath),
+                                                       Common.Utility.Quoted(bundlerOutputFilePath),
+                                                       Common.Utility.Quoted(outputPath)),
+                            cwd = os.path.split(imageListPath)[0])
         
         # not actual files in list: list.rd.txt, delete to avoid confusion
         #os.remove(os.path.join(outputPath, "list.rd.txt"))

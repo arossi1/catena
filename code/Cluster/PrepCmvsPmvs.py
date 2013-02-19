@@ -4,13 +4,15 @@ import os, shutil
 
 class PrepCmvsPmvs(Chain.StageBase):
 
-    def __init__(self, inputStages=None, targetPath=""):
+    def __init__(self, inputStages=None, targetPath="", forceRun=False):
         Chain.StageBase.__init__(self,
                                  inputStages,
                                  "Prepares directories for CMVS/PMVS",
-                                 {"Target Path":"Target path for CMVS/PMVS preparation"})
+                                 {"Target Path":"Target path for CMVS/PMVS preparation",
+                                  "Force Run":"Force run if outputs already exist"})
         
         self._properties["Target Path"] = targetPath
+        self._properties["Force Run"] = forceRun
 
     def GetInputInterface(self):
         return {"bundleFile":(0,BundleAdjustment.BundleFile),
@@ -32,17 +34,22 @@ class PrepCmvsPmvs(Chain.StageBase):
         
         Common.Utility.MakeDirs(paths)
         
-        cmd = "\"%s\" \"%s\" \"%s\" \"%s\"" % (Common.Utility.GetAbsoluteFilePath(__file__, Common.ExecutablePath.EXE_Bundle2PMVS),
-                                               imagelist, bundleFile, outputPath)
-        
-        Common.Utility.RunCommand(cmd, cwd=os.path.split(imagelist)[0])
+        self.RunCommand("Bundle2PMVS", 
+                        Common.Utility.CommandArgs(Common.Utility.Quoted(imagelist),
+                                                   Common.Utility.Quoted(bundleFile),
+                                                   Common.Utility.Quoted(outputPath)),
+                        cwd = os.path.split(imagelist)[0])
 
         return paths
     
     def Bundle2Vis(self, outputPath, bundleFile):
         visFile = os.path.join(outputPath, "vis.dat")
-        cmd = "\"%s\" \"%s\" \"%s\"" % (Common.Utility.GetAbsoluteFilePath(__file__, Common.ExecutablePath.EXE_Bundle2Vis), bundleFile, visFile)
-        Common.Utility.RunCommand(cmd, shell=True)
+        
+        if (Common.Utility.ShouldRun(self._properties["Force Run"], visFile)):
+            self.RunCommand("Bundle2Vis", 
+                            Common.Utility.CommandArgs(Common.Utility.Quoted(bundleFile),
+                                                       Common.Utility.Quoted(visFile)))
+        
         return visFile
     
     def CopyImagesToVisualizeDirectory(self, images, visualizePath):

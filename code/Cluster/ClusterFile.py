@@ -39,8 +39,11 @@ class ClusterFile:
         numImagesDataset, numClusters  = [int(i) for i in f.readline().strip().split(" ")]
                 
         for iCluster in range(numClusters):
-            numImagesCluster, zero  = [int(i) for i in f.readline().strip().split(" ")]            
-            clusterImageIndices = tuple([int(i) for i in f.readline().strip().split(" ")])
+            numImagesCluster, zero  = [int(i) for i in f.readline().strip().split(" ")]
+            if (numImagesCluster>0):
+                clusterImageIndices = tuple([int(i) for i in f.readline().strip().split(" ")])
+            else:
+                clusterImageIndices = ()
             self.__entries.append( ClusterEntry(iCluster, 
                                                 numImagesCluster, 
                                                 clusterImageIndices, 
@@ -53,7 +56,5 @@ class ClusterFile:
             s += str(e) + "\n"
         return s
                        
-        
-    
 
         
