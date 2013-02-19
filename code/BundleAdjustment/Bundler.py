@@ -39,7 +39,8 @@ class Bundler(Chain.StageBase):
                  minimumProjectionErrorThreshold=8,
                  maximumProjectionErrorThreshold=16,
                  previousBundlerResultsFile=Common.Utility.InvalidString(),
-                 runSlowBundler=False):
+                 runSlowBundler=False,
+                 forceRun=False):
         
         Chain.StageBase.__init__(self,
                                  inputStages,
@@ -60,7 +61,8 @@ class Bundler(Chain.StageBase):
                                   "Minimum Projection Error Threshold"  :"The minimum value of the adaptive outlier threshold",
                                   "Maximum Projection Error Threshold"  :"The maximum value of the adaptive outlier threshold",
                                   "Previous Bundler Results File"       :"Previous bundle adjustment results file path",
-                                  "Run Slow Bundler"                    :"Run slow bundle adjustment (adds one image at a time)"})
+                                  "Run Slow Bundler"                    :"Run slow bundle adjustment (adds one image at a time)",
+                                  "Force Run"                           :"Force run if outputs already exist"})
         
         self._properties["Initial Focal Length"]                = initialFocalLength
         self._properties["Variable Focal Length"]               = variableFocalLength
@@ -79,6 +81,7 @@ class Bundler(Chain.StageBase):
         self._properties["Maximum Projection Error Threshold"]  = maximumProjectionErrorThreshold
         self._properties["Previous Bundler Results File"]       = previousBundlerResultsFile
         self._properties["Run Slow Bundler"]                    = runSlowBundler
+        self._properties["Force Run"]                           = forceRun
         
     
     def GetInputInterface(self):
@@ -109,6 +112,8 @@ class Bundler(Chain.StageBase):
         
         # options based on stage properties
         for propName in self._properties.keys():
+            if (propName=="Force Run"):continue
+            
             if (self._properties[propName] != None):
                 
                 if (isinstance(self._properties[propName],bool)):
@@ -137,35 +142,31 @@ class Bundler(Chain.StageBase):
         
         f.close()
         
-    def GenerateBundlerOptionsFile(self, imagePath, matchesFilePath):
-        bundlerOptionsFilePath = os.path.join(imagePath, "bundlerOptions.txt")
-        bundlerOutputPath = os.path.join(imagePath, "bundle")
-        Common.Utility.MakeDir(bundlerOutputPath)
-        bundlerOutputFilePath = os.path.join(bundlerOutputPath, "bundler.out")
-        if (not os.path.exists(bundlerOutputFilePath)):
-            self.WriteBundlerOptionsFile(bundlerOptionsFilePath, os.path.split(matchesFilePath)[1], "bundler.out")
-        return (bundlerOutputFilePath, bundlerOptionsFilePath)
         
-    def RunBundler(self, images, bundlerOutputFilePath, bundlerOptionsFilePath):
-        
-        cmd = "\"%s\" \"%s\" --options_file \"%s\"" % \
-            (Common.Utility.GetAbsoluteFilePath(__file__, Common.ExecutablePath.EXE_Bundler), 
-             images.GetImageListPath(), bundlerOptionsFilePath)
-        
-        if (not os.path.exists(bundlerOutputFilePath)):            
-            Common.Utility.RunCommand(cmd, cwd=os.path.split(images.GetImageListPath())[0])
-        
-        return BundleAdjustment.BundleFile(bundlerOutputFilePath, images.GetImages())
-    
     def Execute(self):
         matchesFilePath = self.GetInputStageValue(0, "keyMatches").GetPath()
         images = self.GetInputStageValue(1, "images")
         
         self.StartProcess()
         
-        images.WriteFileList()
-        bundlerOutputFilePath, bundlerOptionsFilePath = self.GenerateBundlerOptionsFile(images.GetPath(), matchesFilePath)
-        bundleFile = self.RunBundler(images, bundlerOutputFilePath, bundlerOptionsFilePath)
+        bundlerOptionsFilePath = os.path.join(images.GetPath(), "bundlerOptions.txt")
+        bundlerOutputPath = os.path.join(images.GetPath(), "bundle")
+        bundlerOutputFilePath = os.path.join(bundlerOutputPath, "bundler.out")
+        
+        if (Common.Utility.ShouldRun(self._properties["Force Run"],
+                                     bundlerOptionsFilePath,bundlerOutputPath,bundlerOutputFilePath)):
+            
+            images.WriteFileList()
+            Common.Utility.MakeDir(bundlerOutputPath)
+            self.WriteBundlerOptionsFile(bundlerOptionsFilePath, os.path.split(matchesFilePath)[1], "bundler.out")
+            
+            self.RunCommand("bundler", 
+                            Common.Utility.CommandArgs(Common.Utility.Quoted(images.GetImageListPath()),
+                                                       "--options_file",
+                                                       Common.Utility.Quoted(bundlerOptionsFilePath)),
+                            cwd = os.path.split(images.GetImageListPath())[0])
+        
+        bundleFile = BundleAdjustment.BundleFile(bundlerOutputFilePath, images.GetImages())
         
         self.SetOutputValue("bundleFile", bundleFile)
         
