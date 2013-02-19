@@ -43,7 +43,7 @@ class TapPoint(Chain.StageBase):
 
             # use print function for type if provided
             if (self._properties["Print Functions"].has_key(valType)):
-                Chain.Analyze.WriteStatus(self._properties["Print Functions"][valType](vals[valName]))
+                Chain.Analyze.WriteStatus(str(self._properties["Print Functions"][valType](vals[valName])))
             else:
                 Chain.Analyze.WriteStatus(str(vals[valName]))
                 
