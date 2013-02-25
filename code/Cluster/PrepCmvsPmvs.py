@@ -80,7 +80,7 @@ class PrepCmvsPmvs(Chain.StageBase):
         visFile = Cluster.VisFile(visFile)
         
         # TODO: linux hack
-        if (not Common.Utility.IsWindows()):
+        if (not Common.Utility.IsWindows() or Common.Utility.PlatformName=="Windows64bit"):
             Common.Utility.CopyFiles(pmvsPath, paths[0], "txt")
             os.remove(os.path.join(paths[0], "pmvs_options.txt"))
 
