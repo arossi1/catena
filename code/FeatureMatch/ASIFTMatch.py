@@ -30,7 +30,7 @@ class ASIFTMatch(Chain.StageBase):
         
         if (Common.Utility.ShouldRun(self._properties["Force Run"], matchesFile)):
             
-            self.RunCommand("ASIFTMatch", 
+            self.RunCommand("ASIFTmatch", 
                             Common.Utility.CommandArgs(Common.Utility.Quoted(keypointDescriptors.GetKeyListPath()),
                                                        Common.Utility.Quoted(matchesFile)),
                             cwd = os.path.split(matchesFile)[0])            
