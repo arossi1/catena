@@ -27,7 +27,7 @@ def CopyFiles(src, dst, ext):
 
 def CreateSymbolicLink(source, link):
     if (IsWindows()):
-        raise Exception("CreateSymbolicLink not implemented on win32")
+        raise Exception("CreateSymbolicLink not implemented on windows")
 #        import ctypes
 #        kdll = ctypes.windll.LoadLibrary("kernel32.dll")
 #        kdll.CreateSymbolicLinkA(source, link, 0)
@@ -47,7 +47,8 @@ def InvalidInt():    return -sys.maxint
 def InvalidFloat():  return float(-sys.maxint)
 
 def Quoted(s):          return "\"%s\""%s    
-def CommandArgs(*args): return string.join(args, " ")
+def CommandArgs(*args): 
+    return string.join([str(a) for a in args], " ")
 
 def ShouldRun(forceRun, *args):
     if (forceRun): return True
@@ -58,13 +59,26 @@ def ShouldRun(forceRun, *args):
 
 def GetExePath(moduleFile, exe):
     
-    exe = GetAbsoluteFilePath(moduleFile, os.path.join(PlatformName,"bin",exe))
+    # special case for win64
+    if (PlatformName == "Windows64bit"):
         
-    if (IsWindows() and not exe.lower().endswith(".exe")):
-        exe += ".exe"
+        # prefer 64-bit, but use 32-bit if it exists
+        exe64 = GetAbsoluteFilePath(moduleFile, os.path.join("Windows64bit","bin",exe))+".exe"
+        exe32 = GetAbsoluteFilePath(moduleFile, os.path.join("Windows32bit","bin",exe))+".exe"        
+        
+        if   (os.path.exists(exe64)): exe = exe64
+        elif (os.path.exists(exe32)): exe = exe32
+        else:
+            raise Exception("Executables do not exist: (%s) (%s)" % (exe64,exe32))
     
-    if (not os.path.exists(exe)):
-        raise Exception("Executable does not exist: " + exe)
+    else:
+        exe = GetAbsoluteFilePath(moduleFile, os.path.join(PlatformName,"bin",exe))
+            
+        if (IsWindows() and not exe.lower().endswith(".exe")):
+            exe += ".exe"
+        
+        if (not os.path.exists(exe)):
+            raise Exception("Executable does not exist: " + exe)
     
     # add lib to LD_LIBRARY_PATH
     if (not IsWindows()):
@@ -194,7 +208,10 @@ def ConvertImagesToGrayscalePGM(imagePath, extension):
         
         
 OSName = platform.system()
+Machine = platform.machine()
 ArchitectureName = platform.architecture()[0]
-PlatformName = "%s%s"%(OSName,ArchitectureName)
-
+if (Machine=="AMD64" and OSName=="Windows"):
+    PlatformName = "Windows64bit"
+else:
+    PlatformName = "%s%s"%(OSName,ArchitectureName)
         
