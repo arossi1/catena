@@ -46,7 +46,7 @@ class sfmImages:
             return self.ConvertToPGM(outputPath)
         else:
             Common.Utility.MakeDir(outputPath)
-            images = sfmImages(outputPath, type)
+            images = sfmImages(outputPath, type, focalPixelOverride=self._focalPixelOverride)
             
             images._images = []
             for im in self._images: 

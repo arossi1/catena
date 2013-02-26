@@ -10,10 +10,10 @@ class CCDdatabase:
         self._db = {}
         for l in open(dbPath,"r"):
             v = l.strip().split("|")
-            self._db[v[0]] = float(v[1])  #(float(v[1]),v[2])
+            self._db[v[0]] = float(v[1])
     
     def GetCameraCCDWidth(self, camera):
-        if (self._db.has_key(camera)): return self._db[camera] #[0]
+        if (self._db.has_key(camera)): return self._db[camera]
         else: return None
 
 CCD_DB_FILE = "ccdwidths.csv"

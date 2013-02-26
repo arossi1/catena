@@ -41,10 +41,15 @@ class jheadInfo:
         return float(self.GetFocalLength().split("mm")[0].strip())
         
     def GetCCDWidthInMM(self):
-        import CCDdatabase
+        
         try:
-            makeModel = "%s %s" % (self.GetCameraMake(), self.GetCameraModel())
-            return CCDdatabase.Instance.GetCameraCCDWidth(makeModel)
+            if (self.__dict__.has_key("CCD width") and
+                len(self.__dict__["CCD width"].split("mm"))==2):
+                return float(self.__dict__["CCD width"].split("mm")[0])
+            else:
+                import CCDdatabase
+                makeModel = "%s %s" % (self.GetCameraMake(), self.GetCameraModel())
+                return CCDdatabase.Instance.GetCameraCCDWidth(makeModel)
         except:
             return None
         
