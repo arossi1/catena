@@ -28,6 +28,7 @@ class CameraMatrix:
         self.__parse()
         
     def GetMatrixList(self): return self.__matrix
+    
     def GetNumpyMatrix(self):
         import numpy
         return numpy.matrix(self.__matrix)
