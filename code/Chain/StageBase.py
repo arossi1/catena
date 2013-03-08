@@ -215,13 +215,13 @@ class StageBase:
             name = "%s [%s]" % (name, string.join(sargs,", "))
         Analyze.StartProcess(name)
         
-    def RunCommand(self, exe, args="", cwd=None, shell=True): #(sys.platform!="win32")):
+    def RunCommand(self, exe, args="", cwd=None, shell=True, captureCout=False):
         import Common
         
         # find executable for given platform
         exe = Common.Utility.GetExePath(sys.modules[self.__class__.__module__].__file__, exe)
         cmd = "\"%s\" %s" % (exe, args)
-        Common.Utility.RunCommand(cmd, cwd=cwd, shell=shell)
+        return Common.Utility.RunCommand(cmd, cwd=cwd, shell=shell, captureCout=captureCout)
     
     # pure virtual methods...
     def GetInputInterface(self):
