@@ -41,7 +41,7 @@ class KeyMatches:
     
     def GetKeyMatchFiles(self):
         if (len(self.__keyMatches)==0): 
-            self.__parse()
+            self.__parse(False)
         return self.__keyMatches
 
     @staticmethod
