@@ -29,21 +29,20 @@ class KeypointDescriptorFileLowe(KeypointDescriptorFile):
             data += l.strip().split(" ")
         f.close()
 
+        idx = 0
         # get # keypoints and descriptor length
-        numKeypointDescriptors = int(data.pop(0))
-        self._keypointDescriptorLength = int(data.pop(0))
+        numKeypointDescriptors = int(data[idx]); idx+=1
+        self._keypointDescriptorLength = int(data[idx]); idx+=1
 
         # read descriptors
         for i in range(numKeypointDescriptors):
-            row, column, scale, orientation = data[:4]
-            data = data[4:]
-            vector = [int(x) for x in data[:self._keypointDescriptorLength]]
-            data = data[self._keypointDescriptorLength:]
+            row, column, scale, orientation = data[idx:idx+4]
+            idx+=4
+            vector = [int(x) for x in data[idx:self._keypointDescriptorLength]]
+            idx+=self._keypointDescriptorLength
             kpd = KeypointDescriptor(float(row)+offsetY, float(column)+offsetX,
                                      float(scale), float(orientation), vector)
             self._keypointDescriptors.append(kpd)
-                
-    
             
             
             
