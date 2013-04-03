@@ -57,7 +57,7 @@ def ShouldRun(forceRun, *args):
             return True
     return False
 
-def GetExePath(moduleFile, exe):
+def GetExePath(moduleFile, exe, checkExistence=True):
     
     # special case for win64
     if (PlatformName == "Windows64bit"):
@@ -66,10 +66,12 @@ def GetExePath(moduleFile, exe):
         exe64 = GetAbsoluteFilePath(moduleFile, os.path.join("Windows64bit","bin",exe))+".exe"
         exe32 = GetAbsoluteFilePath(moduleFile, os.path.join("Windows32bit","bin",exe))+".exe"        
         
-        if   (os.path.exists(exe64)): exe = exe64
-        elif (os.path.exists(exe32)): exe = exe32
-        else:
-            raise Exception("Executables do not exist: (%s) (%s)" % (exe64,exe32))
+        exe = exe64
+        if (checkExistence):
+            if   (os.path.exists(exe64)): exe = exe64
+            elif (os.path.exists(exe32)): exe = exe32
+            else:
+                raise Exception("Executables do not exist: (%s) (%s)" % (exe64,exe32))
     
     else:
         exe = GetAbsoluteFilePath(moduleFile, os.path.join(PlatformName,"bin",exe))
@@ -77,7 +79,7 @@ def GetExePath(moduleFile, exe):
         if (IsWindows() and not exe.lower().endswith(".exe")):
             exe += ".exe"
         
-        if (not os.path.exists(exe)):
+        if (not os.path.exists(exe) and checkExistence):
             raise Exception("Executable does not exist: " + exe)
     
     # add lib to LD_LIBRARY_PATH
@@ -198,13 +200,6 @@ def RunCommand2(cmd, args=None, cwd=None, shell=False, printStdout=False, captur
         raise Exception("[Return Code = %d] Failed to execute: %s" % (p.returncode, cmd))
     
     return stdoutLines
-    
-
-def ConvertImagesToGrayscalePGM(imagePath, extension):
-    import Image
-    for p in glob.glob(os.path.join(imagePath,"*."+extension)):
-        Image.open(p).convert("L").save(os.path.splitext(p)[0] + ".pgm")
-        
         
         
 OSName = platform.system()

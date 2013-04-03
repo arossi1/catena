@@ -134,7 +134,7 @@ class StageBase:
                     raise Exception("[%s:Prepare] Input stage %d does not include %s:%s" % \
                                     (self.__class__.__name__,inputIndex,inputName,inputType))
                     
-                if (self.__inputStages[inputIndex].GetOutputInterface()[inputName] != inputType):
+                if (not issubclass(self.__inputStages[inputIndex].GetOutputInterface()[inputName],inputType)):
                     raise Exception("[%s:Prepare] Input stage %d's output parameter (%s) type is %s, type should be %s" % \
                                     (self.__class__.__name__,
                                      inputIndex,

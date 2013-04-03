@@ -4,10 +4,10 @@ import math, os
 
 class KeypointDescriptors:
 
-    def __init__(self, path, kdList):
+    def __init__(self, path="", kdList=[], genKeylist=True):
         self.__path = path
         self.__keypointDescriptors = kdList
-        self.GenerateKeyList()
+        if (genKeylist): self.GenerateKeyList()
         
     def GetKeyListPath(self): return self.__keyListPath
     def GetDescriptors(self): return self.__keypointDescriptors
