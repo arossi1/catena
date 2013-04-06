@@ -9,6 +9,26 @@ class KeypointDescriptorFile:
         self._keypointDescriptorFile = keypointDescriptorFile
         self._keypointDescriptorLength = 0
         self._keypointDescriptors = []
+        
+    def Clone(self):
+        kdfClone = KeypointDescriptorFile(self._keypointDescriptorFile)
+        kdfClone._keypointDescriptorLength = self._keypointDescriptorLength
+        kdfClone._keypointDescriptors = copy.deepcopy(self.GetDescriptors())
+        return kdfClone
+    
+    def Filter(self, x,y, w,h):
+        if (x<0 or y<0 or w<=0 or h<=0): return
+        
+        x1 = x+w
+        y1 = y+h
+        
+        kds = []
+        for kd in self._keypointDescriptors:
+            if (kd.Column()>=x and kd.Column()<=x1 and
+                kd.Row()>=y and kd.Row()<=y1):
+                kds.append(kd)
+        self._keypointDescriptors = kds
+            
     
     def GetFileName(self): return os.path.split(self._keypointDescriptorFile)[1]
     def GetFilePath(self): return self._keypointDescriptorFile
@@ -59,8 +79,8 @@ class KeypointDescriptorFile:
 
     def ClearKeypointDescriptors(self):
         self._keypointDescriptors = []
+        
     
-
     def __str__(self):
         s  = "      Keypoint Descriptor File: %s\n" % self._keypointDescriptorFile
         s += "Number of Keypoint Descriptors: %d\n" % len(self._keypointDescriptors)
