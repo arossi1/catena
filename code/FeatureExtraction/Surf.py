@@ -37,6 +37,7 @@ class Surf(Chain.StageBase):
         import cv
         MIN_DESC_VAL = -0.5
         MAX_DESC_VAL = 0.8
+        CONV_FACTOR = 255.0 / (MAX_DESC_VAL-MIN_DESC_VAL)
         kds = []
         
         for im in images.GetImages():
@@ -53,8 +54,7 @@ class Surf(Chain.StageBase):
                 l = []
                 for i,descriptor in enumerate(descriptors):
                     
-                    fact = 255.0 / (MAX_DESC_VAL-MIN_DESC_VAL)
-                    descr = [int((x-MIN_DESC_VAL)*fact) for x in descriptor]
+                    descr = [int((x-MIN_DESC_VAL)*CONV_FACTOR) for x in descriptor]
 
                     l.append(FeatureExtraction.KeypointDescriptor(keypoints[i][0][1],
                                                                   keypoints[i][0][0],
