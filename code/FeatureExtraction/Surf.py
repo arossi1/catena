@@ -13,9 +13,9 @@ class Surf(Chain.StageBase):
         Chain.StageBase.__init__(self,
                                  inputStages,
                                  "Generates Surf descriptors for images",
-                                 {"Hessian Threshold":"Only features with hessian larger than that are extracted. good default value is ~300-500 (can depend on the average local contrast and sharpness of the image). user can further filter out some features based on their hessian values and other characteristics.",
-                                  "Number Octaves":"The number of octaves to be used for extraction. With each next octave the feature size is doubled.",
-                                  "Number Octave Layers":"The number of layers within each octave.",
+                                 {"Hessian Threshold":"Only features with hessian larger than that are extracted. good default value is ~300-500 (can depend on the average local contrast and sharpness of the image)",
+                                  "Number Octaves":"The number of octaves to be used for extraction. With each next octave the feature size is doubled",
+                                  "Number Octave Layers":"The number of layers within each octave",
                                   "Force Run":"Force run if outputs already exist"})
         
         self._properties["Hessian Threshold"] = hessianThreshold
