@@ -46,11 +46,11 @@ class Surf(Chain.StageBase):
             if (Common.Utility.ShouldRun(self._properties["Force Run"], keypointDescriptorFile)):
                 
                 cvim = cv.LoadImageM(im.GetFilePath(), cv.CV_LOAD_IMAGE_GRAYSCALE)
-                keypoints, descriptors = cv.ExtractSURF(cvim, None, cv.CreateMemStorage(), 
+                keypoints, descriptors = cv.ExtractSURF(cvim, None, cv.CreateMemStorage(),
                                                         (1,
                                                          self._properties["Hessian Threshold"],
                                                          self._properties["Number Octaves"],
-                                                         self._properties["Number Octave Layers"]))                
+                                                         self._properties["Number Octave Layers"]))
                 l = []
                 for i,descriptor in enumerate(descriptors):
                     
@@ -60,14 +60,14 @@ class Surf(Chain.StageBase):
                                                                   keypoints[i][0][0],
                                                                   keypoints[i][2],
                                                                   math.radians(keypoints[i][3]),
-                                                                  descr))                    
-                    
+                                                                  descr))
+                
                 kdfl = FeatureExtraction.KeypointDescriptorFileLowe(l)
                 kdfl.Write(keypointDescriptorFile)
                 kdfl = FeatureExtraction.KeypointDescriptorFileLowe(keypointDescriptorFile, False)
                 kds.append(kdfl)
         
         kds = FeatureExtraction.KeypointDescriptors(images.GetPath(), kds, False)
-        self.SetOutputValue("keypointDescriptors", kds)       
+        self.SetOutputValue("keypointDescriptors", kds)
 
         
