@@ -113,7 +113,7 @@ if (CORRESPONDENCES or LABELS or FEATURES):
                     tiepoints = tps(IMAGE_PATH,imageGrid[r][c],imageGrid[r][c+1])
                     
                     for i,tp in enumerate(tiepoints):
-                        if ((i%10)==0):
+                        #if ((i%10)==0):
                             x = (tp[1][0]+dx, tp[1][1]+dy)
                             y = (tp[0][0]+testdx, tp[0][1]+dy)
                             if (CORRESPONDENCES):   drawCorrespondence(iMosaic, x,y)
@@ -126,7 +126,7 @@ if (CORRESPONDENCES or LABELS or FEATURES):
                     tiepoints = tps(IMAGE_PATH,imageGrid[r][c],imageGrid[r+1][c])
                     
                     for i,tp in enumerate(tiepoints):
-                        if ((i%10)==0):
+                        #if ((i%10)==0):
                             x = (tp[1][0]+dx, tp[1][1]+dy)
                             y = (tp[0][0]+dx, tp[0][1]+testdy)
                             if (CORRESPONDENCES):   drawCorrespondence(iMosaic, x,y)
