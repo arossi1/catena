@@ -13,7 +13,7 @@ class jheadInfo:
         exe = Utility.GetExePath(sys.modules[self.__class__.__module__].__file__, "jhead")
         
         for l in Utility.RunCommand(Utility.CommandArgs(Utility.Quoted(exe),Utility.Quoted(self._imagePath)),
-                                    cwd=os.path.split(exe)[0], printStdout=False, captureCout=True):
+                                    printStdout=False, captureCout=True):
             if (len(l.strip())==0): continue
             x = l.split(":")
             self.__dict__[x[0].strip()] = x[1].strip()
