@@ -53,6 +53,7 @@ def CommandArgs(*args):
 def ShouldRun(forceRun, *args):
     if (forceRun): return True
     for f in args:
+        if (os.path.isdir(f)): continue
         if (not os.path.exists(f) or GetFileSize(f)==0):
             return True
     return False
