@@ -52,7 +52,13 @@ def CommandArgs(*args):
 
 def ShouldRun(forceRun, *args):
     if (forceRun): return True
+    l = []
     for f in args:
+        if (isinstance(f,list) or isinstance(f,tuple)):
+            l.extend(f)
+        else:
+            l.append(f)
+    for f in l:            
         if (os.path.isdir(f)): continue
         if (not os.path.exists(f) or GetFileSize(f)==0):
             return True
