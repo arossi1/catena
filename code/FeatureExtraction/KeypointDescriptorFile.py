@@ -5,10 +5,13 @@ import sys, os, string, copy
 
 class KeypointDescriptorFile:
 
-    def __init__(self, keypointDescriptorFile):
+    def __init__(self, 
+                 keypointDescriptorFile,
+                 keypointDescriptorLength=0,
+                 keypointDescriptors=[]):
         self._keypointDescriptorFile = keypointDescriptorFile
-        self._keypointDescriptorLength = 0
-        self._keypointDescriptors = []
+        self._keypointDescriptorLength = keypointDescriptorLength
+        self._keypointDescriptors = keypointDescriptors
         
     def Clone(self):
         kdfClone = KeypointDescriptorFile(self._keypointDescriptorFile)

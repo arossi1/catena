@@ -5,3 +5,4 @@ from ASIFT import ASIFT
 from KeypointDescriptors import KeypointDescriptors
 from KeypointDescriptorFileLowe import KeypointDescriptorFileLowe
 from KeypointDescriptor import KeypointDescriptor
+from KeypointDescriptorFile import KeypointDescriptorFile

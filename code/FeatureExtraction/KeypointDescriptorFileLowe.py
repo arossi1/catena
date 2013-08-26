@@ -38,7 +38,7 @@ class KeypointDescriptorFileLowe(KeypointDescriptorFile):
         for i in range(numKeypointDescriptors):
             row, column, scale, orientation = data[idx:idx+4]
             idx+=4
-            vector = [int(x) for x in data[idx:self._keypointDescriptorLength]]
+            vector = [int(x) for x in data[idx:idx+self._keypointDescriptorLength]]
             idx+=self._keypointDescriptorLength
             kpd = KeypointDescriptor(float(row)+offsetY, float(column)+offsetX,
                                      float(scale), float(orientation), vector)
