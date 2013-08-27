@@ -5,13 +5,10 @@ import sys, os, string, copy
 
 class KeypointDescriptorFile:
 
-    def __init__(self, 
-                 keypointDescriptorFile,
-                 keypointDescriptorLength=0,
-                 keypointDescriptors=[]):
+    def __init__(self, keypointDescriptorFile):
         self._keypointDescriptorFile = keypointDescriptorFile
-        self._keypointDescriptorLength = keypointDescriptorLength
-        self._keypointDescriptors = keypointDescriptors
+        self._keypointDescriptorLength = 0
+        self._keypointDescriptors = []
         
     def Clone(self):
         kdfClone = KeypointDescriptorFile(self._keypointDescriptorFile)
@@ -22,8 +19,8 @@ class KeypointDescriptorFile:
     def Filter(self, x,y, w,h):
         if (x<0 or y<0 or w<=0 or h<=0): return
         
-        x1 = x+w
-        y1 = y+h
+        x1 = x+w-1
+        y1 = y+h-1
         
         kds = []
         for kd in self._keypointDescriptors:
@@ -35,13 +32,14 @@ class KeypointDescriptorFile:
     
     def GetFileName(self): return os.path.split(self._keypointDescriptorFile)[1]
     def GetFilePath(self): return self._keypointDescriptorFile
+    def GetDescriptorLength(self): return self._keypointDescriptorLength
     def GetDescriptors(self):
         if (len(self._keypointDescriptors)==0): self.Parse()
         return self._keypointDescriptors
     def SortDescriptors(self): self._keypointDescriptors.sort(cmp=lambda x,y: x.Compare(y))
     
     def Parse(self, offsetX=0, offsetY=0):
-        self._parse(offsetX, offsetY)    
+        self._parse(offsetX, offsetY)
         
     def MatchDescriptors(self, kdf):        
         matches = []
