@@ -85,6 +85,7 @@ def PrintResults():
 
     if (__analyze._log):
         __analyze._log.close()
+        __analyze._log = None
 
 
 def SetStatusObject(s):
