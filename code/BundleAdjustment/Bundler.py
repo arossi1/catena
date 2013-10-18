@@ -89,7 +89,7 @@ class Bundler(Chain.StageBase):
                 "images":(1,Common.sfmImages)}
     
     def GetOutputInterface(self):
-        return {"bundleFile":BundleAdjustment.BundleFile}    
+        return {"bundleFile":BundleAdjustment.BundleFile}
 #    TODO: add the following file outputs
 #        - constraints.txt
 #        - matches.corresp.txt

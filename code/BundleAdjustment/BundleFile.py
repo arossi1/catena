@@ -21,6 +21,9 @@ class Camera:
         self._k1 = k1
         self._R = R
         self._T = T
+        
+    def valid(self):
+        return ((self._focalLength!=0.0))
     
     def __str__(self):
         s =  "Focal length: %f\n" % self._focalLength
@@ -98,6 +101,19 @@ class BundleFile:
     def GetImages(self):            return self._images
     def GetCameras(self):           return self._cameras
     def Get3DPoints(self):          return self._3Dpoints
+    
+    def Get2D3DPointMapping(self):
+        # image path : {2D point : 3D point}
+        m = {}
+        
+        for i in self._images:
+            m[i.GetFilePath()] = {}
+        
+        for p3d in self._3Dpoints:
+            for p2d in p3d.Get2DPoints():
+                m[p2d.GetImage().GetFilePath()][p2d.GetCoordinate()] = p3d.GetCoordinate()
+        
+        return m
         
     def _parse(self):
         

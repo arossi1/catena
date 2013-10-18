@@ -62,4 +62,11 @@ class sfmImage:
     def __str__(self):
         return "%s" % os.path.split(self._filePath)[1]
     
+    def __hash__(self):
+        return self._filePath.__hash__()
+    
+    def __eq__(self, other):
+        if (not other):return False
+        else:return self._filePath==other._filePath
+    
     

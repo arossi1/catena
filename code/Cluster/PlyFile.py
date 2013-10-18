@@ -10,6 +10,10 @@ class PlyFile:
         self.__filePath = filePath
         self.__parsed = False
         
+        
+    def GetFilePath(self):
+        return self.__filePath
+    
     def __checkParse(self):
         if (not self.__parsed):
             self.__parse()

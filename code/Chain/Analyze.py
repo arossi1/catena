@@ -42,15 +42,15 @@ class Analyze:
         tp = []
         for t in self._timingPoints:
             tp.append([t[0], (t[2]-t[1])])
-        
-        maxElapsed = max([t[1] for t in tp])
-        label = "sec";div=1.0;
-        if (int(maxElapsed/(60.0*60.0))>0):
-            label = "hr";div=60.0*60.0;
-        elif (int(maxElapsed/60.0)>0):
-            label = "min";div=60.0;
-            
-        for t in tp: t[1] = "%.2f %s" % (t[1]/div, label)
+
+        for t in tp:
+            label = "sec";div=1.0;
+            if (int(t[1]/(60.0*60.0))>0):
+                label = "hr";div=60.0*60.0;
+            elif (int(t[1]/60.0)>0):
+                label = "min";div=60.0;
+                
+            t[1] = "%.2f %s" % (t[1]/div, label)
             
         self._timingPoints = tp
         
