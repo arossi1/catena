@@ -5,13 +5,17 @@ import random
 
 class ImageSubset(Chain.StageBase):
 
-    def __init__(self, inputStage=None, maxOutputImages=0):
+    def __init__(self, inputStage=None, 
+                 maxOutputImages=0, 
+                 startIndex=0):
         Chain.StageBase.__init__(self,
                                  inputStage,
                                  "Takes a subset of the source of images",
-                                 {"Max Images":"Maximum images in the output set"})
+                                 {"Max Images":"Maximum images in the output set",
+                                  "Start Index":"Starting index of subset"})
         
         self._properties["Max Images"] = maxOutputImages
+        self._properties["Start Index"] = startIndex
 
 
     def GetInputInterface(self):
@@ -28,7 +32,10 @@ class ImageSubset(Chain.StageBase):
         imageList = images.GetImages()
 
         if (self._properties["Max Images"]>0):
-            imageList = imageList[:self._properties["Max Images"]]
+            imageList = imageList[self._properties["Start Index"]:
+                                  self._properties["Start Index"]+self._properties["Max Images"]]
+        else:
+            imageList = imageList[self._properties["Start Index"]:]
 
         images = Common.sfmImages(images.GetPath(),
                                   images.GetExtension(), 
