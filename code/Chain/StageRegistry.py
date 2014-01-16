@@ -35,6 +35,7 @@ class StageRegistry:
         self.__stageInstances[stageObject._uid] = stageObject
     
     def RemoveInstance(self, stageObject):
+        stageObject.RemoveConnections()
         del self.__stageInstances[stageObject._uid]
         
     def GetStageInstances(self): return self.__stageInstances.values()

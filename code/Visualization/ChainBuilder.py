@@ -107,7 +107,6 @@ class Arrow(QtGui.QGraphicsLineItem):
         
     def keyPressEvent(self, event):
         if (event.key()==QtCore.Qt.Key_Delete):
-            self.__stageObject.RemoveConnections()
             Chain.StageRegistry.registry.RemoveInstance(self.__stageObject)
             self.removeArrows()
             self.scene().removeItem(self)
@@ -233,7 +232,6 @@ class StageItem(QtGui.QGraphicsPolygonItem):
     
     def keyPressEvent(self, event):
         if (event.key()==QtCore.Qt.Key_Delete):
-            self.__stageObject.RemoveConnections()
             Chain.StageRegistry.registry.RemoveInstance(self.__stageObject)
             self.removeArrows()
             self.scene().removeItem(self)

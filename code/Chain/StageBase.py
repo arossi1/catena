@@ -32,7 +32,6 @@ class StageBase:
             stages.AddOutputStage(self)
 
     def AddOutputStage(self, stages):
-        self.__prepared = False
         if (isinstance(stages, list)):  self.__outputStages += stages
         else:                           self.__outputStages.append(stages)
         
@@ -71,6 +70,9 @@ class StageBase:
             return self.__parameterDoc[name]
         else:
             raise Exception("Property does not exist: " + name)
+        
+    def SetPropertyDescription(self, name, desc):
+        self.__parameterDoc[name] = desc
         
     def GetProperty(self, name):
         if (name in self._properties.keys()):
