@@ -60,17 +60,18 @@ class jheadInfo:
         return int(self.GetResolution().split("x")[1])
 
     def GetFocalPixels(self):
+
+        # get max linear resolution
+        maxRes = max([self.GetXResolution(), self.GetYResolution()])
+
+        # get focal length        
+        focalLength = self.GetFocalLengthMM()
+
+        # get CCD width
         ccdWidthMM = self.GetCCDWidthInMM()
         if (not ccdWidthMM): return None
         
-        xRes = self.GetXResolution()
-        yRes = self.GetYResolution()
-        
-        # NOTE: perl script swaps x/y if aspect ratio is "wrong"
-        if (xRes<yRes): t = xRes; xRes = yRes; yRes = t;
-        
-        focalPixels = xRes * (self.GetFocalLengthMM() / ccdWidthMM)
-        return focalPixels
+        return float(maxRes) * focalLength / ccdWidthMM
 
     def __str__(self):
         s = ""

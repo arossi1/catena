@@ -5,7 +5,7 @@ import Chain # Chain must be imported first, requirement of registry
 import Sources, FeatureExtraction, Common
 
 # path to images
-imagePath = r"E:\Sources\thesis\Datasets\ET"
+imagePath = os.path.abspath("../Datasets/ET")
 
 # build chain
 imageSource = Sources.ImageSource(imagePath, "jpg")
@@ -19,5 +19,5 @@ tap = Common.TapPoint(tap)
 sift = FeatureExtraction.Sift(tap, False, "SiftHess")
 
 # render chain
-print Chain.Render(sift,"log.txt")
+print Chain.Render(sift,"tapPoint.txt")
 
