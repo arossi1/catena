@@ -4,7 +4,7 @@ sys.path.append(os.path.abspath("."))
 import Chain # Chain must be imported first, requirement of registry
 import Sources, FeatureExtraction, FeatureMatch, BundleAdjustment, Cluster, Common
 
-
+# path to images / PMVS
 imagePath = os.path.abspath("../Datasets/ET")
 pmvsPath = os.path.join(imagePath,"pmvs")
 
@@ -16,7 +16,6 @@ keyMatch = FeatureMatch.ASIFTMatch(asift)
 bundler = BundleAdjustment.Bundler([keyMatch, imageSource], forceRun=True)
 radialUndistort = Cluster.RadialUndistort([bundler, imageSourceJpg], forceRun=True)
 prepCmvsPmvs = Cluster.PrepCmvsPmvs(radialUndistort, pmvsPath, forceRun=True)
-
 cmvs = Cluster.CMVS(prepCmvsPmvs, forceRun=True)
 pmvs = Cluster.PMVS(cmvs, forceRun=True)
     
