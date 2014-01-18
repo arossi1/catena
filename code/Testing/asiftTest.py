@@ -5,7 +5,7 @@ import Chain # Chain must be imported first, requirement of registry
 import Sources, FeatureExtraction, FeatureMatch, BundleAdjustment, Cluster, Common
 
 
-imagePath = r"C:\images\ET"
+imagePath = os.path.abspath("../Datasets/ET")
 pmvsPath = os.path.join(imagePath,"pmvs")
 
 # build chain
@@ -21,5 +21,5 @@ cmvs = Cluster.CMVS(prepCmvsPmvs, forceRun=True)
 pmvs = Cluster.PMVS(cmvs, forceRun=True)
     
 # render chain
-print Chain.Render(pmvs,"ASIFT-log.txt")
+print Chain.Render(pmvs,"asift.txt")
     
