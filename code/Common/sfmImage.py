@@ -1,7 +1,5 @@
-# Copyright (c) 2012, Adam J. Rossi. All rights reserved. See README for licensing details.
+# Copyright (c) 2014, Adam J. Rossi. All rights reserved. See README for licensing details.
 import os
-
-import Image as PILImage
 import jhead, PILinfo
 
 
@@ -18,12 +16,14 @@ class sfmImage:
     def GetYResolution(self):   return self._getMetadata().GetYResolution()    
     
     def ConvertToPGM(self, outputPath):
+        import Image as PILImage
         pgmFilePath = os.path.join(outputPath, os.path.splitext(os.path.split(self._filePath)[1])[0] + ".pgm")
         if (not os.path.exists(pgmFilePath)):
             PILImage.open(self._filePath).convert("L").save(pgmFilePath)
         return sfmImage(pgmFilePath, self._getMetadata())
     
     def Convert(self, outputPath, type):
+        import Image as PILImage
         outputFilePath = os.path.join(outputPath, os.path.splitext(os.path.split(self._filePath)[1])[0] + "." + type)
         if (not os.path.exists(outputFilePath)):
             PILImage.open(self._filePath).save(outputFilePath)

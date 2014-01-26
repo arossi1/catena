@@ -1,5 +1,4 @@
-# Copyright (c) 2012, Adam J. Rossi. All rights reserved. See README for licensing details.
-from PIL import Image
+# Copyright (c) 2014, Adam J. Rossi. All rights reserved. See README for licensing details.
 import os, time
 import jhead
 
@@ -9,6 +8,7 @@ class PILinfo(jhead.jheadInfo):
         jhead.jheadInfo.__init__(self, imagePath)
         
     def _fillInfo(self):
+        from PIL import Image
         im = Image.open(self._imagePath)
         
         self.__dict__["Date/Time"] = None
