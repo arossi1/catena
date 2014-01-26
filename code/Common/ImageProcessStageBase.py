@@ -53,7 +53,7 @@ class ImageProcessStageBase(Chain.StageBase):
         
     def GetOutputImagePath(self, inputImagePath):
         return os.path.join(self._properties["Output Image Path"], 
-                            os.path.splitext(os.path.basename(inputImagePath)[0])[0] + 
+                            os.path.splitext(os.path.basename(inputImagePath))[0] + 
                             "."+self._properties["Image Extension"])
 
 
