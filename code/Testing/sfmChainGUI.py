@@ -28,10 +28,10 @@ stagesDisplayProperty = [(imageSource,"Source"),
                          (sift,"Features"),
                          (keyMatch,"Keymatch"),
                          (bundler,"Bundler"),
-                        (radialUndistort,"Radial Undistort"),
-                        (prepCmvsPmvs,"Prep CMVS/PMVS"),
-                        (cmvs,"CMVS"),
-                        (pmvs,"PMVS")
+                         (radialUndistort,"Radial Undistort"),
+                         (prepCmvsPmvs,"Prep CMVS/PMVS"),
+                         (cmvs,"CMVS"),
+                         (pmvs,"PMVS")
                          ]
 
 stagesPropertyRanges={pmvs:{"Cell Size":(1,40),
