@@ -18,6 +18,7 @@ class FeatureDetector(Chain.StageBase):
     DESCRIPTOR_ADAPTERS = ("")  # these don't work: "Opponent"
     FEATURE_DESCRIPTORS = DESCRIPTORS
     # FEATURE_DESCRIPTORS = tuple([str(a)+str(d) for a in DESCRIPTOR_ADAPTERS for d in DESCRIPTORS])
+    DESCRIPTORS_DATATYPES = {"SIFT":int,"SURF":float,"ORB":int,"BRISK":int,"BRIEF":int}
     
     def __init__(self, 
                  inputStages=None,
@@ -136,11 +137,15 @@ class FeatureDetector(Chain.StageBase):
                 keypoints, descriptors = de.compute(cvim,keypoints)
                 ifs = Types.ImageFeatures.FromOCVFeatures(im.GetFilePath(),
                                                           keypoints,descriptors)
-                ifs.Serialize(keyFile)
+                ifs.Serialize(keyFile, 
+                    FeatureDetector.DESCRIPTORS_DATATYPES[self._properties["Descriptor"]])
             else:
-                ifs = Types.ImageFeatures.FromFile(keyFile, im.GetFilePath())
+                ifs = Types.ImageFeatures.FromFile(keyFile, im.GetFilePath(),
+                    dt=FeatureDetector.DESCRIPTORS_DATATYPES[self._properties["Descriptor"]])
                 
             isfs.append(ifs)
+            
+        isfs.GenerateKeyList()
             
         self.SetOutputValue("keypointDescriptors", isfs)
 

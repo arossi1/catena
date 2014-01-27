@@ -13,16 +13,19 @@ class FeatureMatcher(Chain.StageBase):
                  inputStages=None,
                  matcher="BruteForce",
                  matchesPath="",
+                 distanceThreshold=0.5,
                  forceRun=False):
         Chain.StageBase.__init__(self,
                                  inputStages,
                                  "Generates features for images",
                                  {"Matcher":"Matcher type {"+string.join(FeatureMatcher.FEATURE_MATCHERS,", ")+"}",
                                   "Matches Path":"Path to matches output file",
+                                  "Distance Threshold":"Threshold as a percentage of mean distance",
                                   "Force Run":"Force run if outputs already exist"})
         
         self._properties["Matcher"] = matcher
         self._properties["Matches Path"] = matchesPath
+        self._properties["Distance Threshold"] = distanceThreshold
         self._properties["Force Run"] = forceRun
 
     def GetInputInterface(self):
@@ -32,7 +35,7 @@ class FeatureMatcher(Chain.StageBase):
         return {"keyMatches":FeatureMatch.KeyMatches}
     
     @staticmethod
-    def FilterMatches(matches):
+    def FilterMatches(matches, distanceThreshold=0.5):
         
         dist = [x.distance for x in matches]
         print "Input Matches: %d" % len(matches)
@@ -40,14 +43,17 @@ class FeatureMatcher(Chain.StageBase):
               (min(dist), (sum(dist) / len(dist)), max(dist))
         
         # threshold matches at half the mean
-        dThreshold = (sum(dist) / len(dist)) * 0.5
+        dThreshold = (sum(dist) / len(dist)) * distanceThreshold
         fmatches = [m for m in matches if m.distance < dThreshold]
         
         print "Output Matches: %d" % len(fmatches)
-        return fmatches        
+        return fmatches
     
     @staticmethod
-    def PerformMatching(features1,features2,matchesPath,matcher="BruteForce"):       
+    def PerformMatching(features1,features2,
+                        matchesPath,
+                        matcher="BruteForce",
+                        distanceThreshold=0.5):       
         
         m = cv2.DescriptorMatcher_create(matcher)
         trainDescriptors = features1.GetDescriptorsArray(numpy.float32)
@@ -55,7 +61,7 @@ class FeatureMatcher(Chain.StageBase):
         m.train()
         matches = m.match(features2.GetDescriptorsArray(numpy.float32), trainDescriptors)
         
-        matches = FeatureMatcher.FilterMatches(matches)
+        matches = FeatureMatcher.FilterMatches(matches, distanceThreshold)
         
         f = open(matchesPath,"w")
         f.write("0 1\n%d\n" % len(matches))
@@ -87,7 +93,8 @@ class FeatureMatcher(Chain.StageBase):
                     matches = m.match(features.GetDescriptors()[j].GetDescriptorsArray(numpy.float32), 
                                       trainDescriptors)
                     
-                    matches = FeatureMatcher.FilterMatches(matches)
+                    matches = FeatureMatcher.FilterMatches(
+                        matches, self._properties["Distance Threshold"])
                     
                     f.write("%d %d\n%d\n" % (i,j,len(matches)))
                     for match in matches:

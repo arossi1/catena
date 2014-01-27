@@ -12,14 +12,8 @@ class ImagesFeatures(FeatureExtraction.KeypointDescriptors):
                                                        genKeylist=False)
         self.__keypointDescriptors = []
         
-    def append(self, v):
-        self.__keypointDescriptors.append(v)
-        
+    def append(self, v): self.__keypointDescriptors.append(v)
     def GetDescriptors(self): return self.__keypointDescriptors
-    def GetDescriptor(self, fileName):
-        for kd in self.__keypointDescriptors:
-            if (kd.GetFileName()==fileName): return kd
-        return None  
             
 
 class ImageFeatures:
@@ -35,22 +29,41 @@ class ImageFeatures:
     def GetFilePath(self): return os.path.splitext(self.__imagePath)[0]+".key"
     def GetFileName(self): return os.path.split(self.GetFilePath())[1]
     
-    def Serialize(self, filePath):
+    def Serialize(self, filePath, dt):
+        
+        dfmt = "%d"
+        if (dt==float):dfmt="%f"
+        
         f = open(filePath,"w")
         f.write("%d %d\n" % (len(self.__features),self.__descriptorLength))
         for feature in self.__features:
-            f.write("%f %f %d %f %f %f\n" % (feature.Row(), feature.Column(), feature.Scale(), feature.Orientation(),
-                                             feature.Response(), feature.NeighborhoodDiameter()))            
-            v = copy.copy(feature.Descriptor())
-            while (len(v)):
-                numVals = min(20,len(v))
-                vals = v[:numVals]
-                v = v[numVals:]
-                f.write((string.join(["%f"]*numVals," ")+"\n") % tuple(vals))
+            
+#             f.write("%f %f %d %f %f %f\n" % (feature.Row(), 
+#                                              feature.Column(), 
+#                                              feature.Scale(), 
+#                                              feature.Orientation(),
+#                                              feature.Response(), 
+#                                              feature.NeighborhoodDiameter()))
+
+            f.write("%f %f %d %f\n" % (feature.Row(), 
+                                       feature.Column(), 
+                                       feature.Scale(), 
+                                       feature.Orientation()))
+            
+            idx = 0
+            dLength = len(feature.Descriptor())
+            while (idx<dLength):
+                numVals = min(20,dLength-idx)
+                
+                f.write((string.join([dfmt]*numVals," ")+"\n") % \
+                        tuple(feature.Descriptor()[idx:idx+numVals]))
+                
+                idx+=numVals
         f.close()
         
+        
     @staticmethod
-    def FromFile(filePath, imagePath, offsetX=0,offsetY=0):
+    def FromFile(filePath, imagePath, offsetX=0,offsetY=0,dt=int):
         
         import cv2
         
@@ -71,9 +84,14 @@ class ImageFeatures:
 
         # read descriptors
         for i in range(numKeypointDescriptors):
-            row, column, scale, orientation, response, neighborhoodDiameter = data[idx:idx+6]
-            idx+=6
-            vector = [float(x) for x in data[idx:idx+ifs.__descriptorLength]]
+#             row, column, scale, orientation, response, neighborhoodDiameter = data[idx:idx+6]
+#             idx+=6
+            
+            row, column, scale, orientation = data[idx:idx+4]
+            response=0;neighborhoodDiameter=0
+            idx+=4
+            
+            vector = [dt(x) for x in data[idx:idx+ifs.__descriptorLength]]
             idx+=ifs.__descriptorLength
             feature = Feature(cv2.KeyPoint(float(column),float(row),float(neighborhoodDiameter),
                                            float(orientation),float(response),int(scale)),
