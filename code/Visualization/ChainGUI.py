@@ -25,6 +25,8 @@ class CorrespondenceWidget(QtGui.QGraphicsScene):
         self.__xTestPosCoeff = 1.0
         self.__yTestPosCoeff = 0.0
         self.__autoZoom = True
+        self.__pmRef = None
+        self.__pmTest = None
         
     def horizontalSlot(self):
         self.__yTestPosCoeff = 0.0
@@ -32,7 +34,7 @@ class CorrespondenceWidget(QtGui.QGraphicsScene):
             self.__xTestPosCoeff = 1.0
         else:
             self.__xTestPosCoeff*=-1
-        self.refresh()
+        self.refresh(False)
         
     def verticalSlot(self):
         self.__xTestPosCoeff = 0.0
@@ -40,14 +42,14 @@ class CorrespondenceWidget(QtGui.QGraphicsScene):
             self.__yTestPosCoeff = 1.0
         else:
             self.__yTestPosCoeff*=-1
-        self.refresh()
+        self.refresh(False)
         
     def autoZoomSlot(self, val):
         self.__autoZoom = (val!=0)
         if (self.__autoZoom): self.views()[0].autoZoom()
         
     def matchIndexChangedSlot(self, val):
-        self.refresh()
+        self.refresh(False)
     
     @staticmethod
     def create(stages, label):
@@ -111,11 +113,7 @@ class CorrespondenceWidget(QtGui.QGraphicsScene):
         return ivs
     
     def createPixmap(self, imagePath):
-        pm = QtGui.QGraphicsPixmapItem(QtGui.QPixmap(imagePath))
-        pm.setFlag(QtGui.QGraphicsItem.ItemIsMovable, False)
-        pm.setFlag(QtGui.QGraphicsItem.ItemIsSelectable, False)
-        pm.setFlag(QtGui.QGraphicsItem.ItemIsFocusable, False)
-        return pm
+        return QtGui.QPixmap(imagePath)
     
     def createFeaturePoint(self, coord, parent=None, scene=None):
         pt = QtGui.QGraphicsEllipseItem(-2.0,-2.0, 4.0,4.0, 
@@ -130,7 +128,7 @@ class CorrespondenceWidget(QtGui.QGraphicsScene):
     def resize(self):
         if (self.__autoZoom): self.views()[0].autoZoom()
         
-    def refresh(self):
+    def refresh(self, reloadImages=True):
         self.clear()
         
         images = self.__stages[0].GetOutput()["images"]
@@ -148,12 +146,25 @@ class CorrespondenceWidget(QtGui.QGraphicsScene):
             print "[CorrespondenceWidget] Warning: did not find key matches for: " + str(self.__imagePair)
             return
         
-        tiRef = self.createPixmap(images.GetImages()[self.__imagePair[0]].GetFilePath())
-        self.addItem(tiRef)
-            
-        tiTest = self.createPixmap(images.GetImages()[self.__imagePair[1]].GetFilePath())
-        self.addItem(tiTest)
+        if (reloadImages or (self.__pmRef==None)):
+            self.__pmRef = self.createPixmap(images.GetImages()[self.__imagePair[0]].GetFilePath())
+        if (reloadImages or (self.__pmTest==None)):
+            self.__pmTest = self.createPixmap(images.GetImages()[self.__imagePair[1]].GetFilePath())
         
+        
+        tiRef = QtGui.QGraphicsPixmapItem(self.__pmRef)
+        tiRef.setFlag(QtGui.QGraphicsItem.ItemIsMovable, False)
+        tiRef.setFlag(QtGui.QGraphicsItem.ItemIsSelectable, False)
+        tiRef.setFlag(QtGui.QGraphicsItem.ItemIsFocusable, False)
+
+        tiTest = QtGui.QGraphicsPixmapItem(self.__pmTest)
+        tiTest.setFlag(QtGui.QGraphicsItem.ItemIsMovable, False)
+        tiTest.setFlag(QtGui.QGraphicsItem.ItemIsSelectable, False)
+        tiTest.setFlag(QtGui.QGraphicsItem.ItemIsFocusable, False)        
+        
+        self.addItem(tiRef)
+        self.addItem(tiTest)
+
         SPACING = 50
         tiTest.moveBy(self.__xTestPosCoeff*(tiRef.sceneBoundingRect().width()+SPACING),
                       self.__yTestPosCoeff*(tiRef.sceneBoundingRect().height()+SPACING))
