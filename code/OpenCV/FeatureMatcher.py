@@ -38,15 +38,15 @@ class FeatureMatcher(Chain.StageBase):
     def FilterMatches(matches, distanceThreshold=0.5):
         
         dist = [x.distance for x in matches]
-        print "Input Matches: %d" % len(matches)
-        print "Distance (min,mean,max): %.3f, %.3f, %.3f" % \
-              (min(dist), (sum(dist) / len(dist)), max(dist))
+        Chain.Analyze.WriteStatus("Input Matches: %d" % len(matches))
+        Chain.Analyze.WriteStatus("Distance (min,mean,max): %.3f, %.3f, %.3f" % \
+            (min(dist), (sum(dist) / len(dist)), max(dist)))
         
         # threshold matches at half the mean
         dThreshold = (sum(dist) / len(dist)) * distanceThreshold
         fmatches = [m for m in matches if m.distance < dThreshold]
         
-        print "Output Matches: %d" % len(fmatches)
+        Chain.Analyze.WriteStatus("Output Matches: %d" % len(fmatches))
         return fmatches
     
     @staticmethod

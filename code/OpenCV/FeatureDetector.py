@@ -142,7 +142,10 @@ class FeatureDetector(Chain.StageBase):
             else:
                 ifs = Types.ImageFeatures.FromFile(keyFile, im.GetFilePath(),
                     dt=FeatureDetector.DESCRIPTORS_DATATYPES[self._properties["Descriptor"]])
-                
+            
+            Chain.Analyze.WriteStatus("[%s] Features: %d" % \
+                                      (im.GetFileName(), len(ifs.GetDescriptors())))
+            
             isfs.append(ifs)
             
         isfs.GenerateKeyList()
