@@ -1,10 +1,8 @@
 # Copyright (c) 2014, Adam J. Rossi. All rights reserved. See README for licensing details.
 import sys, os, copy, collections, math
 sys.path.append(os.path.abspath("."))
-
 from PySide import QtCore, QtGui
-import Chain # Chain must be imported first, requirement of registry
-import Sources, BundleAdjustment, Common, FeatureExtraction, FeatureMatch
+import Chain, Sources, Common
 
     
 ############################################################################### 
@@ -66,7 +64,6 @@ class CorrespondenceWidget(QtGui.QGraphicsScene):
             imagePairs.append(imagePair)
                 
             cw = CorrespondenceWidget(stages,imagePair)
-            iv = ImageView(cw)
             
             frame = WidgetFrame()
             QtCore.QObject.connect(frame, QtCore.SIGNAL("refresh()"), cw.refresh)
@@ -192,13 +189,6 @@ class CorrespondenceWidget(QtGui.QGraphicsScene):
         
         self.setSceneRect(self.itemsBoundingRect())
         if (self.__autoZoom): self.views()[0].autoZoom()
-        
-    @staticmethod
-    def readTiepoints(filePath):
-        f = open(filePath,"r")
-        tps = [[[int(round(float(y))) for y in x.split(",")] for x in l.strip().split("  ")] for l in f.readlines()]
-        f.close()
-        return tps
     
 
 ###############################################################################
@@ -360,19 +350,15 @@ class ImageWidget(QtGui.QGraphicsScene):
         
     def refresh(self):
 
-        stages = []
+        imagePath = ""
         try:
             if (self.__index<0):
                 imagePath = self.__stage.GetOutput()[self.__outputName].GetFilePath()
             else:
-                sub = Sources.ImageSubset(self.__stage, 1,self.__index)
-                stages.append(sub)
-                imagePath = sub.GetOutput()[self.__outputName].GetImages()[0].GetFilePath()
+                imagePath = self.__stage.GetOutput()[self.__outputName].GetImages()[self.__index].GetFilePath()
         except Exception, e:
             print "Exception rendering visualization image:" + str(e)
             print
-        finally:
-            for s in stages: Chain.StageRegistry.registry.RemoveInstance(s)
             
         self.__pixmapItem.setPixmap(QtGui.QPixmap())
         self.__pixmapItem.setPixmap(QtGui.QPixmap(imagePath))
