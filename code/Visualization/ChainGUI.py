@@ -131,75 +131,80 @@ class CorrespondenceWidget(QtGui.QGraphicsScene):
     def refresh(self, reloadImages=True):
         self.clear()
         
-        images = self.__stages[0].GetOutput()["images"]
-        matches = self.__stages[1].GetOutput()["keyMatches"]
-        
-        mykmf = None
-        for kmf in matches.GetKeyMatchFiles():
+        try:
+            images = self.__stages[0].GetOutput()["images"]
+            matches = self.__stages[1].GetOutput()["keyMatches"]
             
-            imagePair = sorted([kmf.GetImageIndex1(), kmf.GetImageIndex2()])
-            if (imagePair != self.__imagePair): continue
-            mykmf = kmf
-            break
-        
-        if (mykmf==None):
-            print "[CorrespondenceWidget] Warning: did not find key matches for: " + str(self.__imagePair)
-            return
-        
-        if (reloadImages or (self.__pmRef==None)):
-            self.__pmRef = self.createPixmap(images.GetImages()[self.__imagePair[0]].GetFilePath())
-        if (reloadImages or (self.__pmTest==None)):
-            self.__pmTest = self.createPixmap(images.GetImages()[self.__imagePair[1]].GetFilePath())
-        
-        
-        tiRef = QtGui.QGraphicsPixmapItem(self.__pmRef)
-        tiRef.setFlag(QtGui.QGraphicsItem.ItemIsMovable, False)
-        tiRef.setFlag(QtGui.QGraphicsItem.ItemIsSelectable, False)
-        tiRef.setFlag(QtGui.QGraphicsItem.ItemIsFocusable, False)
-
-        tiTest = QtGui.QGraphicsPixmapItem(self.__pmTest)
-        tiTest.setFlag(QtGui.QGraphicsItem.ItemIsMovable, False)
-        tiTest.setFlag(QtGui.QGraphicsItem.ItemIsSelectable, False)
-        tiTest.setFlag(QtGui.QGraphicsItem.ItemIsFocusable, False)        
-        
-        self.addItem(tiRef)
-        self.addItem(tiTest)
-
-        SPACING = 50
-        tiTest.moveBy(self.__xTestPosCoeff*(tiRef.sceneBoundingRect().width()+SPACING),
-                      self.__yTestPosCoeff*(tiRef.sceneBoundingRect().height()+SPACING))
-        
-        colors = (QtCore.Qt.red, QtCore.Qt.green, QtCore.Qt.yellow, QtCore.Qt.blue)
-        lis = []
-
-        self._sbMatch.setMaximum(len(mykmf.GetMatches())-1)
-        
-        for i,(d0,d1,m0,m1) in enumerate(mykmf.GetMatches()):
+            mykmf = None
+            for kmf in matches.GetKeyMatchFiles():
+                
+                imagePair = sorted([kmf.GetImageIndex1(), kmf.GetImageIndex2()])
+                if (imagePair != self.__imagePair): continue
+                mykmf = kmf
+                break
             
-            if (self._sbMatch.value()>=0):
-                i = self._sbMatch.value()
-                (d0,d1,m0,m1) = mykmf.GetMatches()[self._sbMatch.value()]
+            if (mykmf==None):
+                print "[CorrespondenceWidget] Warning: did not find key matches for: " + str(self.__imagePair)
+                return
             
-            match = ((d1.Column(),d1.Row()),
-                     (d0.Column(),d0.Row()))
+            if (reloadImages or (self.__pmRef==None)):
+                self.__pmRef = self.createPixmap(images.GetImages()[self.__imagePair[0]].GetFilePath())
+            if (reloadImages or (self.__pmTest==None)):
+                self.__pmTest = self.createPixmap(images.GetImages()[self.__imagePair[1]].GetFilePath())
             
-            self.createFeaturePoint(match[0], tiTest, self)
-            self.createFeaturePoint(match[1], tiRef, self)
             
-            pointRef = tiRef.mapToScene(match[1][0], match[1][1])
-            pointTest = tiTest.mapToScene(match[0][0], match[0][1])
-            li = QtGui.QGraphicsLineItem(pointRef.x(),pointRef.y(),
-                                         pointTest.x(),pointTest.y(),
-                                         scene=self)
-            li.setPen(QtGui.QPen(colors[i%len(colors)], 1))
-            lis.append(li)
+            tiRef = QtGui.QGraphicsPixmapItem(self.__pmRef)
+            tiRef.setFlag(QtGui.QGraphicsItem.ItemIsMovable, False)
+            tiRef.setFlag(QtGui.QGraphicsItem.ItemIsSelectable, False)
+            tiRef.setFlag(QtGui.QGraphicsItem.ItemIsFocusable, False)
+    
+            tiTest = QtGui.QGraphicsPixmapItem(self.__pmTest)
+            tiTest.setFlag(QtGui.QGraphicsItem.ItemIsMovable, False)
+            tiTest.setFlag(QtGui.QGraphicsItem.ItemIsSelectable, False)
+            tiTest.setFlag(QtGui.QGraphicsItem.ItemIsFocusable, False)        
             
-            if (self._sbMatch.value()>=0): break
-
-        self.__matchesGroup = self.createItemGroup(lis)
+            self.addItem(tiRef)
+            self.addItem(tiTest)
+    
+            SPACING = 50
+            tiTest.moveBy(self.__xTestPosCoeff*(tiRef.sceneBoundingRect().width()+SPACING),
+                          self.__yTestPosCoeff*(tiRef.sceneBoundingRect().height()+SPACING))
+            
+            colors = (QtCore.Qt.red, QtCore.Qt.green, QtCore.Qt.yellow, QtCore.Qt.blue)
+            lis = []
+    
+            self._sbMatch.setMaximum(len(mykmf.GetMatches())-1)
+            
+            for i,(d0,d1,m0,m1) in enumerate(mykmf.GetMatches()):
+                
+                if (self._sbMatch.value()>=0):
+                    i = self._sbMatch.value()
+                    (d0,d1,m0,m1) = mykmf.GetMatches()[self._sbMatch.value()]
+                
+                match = ((d1.Column(),d1.Row()),
+                         (d0.Column(),d0.Row()))
+                
+                self.createFeaturePoint(match[0], tiTest, self)
+                self.createFeaturePoint(match[1], tiRef, self)
+                
+                pointRef = tiRef.mapToScene(match[1][0], match[1][1])
+                pointTest = tiTest.mapToScene(match[0][0], match[0][1])
+                li = QtGui.QGraphicsLineItem(pointRef.x(),pointRef.y(),
+                                             pointTest.x(),pointTest.y(),
+                                             scene=self)
+                li.setPen(QtGui.QPen(colors[i%len(colors)], 1))
+                lis.append(li)
+                
+                if (self._sbMatch.value()>=0): break
+    
+            self.__matchesGroup = self.createItemGroup(lis)
+            
+            self.setSceneRect(self.itemsBoundingRect())
+            if (self.__autoZoom): self.views()[0].autoZoom()
         
-        self.setSceneRect(self.itemsBoundingRect())
-        if (self.__autoZoom): self.views()[0].autoZoom()
+        except Exception, e:
+            print "Exception refreshing correspondence widget:" + str(e)
+            print
     
 
 ###############################################################################
@@ -269,17 +274,22 @@ class FeatureWidget(QtGui.QGraphicsScene):
     def refresh(self):
         self.clear()
         
-        image = self.__stages[0].GetOutput()["images"].GetImages()[self.__index]
-        kd = self.__stages[1].GetOutput()["keypointDescriptors"].GetDescriptors()[self.__index]
-        
-        pm = self.createPixmap(image.GetFilePath())
-        self.addItem(pm)
+        try:
+            image = self.__stages[0].GetOutput()["images"].GetImages()[self.__index]
+            kd = self.__stages[1].GetOutput()["keypointDescriptors"].GetDescriptors()[self.__index]
             
-        for d in kd.GetDescriptors():
-            self.createFeaturePoint((d.Column(),d.Row()), pm, self)
-                    
-        self.setSceneRect(self.itemsBoundingRect())
-        if (self.__autoZoom): self.views()[0].autoZoom() 
+            pm = self.createPixmap(image.GetFilePath())
+            self.addItem(pm)
+                
+            for d in kd.GetDescriptors():
+                self.createFeaturePoint((d.Column(),d.Row()), pm, self)
+                        
+            self.setSceneRect(self.itemsBoundingRect())
+            if (self.__autoZoom): self.views()[0].autoZoom()
+        
+        except Exception, e:
+            print "Exception refreshing feature widget:" + str(e)
+            print
     
 ############################################################################### 
 class ImageWidget(QtGui.QGraphicsScene):
@@ -360,16 +370,18 @@ class ImageWidget(QtGui.QGraphicsScene):
             self.views()[0].autoZoom()        
         
     def refresh(self):
-
+        
         imagePath = ""
         try:
+            
             if (self.__index<0):
                 imagePath = self.__stage.GetOutput()[self.__outputName].GetFilePath()
             else:
                 imagePath = self.__stage.GetOutput()[self.__outputName].GetImages()[self.__index].GetFilePath()
+        
         except Exception, e:
-            print "Exception rendering visualization image:" + str(e)
-            print
+            print "Exception refreshing image widget:" + str(e)
+            print            
             
         self.__pixmapItem.setPixmap(QtGui.QPixmap())
         self.__pixmapItem.setPixmap(QtGui.QPixmap(imagePath))
