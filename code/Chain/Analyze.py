@@ -1,4 +1,4 @@
-# Copyright (c) 2012, Adam J. Rossi. All rights reserved. See README for licensing details.
+# Copyright (c) 2014, Adam J. Rossi. All rights reserved. See README for licensing details.
 import os, time
 
 class Analyze:
@@ -17,7 +17,7 @@ class Analyze:
         self.WriteStatus("\n" + "-"*80 + "\n{%s}\n"%name)            
         
         self.End()
-        self._timingPoints.append([name, time.clock()])
+        self._timingPoints.append([name, time.time()])
         
     def WriteStatus(self, s):
         
@@ -32,7 +32,7 @@ class Analyze:
     def End(self):
         if (len(self._timingPoints)>0 and 
             len(self._timingPoints[-1])==2):
-            self._timingPoints[-1].append(time.clock())
+            self._timingPoints[-1].append(time.time())
             
     def Clear(self):
         self._timingPoints = []        
