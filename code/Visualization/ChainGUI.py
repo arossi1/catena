@@ -17,11 +17,10 @@ class WidgetFrame(QtGui.QFrame):
 ############################################################################### 
 class CorrespondenceWidget(QtGui.QGraphicsScene):
     
-    def __init__(self, stages, imagePair, parent=None):
+    def __init__(self, stages, parent=None):
         QtGui.QGraphicsScene.__init__(self, -400, -400, 800, 800, parent)        
 
         self.__stages = stages
-        self.__imagePair = imagePair
         self.__xTestPosCoeff = 1.0
         self.__yTestPosCoeff = 0.0
         self.__autoZoom = True
@@ -50,6 +49,9 @@ class CorrespondenceWidget(QtGui.QGraphicsScene):
         
     def matchIndexChangedSlot(self, val):
         self.refresh(False)
+        
+    def pairIndexChangedSlot(self, val):
+        self.refresh(True)
     
     @staticmethod
     def create(stages, label):
@@ -57,60 +59,57 @@ class CorrespondenceWidget(QtGui.QGraphicsScene):
         images = stages[0].GetOutput()["images"]
         matches = stages[1].GetOutput()["keyMatches"]
         
-        ivs = []
-        imagePairs = []
-        for kmf in matches.GetKeyMatchFiles():
-            
-            imagePair = sorted([kmf.GetImageIndex1(), kmf.GetImageIndex2()])
-            if (imagePair in imagePairs): continue
-            imagePairs.append(imagePair)
-                
-            cw = CorrespondenceWidget(stages,imagePair)
-            
-            frame = WidgetFrame()
-            QtCore.QObject.connect(frame, QtCore.SIGNAL("refresh()"), cw.refresh)
-            QtCore.QObject.connect(frame, QtCore.SIGNAL("resize()"), cw.resize)
-            
-            layout = QtGui.QVBoxLayout()
-            blayout = QtGui.QHBoxLayout()
-            
-            autoZoom = QtGui.QCheckBox("Auto Zoom")
-            autoZoom.setCheckState(QtCore.Qt.Checked)
-            blayout.addWidget(autoZoom, 1, QtCore.Qt.AlignLeft)
-            QtCore.QObject.connect(autoZoom, QtCore.SIGNAL("stateChanged(int)"), cw.autoZoomSlot)
-            
-            cw._sbMatch = QtGui.QSpinBox()
-            cw._sbMatch.setRange(-1,0)
-            cw._sbMatch.setValue(-1)
-            QtCore.QObject.connect(cw._sbMatch, QtCore.SIGNAL("valueChanged(int)"), cw.matchIndexChangedSlot)
-            blayout.addWidget(QtGui.QLabel("Match Index:"))
-            blayout.addWidget(cw._sbMatch, 1, QtCore.Qt.AlignLeft)
-            
-            fliplayout = QtGui.QHBoxLayout()
-            fliplayout.setContentsMargins(0,0,0,0)
-            
-            horizontal = QtGui.QPushButton("Horizontal Flip")
-            QtCore.QObject.connect(horizontal, QtCore.SIGNAL("clicked()"), cw.horizontalSlot)
-            fliplayout.addWidget(horizontal)
-            
-            vertical = QtGui.QPushButton("Vertical Flip")
-            QtCore.QObject.connect(vertical, QtCore.SIGNAL("clicked()"), cw.verticalSlot)
-            fliplayout.addWidget(vertical)
-            
-            flipFrame = QtGui.QFrame()
-            flipFrame.setLayout(fliplayout)
-            blayout.addWidget(flipFrame, 1, QtCore.Qt.AlignLeft)
-            
-            blayout.addWidget(
-                QtGui.QLabel("%s | %s"%(images.GetImages()[kmf.GetImageIndex1()].GetFileName(),
-                                        images.GetImages()[kmf.GetImageIndex2()].GetFileName())))
-            
-            iv = ImageView(cw)
-            layout.addLayout(blayout)
-            layout.addWidget(iv)
-            frame.setLayout(layout)
-            ivs.append(frame)
-        return ivs
+        cw = CorrespondenceWidget(stages)
+        
+        frame = WidgetFrame()
+        QtCore.QObject.connect(frame, QtCore.SIGNAL("refresh()"), cw.refresh)
+        QtCore.QObject.connect(frame, QtCore.SIGNAL("resize()"), cw.resize)
+        
+        layout = QtGui.QVBoxLayout()
+        blayout = QtGui.QHBoxLayout()
+        
+        autoZoom = QtGui.QCheckBox("Auto Zoom")
+        autoZoom.setCheckState(QtCore.Qt.Checked)
+        blayout.addWidget(autoZoom, 1, QtCore.Qt.AlignLeft)
+        QtCore.QObject.connect(autoZoom, QtCore.SIGNAL("stateChanged(int)"), cw.autoZoomSlot)
+        
+        cw._sbPair = QtGui.QSpinBox()
+        cw._sbPair.setRange(0,len(matches.GetKeyMatchFiles()))
+        cw._sbPair.setValue(0)
+        QtCore.QObject.connect(cw._sbPair, QtCore.SIGNAL("valueChanged(int)"), cw.pairIndexChangedSlot)
+        blayout.addWidget(QtGui.QLabel("Pair Index:"))
+        blayout.addWidget(cw._sbPair, 1, QtCore.Qt.AlignLeft)
+        
+        cw._sbMatch = QtGui.QSpinBox()
+        cw._sbMatch.setRange(-1,0)
+        cw._sbMatch.setValue(-1)
+        QtCore.QObject.connect(cw._sbMatch, QtCore.SIGNAL("valueChanged(int)"), cw.matchIndexChangedSlot)
+        blayout.addWidget(QtGui.QLabel("Match Index:"))
+        blayout.addWidget(cw._sbMatch, 1, QtCore.Qt.AlignLeft)
+        
+        fliplayout = QtGui.QHBoxLayout()
+        fliplayout.setContentsMargins(0,0,0,0)
+        
+        horizontal = QtGui.QPushButton("Horizontal Flip")
+        QtCore.QObject.connect(horizontal, QtCore.SIGNAL("clicked()"), cw.horizontalSlot)
+        fliplayout.addWidget(horizontal)
+        
+        vertical = QtGui.QPushButton("Vertical Flip")
+        QtCore.QObject.connect(vertical, QtCore.SIGNAL("clicked()"), cw.verticalSlot)
+        fliplayout.addWidget(vertical)
+        
+        flipFrame = QtGui.QFrame()
+        flipFrame.setLayout(fliplayout)
+        blayout.addWidget(flipFrame, 1, QtCore.Qt.AlignLeft)
+        
+        cw._pairLabel = QtGui.QLabel("")
+        blayout.addWidget(cw._pairLabel)
+        
+        iv = ImageView(cw)
+        layout.addLayout(blayout)
+        layout.addWidget(iv)
+        frame.setLayout(layout)
+        return frame
     
     def createPixmap(self, imagePath):
         return QtGui.QPixmap(imagePath)
@@ -135,22 +134,18 @@ class CorrespondenceWidget(QtGui.QGraphicsScene):
             images = self.__stages[0].GetOutput()["images"]
             matches = self.__stages[1].GetOutput()["keyMatches"]
             
-            mykmf = None
-            for kmf in matches.GetKeyMatchFiles():
-                
-                imagePair = sorted([kmf.GetImageIndex1(), kmf.GetImageIndex2()])
-                if (imagePair != self.__imagePair): continue
-                mykmf = kmf
-                break
+            self._sbPair.setRange(0,len(matches.GetKeyMatchFiles())-1)
             
-            if (mykmf==None):
-                print "[CorrespondenceWidget] Warning: did not find key matches for: " + str(self.__imagePair)
-                return
+            kmf = matches.GetKeyMatchFiles()[self._sbPair.value()]
+            imagePair = sorted([kmf.GetImageIndex1(), kmf.GetImageIndex2()])
+            
+            self._pairLabel.setText("%s | %s"%(images.GetImages()[imagePair[0]].GetFileName(),
+                                               images.GetImages()[imagePair[1]].GetFileName()))
             
             if (reloadImages or (self.__pmRef==None)):
-                self.__pmRef = self.createPixmap(images.GetImages()[self.__imagePair[0]].GetFilePath())
+                self.__pmRef = self.createPixmap(images.GetImages()[imagePair[0]].GetFilePath())
             if (reloadImages or (self.__pmTest==None)):
-                self.__pmTest = self.createPixmap(images.GetImages()[self.__imagePair[1]].GetFilePath())
+                self.__pmTest = self.createPixmap(images.GetImages()[imagePair[1]].GetFilePath())
             
             
             tiRef = QtGui.QGraphicsPixmapItem(self.__pmRef)
@@ -173,13 +168,13 @@ class CorrespondenceWidget(QtGui.QGraphicsScene):
             colors = (QtCore.Qt.red, QtCore.Qt.green, QtCore.Qt.yellow, QtCore.Qt.blue)
             lis = []
     
-            self._sbMatch.setMaximum(len(mykmf.GetMatches())-1)
+            self._sbMatch.setMaximum(len(kmf.GetMatches())-1)
             
-            for i,(d0,d1,m0,m1) in enumerate(mykmf.GetMatches()):
+            for i,(d0,d1,m0,m1) in enumerate(kmf.GetMatches()):
                 
                 if (self._sbMatch.value()>=0):
                     i = self._sbMatch.value()
-                    (d0,d1,m0,m1) = mykmf.GetMatches()[self._sbMatch.value()]
+                    (d0,d1,m0,m1) = kmf.GetMatches()[self._sbMatch.value()]
                 
                 match = ((d1.Column(),d1.Row()),
                          (d0.Column(),d0.Row()))
