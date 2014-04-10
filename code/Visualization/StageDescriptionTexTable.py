@@ -16,7 +16,7 @@ for package in reg.GetPackages():
     stages = reg.GetStages(package)
     if (len(stages)>0):
         print r"\begin{landscape}"
-        if (thesis):    print r"\begin{longtable}{P{5cm} P{1cm} P{2.5cm} P{9cm}}"
+        if (thesis):    print r"\begin{longtable}{P{5cm} P{1cm} P{2.5cm} P{10cm}}"
         else:           print r"\begin{longtable}{P{5cm} P{1cm} P{2.5cm} P{13cm}}"
         
         print r"\midrule"
@@ -25,10 +25,8 @@ for package in reg.GetPackages():
         
         for stage in stages:
             print r"\textbf{\Large{%s}} & " % stage
-
-            if (thesis):    print r"\multicolumn{3}{P{9cm}}{\emph{\large{%s}}} \\ " % reg.GetStageDescription(package,stage)
-            else:           print r"\multicolumn{3}{P{14cm}}{\emph{\large{%s}}} \\ " % reg.GetStageDescription(package,stage)
-
+            print r"\multicolumn{3}{P{14cm}}{\emph{\large{%s}}} \\ " % reg.GetStageDescription(package,stage)
+            
             stageInstance = reg.CreateInstance(package, stage)
             pMap = reg.GetStagePropertyMap(package, stage)
             if (len(pMap)>0):
