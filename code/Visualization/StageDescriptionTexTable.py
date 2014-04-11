@@ -18,8 +18,10 @@ for package in reg.GetPackages():
         print r"\begin{landscape}"
         if (thesis):    print r"\begin{longtable}{P{5cm} P{1cm} P{2.5cm} P{10cm}}"
         else:           print r"\begin{longtable}{P{5cm} P{1cm} P{2.5cm} P{13cm}}"
-        
-        print r"\midrule"
+
+        print r"\caption{Auto-documentation for \textbf{%s} package} \\"%package
+
+        print r"\toprule"
         print r"\multicolumn{4}{l}{\LARGE{\textbf{%s}}} \\" % package
         print r"\midrule"
         
@@ -44,6 +46,5 @@ for package in reg.GetPackages():
                     print r"%s & %s & %s & %s\\" % (prop, typeStr, defaultVal, propDesc)
             print r"\cmidrule(l){1-4}"
 
-        print r"\caption{Auto-documentation for \textbf{%s} package}"%package
         print r"\end{longtable}"
         print r"\end{landscape}"
