@@ -13,6 +13,9 @@ class WidgetFrame(QtGui.QFrame):
     def resizeEvent(self, event):
         QtGui.QFrame.resizeEvent(self, event)
         self.emit(QtCore.SIGNAL("resize()"))
+        
+    def propertyChangedSlot(self, stage, name, val):
+        self.emit(QtCore.SIGNAL("propertyChangedSignal(object,object,object)"), stage, name, val)
 
 ############################################################################### 
 class CorrespondenceWidget(QtGui.QGraphicsScene):
@@ -448,6 +451,10 @@ class cgSpinBoxSlider(QtGui.QFrame):
         sbVal = int(round((self.__spinbox.maximum() - self.__spinbox.minimum()) * (val/100.0) + self.__spinbox.minimum()))
         self.__spinbox.setValue(sbVal)
         
+    def value(self): return self.__spinbox.value()
+    def setMinimum(self, val): self.__spinbox.setMinimum(val)
+    def setMaximum(self, val): self.__spinbox.setMaximum(val)
+        
 class cgDoubleSpinBoxSlider(QtGui.QFrame):
     def __init__(self, name, initVal, minVal, maxVal):
         QtGui.QFrame.__init__(self)
@@ -584,6 +591,11 @@ class PropertyEditor(QtGui.QWidget):
         self.stagePropertiesView.setRowCount(len(self.__propNames))
         self.stagePropertiesView.setColumnCount(2)
         
+        propWildcards = {}
+        for k in self.__propRanges.keys():
+            if ("*" in k):
+                propWildcards[k.replace("*","")] = self.__propRanges[k]
+        
         for i,k in enumerate(self.__propNames):
             
             label = QtGui.QTableWidgetItem(k)
@@ -593,6 +605,10 @@ class PropertyEditor(QtGui.QWidget):
             propRange = None
             if (self.__propRanges.has_key(k)):
                 propRange = self.__propRanges[k]
+            else:
+                for wck in propWildcards.keys():
+                    if (wck in k):
+                        propRange = propWildcards[wck]
             
             w = self.GetWidgetForType(k,
                                       type(self.__stage.GetProperty(k)),
@@ -694,7 +710,10 @@ class PropertyEditor(QtGui.QWidget):
                     
             inputInterface.sort()
             for i in inputInterface:
-                s += "  [%d] %s\n" % i
+                if (isinstance(i[0],tuple)):
+                    s += "  [%d-%d] %s\n" % (i[0][0],i[0][1],i[1])
+                else:
+                    s += "  [%d] %s\n" % i
         s+="\n"
         
         s += "Output Interface:\n"
@@ -720,6 +739,9 @@ class PropertyEditor(QtGui.QWidget):
         if (props!=self.__stage.GetPropertyMap().keys()):
             self.SetProperties()
         self.__propModifiedTimer.start()
+        
+        self.emit(QtCore.SIGNAL("propertyChangedSignal(object,object,object)"), self.__stage, name, val)
+        
         
     def eventFilter(self, o, event):
         if (event.type() == QtCore.QEvent.Enter and o in self.__widgetIndexMap):
@@ -774,6 +796,7 @@ class ChainGUI(QtGui.QMainWindow):
     def initalizePropertyEditors(self, stagesDisplayProperty, stagesPropertyRanges):
         prevDw = None
         firstDw = None
+        self.__propertyEditors = {}
         for sdp in stagesDisplayProperty:
             if (len(sdp)==3):
                 stage,stageLabel,propNames = sdp
@@ -788,6 +811,7 @@ class ChainGUI(QtGui.QMainWindow):
                 propRanges = stagesPropertyRanges[stage]
             
             pe = PropertyEditor(stage, propNames, propRanges)
+            self.__propertyEditors[stage] = pe
             QtCore.QObject.connect(pe, QtCore.SIGNAL("propertyModifiedSignal()"), self.propertyModifiedSlot)
             dw = QtGui.QDockWidget(stageLabel)
             dw.setObjectName(stageLabel)
@@ -856,6 +880,18 @@ class ChainGUI(QtGui.QMainWindow):
                 
             for i,w in enumerate(widgets):
                 self.__visualizations.append(w)
+                
+                # connect signal if slot exists
+                if ("propertyChangedSlot" in dir(w)):
+                    stages = stage
+                    if (not isinstance(stages,collections.Iterable)):
+                        stages = [stages]
+                        
+                    for s in stages:
+                        if (self.__propertyEditors.has_key(s)):
+                            QtCore.QObject.connect(self.__propertyEditors[s],
+                                                   QtCore.SIGNAL("propertyChangedSignal(object,object,object)"),
+                                                   w.propertyChangedSlot)
                 
                 # dock the widget
                 sl = stageLabel
@@ -933,6 +969,9 @@ class ChainGUI(QtGui.QMainWindow):
         for vis in self.__visualizations: 
             try: vis.refresh()
             except: pass
+        
+        for pe in self.__propertyEditors.values():
+            pe.SetProperties()
 
 
     def saveImage(self):

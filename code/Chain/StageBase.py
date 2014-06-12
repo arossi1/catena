@@ -127,23 +127,39 @@ class StageBase:
                     inputName,(inputIndex,inputType) = kv
                 except:
                     raise Exception("[%s:Prepare] Input interface definition error" % (self.__class__.__name__))
-                    
-                if (inputIndex >= self.NumInputStages()):
-                    raise Exception("[%s:Prepare] Expected input stage at index %d" % \
-                                    (self.__class__.__name__,inputIndex))
-                    
-                if (not self.__inputStages[inputIndex].GetOutputInterface().has_key(inputName)):
-                    raise Exception("[%s:Prepare] Input stage %d does not include %s:%s" % \
-                                    (self.__class__.__name__,inputIndex,inputName,inputType))
-                    
-                if (not issubclass(self.__inputStages[inputIndex].GetOutputInterface()[inputName],inputType)):
-                    raise Exception("[%s:Prepare] Input stage %d's output parameter (%s) type is %s, type should be %s" % \
-                                    (self.__class__.__name__,
-                                     inputIndex,
-                                     inputName,
-                                     self.__inputStages[inputIndex].GetOutputInterface()[inputName],
-                                     inputType))
-        
+                
+                if (isinstance(inputIndex,tuple)):
+                    for iIndex in range(inputIndex[0], inputIndex[0]+inputIndex[1]):
+                        if (iIndex < self.NumInputStages()):  # check only valid input stage indices
+                            if (not self.__inputStages[iIndex].GetOutputInterface().has_key(inputName)):
+                                raise Exception("[%s:Prepare] Input stage %d does not include %s:%s" % \
+                                                (self.__class__.__name__,iIndex,inputName,inputType))
+                                
+                            if (not issubclass(self.__inputStages[iIndex].GetOutputInterface()[inputName],inputType)):
+                                raise Exception("[%s:Prepare] Input stage %d's output parameter (%s) type is %s, type should be %s" % \
+                                                (self.__class__.__name__,
+                                                 iIndex,
+                                                 inputName,
+                                                 self.__inputStages[iIndex].GetOutputInterface()[inputName],
+                                                 inputType))
+                else:
+                    if (inputIndex >= self.NumInputStages()):
+                        raise Exception("[%s:Prepare] Expected input stage at index %d" % \
+                                        (self.__class__.__name__,inputIndex))
+                        
+                    if (not self.__inputStages[inputIndex].GetOutputInterface().has_key(inputName)):
+                        raise Exception("[%s:Prepare] Input stage %d does not include %s:%s" % \
+                                        (self.__class__.__name__,inputIndex,inputName,inputType))
+                        
+                    if (not issubclass(self.__inputStages[inputIndex].GetOutputInterface()[inputName], inputType) and
+                        not issubclass(inputType, self.__inputStages[inputIndex].GetOutputInterface()[inputName])):
+                        raise Exception("[%s:Prepare] Input stage %d's output parameter (%s) type is %s, type should be %s" % \
+                                        (self.__class__.__name__,
+                                         inputIndex,
+                                         inputName,
+                                         self.__inputStages[inputIndex].GetOutputInterface()[inputName],
+                                         inputType))
+            
         
         # successfully prepared stage
         self.__prepared = True
@@ -160,8 +176,11 @@ class StageBase:
                 raise Exception("[%s::__ValidateCompleteOutputCache] Developer error, output parameter (%s) not filled" % \
                                 (self.__class__.__name__,k))
             
-            if (str(type(v)) == "<type 'instance'>"):
-                if (str(self.GetOutputInterface()[k]) not in [v.__class__.__name__, "%s.%s" % (v.__module__, v.__class__.__name__)]):
+            if (str(type(v)) == "<type 'instance'>" or
+                str(type(v)).startswith("<class '")):
+                if (issubclass(v.__class__, self.GetOutputInterface()[k])):
+                    pass                    
+                elif (str(self.GetOutputInterface()[k]) not in [v.__class__.__name__, "%s.%s" % (v.__module__, v.__class__.__name__)]):
                     raise Exception("[%s::__ValidateCompleteOutputCache] Developer error, output parameter (%s) type is %s, type should be %s" % \
                                     (self.__class__.__name__,k,v.__class__.__name__,self.GetOutputInterface()[k]))
             else:
