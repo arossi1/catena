@@ -398,6 +398,7 @@ class ImageView(QtGui.QGraphicsView):
         self.setRenderHint(QtGui.QPainter.Antialiasing)
         self.setRenderHint(QtGui.QPainter.TextAntialiasing)
         self.setRenderHint(QtGui.QPainter.SmoothPixmapTransform)
+        self.setMouseTracking(True)
         self.__graphicsScene = graphicsScene
         
     def wheelEvent(self, event):
@@ -412,6 +413,10 @@ class ImageView(QtGui.QGraphicsView):
     
     def autoZoom(self):
         self.fitInView(self.__graphicsScene.itemsBoundingRect(), QtCore.Qt.KeepAspectRatio)
+        
+    def mouseMoveEvent(self, e):
+        QtGui.QGraphicsView.mouseMoveEvent(self,e)
+        self.emit(QtCore.SIGNAL("mouseMoveSignal(object)"), e)
 
 ###############################################################################
 class cgSpinBoxSlider(QtGui.QFrame):
