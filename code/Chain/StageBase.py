@@ -1,4 +1,4 @@
-# Copyright (c) 2012, Adam J. Rossi. All rights reserved. See README for licensing details.
+# Copyright (c) 2014, Adam J. Rossi. All rights reserved. See README for licensing details.
 import sys, uuid, string, os
 import Chain, Analyze
 
@@ -6,9 +6,10 @@ class StageBase:
     
     MAX_INPUT_STAGES = sys.maxint
     
-    def __init__(self, inputStages=None, stageDoc="", parameterDoc={}):
+    def __init__(self, inputStages=None, stageDoc="", parameterDoc=None):
         self.__stageDoc = stageDoc
-        self.__parameterDoc = parameterDoc
+        if (parameterDoc==None): self.__parameterDoc = {}
+        else:                    self.__parameterDoc = parameterDoc
         self._properties = {}
         self.__inputStages = []
         self.__outputStages = []
