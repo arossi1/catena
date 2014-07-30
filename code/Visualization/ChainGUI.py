@@ -1009,7 +1009,8 @@ class ChainGUI(QtGui.QMainWindow):
 def display(stagesVisualizations,          # stages with outputs to visualize [(stage,label,visualization widget), ...]
             stagesDisplayProperty,         # stages that have properties that need manipulating [(stage,stageLabel,[property name,...]), ...]
             stagesPropertyRanges={}):      # property ranges {stage:{property name:(min, max),...}, ...}
-    app = QtGui.QApplication(sys.argv)
+    app = QtGui.QApplication.instance()
+    if app is None: app = QtGui.QApplication(sys.argv)
     gui = ChainGUI(stagesVisualizations, stagesDisplayProperty, stagesPropertyRanges)
     gui.show()
     return app.exec_()
