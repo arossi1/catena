@@ -403,6 +403,7 @@ class ImageView(QtGui.QGraphicsView):
         
     def wheelEvent(self, event):
         self.scaleView(math.pow(2.0, -event.delta() / 240.0))
+        self.emit(QtCore.SIGNAL("wheelSignal(object)"), event)
     
     def scaleView(self, scaleFactor):
         factor = self.matrix().scale(scaleFactor, scaleFactor).mapRect(QtCore.QRectF(0, 0, 1, 1)).width()
@@ -417,6 +418,19 @@ class ImageView(QtGui.QGraphicsView):
     def mouseMoveEvent(self, e):
         QtGui.QGraphicsView.mouseMoveEvent(self,e)
         self.emit(QtCore.SIGNAL("mouseMoveSignal(object)"), e)
+        
+    def mousePressEvent(self, e):
+        QtGui.QGraphicsView.mousePressEvent(self,e)
+        self.emit(QtCore.SIGNAL("mousePressSignal(object)"), e)
+
+    def mouseReleaseEvent(self, e):
+        QtGui.QGraphicsView.mouseReleaseEvent(self,e)
+        self.emit(QtCore.SIGNAL("mouseReleaseSignal(object)"), e)
+        
+    def mouseDoubleClickEvent(self, e):
+        QtGui.QGraphicsView.mouseDoubleClickEvent(self,e)
+        self.emit(QtCore.SIGNAL("mouseDoubleClickSignal(object)"), e)
+        
 
 ###############################################################################
 class cgSpinBoxSlider(QtGui.QFrame):
@@ -457,8 +471,11 @@ class cgSpinBoxSlider(QtGui.QFrame):
         self.__spinbox.setValue(sbVal)
         
     def value(self): return self.__spinbox.value()
+    def setValue(self, val): self.__spinbox.setValue(val)
     def setMinimum(self, val): self.__spinbox.setMinimum(val)
     def setMaximum(self, val): self.__spinbox.setMaximum(val)
+    def getMinimum(self): return self.__spinbox.minimum()
+    def getMaximum(self): return self.__spinbox.maximum()
         
 class cgDoubleSpinBoxSlider(QtGui.QFrame):
     def __init__(self, name, initVal, minVal, maxVal):
