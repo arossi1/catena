@@ -27,7 +27,7 @@ class sfmImage:
         outputFilePath = os.path.join(outputPath, os.path.splitext(os.path.split(self._filePath)[1])[0] + "." + type)
         if (not os.path.exists(outputFilePath)):
             PILImage.open(self._filePath).save(outputFilePath)
-        return sfmImage(outputFilePath, self._getMetadata())
+        return sfmImage(outputFilePath) #, self._getMetadata())
     
     def SplitTiles(self, outputPath, dim=512):
         tiles = []

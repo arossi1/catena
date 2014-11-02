@@ -91,6 +91,9 @@ def PrintResults():
 def SetStatusObject(s):
     __analyze._statusObject = s
     
+def SetPrintProgress(enable):
+    __analyze._printProgress = enable
+    
 #def GetLog():
 #    __analyze.WriteStatus(time.strftime("\n[%Y%m%d--%H:%M:%S]\n\n"))
 #    __analyze._log.flush()
