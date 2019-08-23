@@ -1,6 +1,5 @@
 # Copyright (c) 2012, Adam J. Rossi. All rights reserved. See README for licensing details.
-import sys, os, glob
-sys.path.append(os.path.abspath(".."))
+import os, glob
 
 from PyQt4 import QtCore, QtGui, QtXml
 import Common

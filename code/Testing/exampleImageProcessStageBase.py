@@ -1,6 +1,5 @@
 # Copyright (c) 2014, Adam J. Rossi. All rights reserved. See README for licensing details.
-import sys, os, shutil
-sys.path.append(os.path.abspath("."))
+import os, shutil
 import Chain, Common, Sources
 
 #################################################################################

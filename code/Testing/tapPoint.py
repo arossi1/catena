@@ -1,6 +1,5 @@
 # Copyright (c) 2012, Adam J. Rossi. All rights reserved. See README for licensing details.
-import sys, os
-sys.path.append(os.path.abspath("."))
+import os
 import Chain # Chain must be imported first, requirement of registry
 import Sources, FeatureExtraction, Common
 

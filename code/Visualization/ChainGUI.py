@@ -1,7 +1,6 @@
 # Copyright (c) 2014, Adam J. Rossi. All rights reserved. See README for licensing details.
-import sys, os, copy, collections, math
-sys.path.append(os.path.abspath("."))
-from PySide import QtCore, QtGui
+import os, copy, collections, math
+from PyQt4 import QtCore, QtGui
 from catena import Chain, Sources, Common
 
     

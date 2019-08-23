@@ -1,6 +1,5 @@
 # Copyright (c) 2014, Adam J. Rossi. All rights reserved. See README for licensing details.
-import sys, os
-sys.path.append(os.path.abspath("."))
+import os
 from catena import Chain
 from catena import Sources, OpenCV
 
