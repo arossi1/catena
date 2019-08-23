@@ -1,6 +1,5 @@
 # Copyright (c) 2012, Adam J. Rossi. All rights reserved. See README for licensing details.
-
-import Cluster
+from PlyFile import PlyFile
 import os
 
 class ClusterEntry:
@@ -17,7 +16,7 @@ class ClusterEntry:
     def GetCameraCenterPlyFile(self): return self.__cameraCenterFile
     
     def __parseCameraCenterFile(self, path):
-        self.__cameraCenterFile = Cluster.PlyFile(os.path.join(path, "centers-%04d.ply" % self.__id))
+        self.__cameraCenterFile = PlyFile(os.path.join(path, "centers-%04d.ply" % self.__id))
         
     def __str__(self):
         return "Cluster Index: %d\nImages in cluster: %d\nCluster indices: %s" % \

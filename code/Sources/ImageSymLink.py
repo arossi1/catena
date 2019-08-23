@@ -1,6 +1,5 @@
 # Copyright (c) 2012, Adam J. Rossi. All rights reserved. See README for licensing details.
-import Chain
-import Common
+from catena import Chain, Common
 import os
 
 class ImageSymLink(Chain.StageBase):

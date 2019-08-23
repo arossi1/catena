@@ -1,5 +1,5 @@
 # Copyright (c) 2012, Adam J. Rossi. All rights reserved. See README for licensing details.
-import Chain
+from catena import Chain
 
 class MuxStage(Chain.StageBase):
 

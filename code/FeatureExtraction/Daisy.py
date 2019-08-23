@@ -1,6 +1,8 @@
 # Copyright (c) 2012, Adam J. Rossi. All rights reserved. See README for licensing details.
-import Chain, Common, FeatureExtraction
+from catena import Chain, Common
 from DaisyKeypointDescriptorFile import DaisyKeypointDescriptorFile
+from KeypointDescriptors import KeypointDescriptors
+from KeypointDescriptorFileLowe import KeypointDescriptorFileLowe
 import string, os
 
 class Daisy(Chain.StageBase):
@@ -48,7 +50,7 @@ class Daisy(Chain.StageBase):
         return {"images":(0,Common.sfmImages)}
     
     def GetOutputInterface(self):
-        return {"keypointDescriptors":FeatureExtraction.KeypointDescriptors}
+        return {"keypointDescriptors":KeypointDescriptors}
     
     
     def Process(self,
@@ -125,18 +127,18 @@ class Daisy(Chain.StageBase):
                                     
                 daisyKD = self.Process(im.GetFilePath())
                 
-                kd = FeatureExtraction.KeypointDescriptorFileLowe(daisyKD,
-                                                                  self._properties["Parse Descriptors"])
+                kd = KeypointDescriptorFileLowe(daisyKD,
+                                                self._properties["Parse Descriptors"])
                 
                 kd.Write(os.path.splitext(daisyKD.GetFilePath())[0]+".key")
             
             else:
-                kd = FeatureExtraction.KeypointDescriptorFileLowe(keypointDescriptorFile, 
-                                                                  self._properties["Parse Descriptors"])
+                kd = KeypointDescriptorFileLowe(keypointDescriptorFile, 
+                                                self._properties["Parse Descriptors"])
                 
             kds.append(kd)
         
-        kds = FeatureExtraction.KeypointDescriptors(images.GetPath(), kds)
+        kds = KeypointDescriptors(images.GetPath(), kds)
         self.SetOutputValue("keypointDescriptors", kds)
 
 

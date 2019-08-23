@@ -1,6 +1,6 @@
 # Copyright (c) 2012, Adam J. Rossi. All rights reserved. See README for licensing details.
 import os, glob, string
-import Common
+import sfmImage, Utility
 
 
 class sfmImages:
@@ -28,11 +28,11 @@ class sfmImages:
     
     def _fillImages(self):        
         for p in sorted(glob.glob(os.path.join(self._path,"*."+self._extension))):
-            self._images.append(Common.sfmImage(p))    
+            self._images.append(sfmImage(p))    
     
     
     def ConvertToPGM(self, outputPath):
-        Common.Utility.MakeDir(outputPath)
+        Utility.MakeDir(outputPath)
         images = sfmImages(outputPath, "pgm", focalPixelOverride=self._focalPixelOverride)
 
         images._images = []
@@ -45,7 +45,7 @@ class sfmImages:
         if (type=="pgm"):
             return self.ConvertToPGM(outputPath)
         else:
-            Common.Utility.MakeDir(outputPath)
+            Utility.MakeDir(outputPath)
             images = sfmImages(outputPath, type, focalPixelOverride=self._focalPixelOverride)
             
             images._images = []
@@ -54,7 +54,7 @@ class sfmImages:
             return images
     
     def SplitTiles(self, outputPath, dim=512):
-        Common.Utility.MakeDir(outputPath)
+        Utility.MakeDir(outputPath)
         for im in self._images: im.SplitTiles(outputPath, dim)
         self.WriteTileList(outputPath, dim)
         return sfmImages(outputPath, self._extension)

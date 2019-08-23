@@ -1,7 +1,7 @@
 # Copyright (c) 2014, Adam J. Rossi. All rights reserved. See README for licensing details.
 import copy, string, os
 import numpy
-import FeatureExtraction
+from catena import FeatureExtraction
 
 class ImagesFeatures(FeatureExtraction.KeypointDescriptors):
     

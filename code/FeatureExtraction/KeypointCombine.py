@@ -1,25 +1,22 @@
 # Copyright (c) 2012, Adam J. Rossi. All rights reserved. See README for licensing details.
-import PackagePath
-from StageBase import StageBase
-from sfmImages import sfmImages
+from catena import Chain, Common
 from KeypointDescriptors import KeypointDescriptors
 from KeypointDescriptorFileLowe import KeypointDescriptorFileLowe
 
-import Utility
 import os
 
-class KeypointCombine(StageBase):
+class KeypointCombine(Chain.StageBase):
 
     def __init__(self, inputStages=None): #, cppver=False):
-        StageBase.__init__(self,
-                           inputStages,
-                           "Combines 2 sets of keypoint descriptors")
+        Chain.StageBase.__init__(self,
+                                 inputStages,
+                                 "Combines 2 sets of keypoint descriptors")
         #self._cppver = cppver
 
     def GetInputInterface(self):
         return {"keypointDescriptors"   :(0,KeypointDescriptors),
-                "images"                :(1,sfmImages),
-                "images"                :(2,sfmImages)}
+                "images"                :(1,Common.sfmImages),
+                "images"                :(2,Common.sfmImages)}
     
     def GetOutputInterface(self):
         return {"keypointDescriptors":KeypointDescriptors}

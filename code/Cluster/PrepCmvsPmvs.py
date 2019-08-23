@@ -1,5 +1,7 @@
 # Copyright (c) 2012, Adam J. Rossi. All rights reserved. See README for licensing details.
-import Common, Chain, BundleAdjustment, Cluster
+from catena import Common, Chain, BundleAdjustment
+from VisFile import VisFile
+from CameraMatrix import CameraMatrices
 import os, shutil
 
 class PrepCmvsPmvs(Chain.StageBase):
@@ -21,8 +23,8 @@ class PrepCmvsPmvs(Chain.StageBase):
     def GetOutputInterface(self):
         return {"bundleFile":BundleAdjustment.BundleFile,
                 "images":Common.sfmImages,
-                "visFile":Cluster.VisFile,
-                "cameraMatrices":Cluster.CameraMatrices}
+                "visFile":VisFile,
+                "cameraMatrices":CameraMatrices}
 
     def Bundle2PMVS(self, imagelist, bundleFile, outputPath):
     
@@ -77,14 +79,14 @@ class PrepCmvsPmvs(Chain.StageBase):
         bundleFileDest = self.CopyBundleFile(bundleFile.GetBundleFilePath(), pmvsPath)
         
         bundleFile = BundleAdjustment.BundleFile(bundleFileDest, images.GetImages())
-        visFile = Cluster.VisFile(visFile)
+        visFile = VisFile(visFile)
         
         # TODO: linux hack
         if (not Common.Utility.IsWindows() or Common.Utility.PlatformName=="Windows64bit"):
             Common.Utility.CopyFiles(pmvsPath, paths[0], "txt")
             os.remove(os.path.join(paths[0], "pmvs_options.txt"))
 
-        cameraMatrices = Cluster.CameraMatrices(paths[0])
+        cameraMatrices = CameraMatrices(paths[0])
         
         self.SetOutputValue("bundleFile", bundleFile)
         self.SetOutputValue("images", images)

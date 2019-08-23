@@ -1,5 +1,6 @@
 # Copyright (c) 2012, Adam J. Rossi. All rights reserved. See README for licensing details.
-import Chain, Common, FeatureMatch, BundleAdjustment
+from catena import Chain, Common, FeatureMatch
+from BundleFile import BundleFile
 import os
 
 class Bundler(Chain.StageBase):
@@ -85,11 +86,11 @@ class Bundler(Chain.StageBase):
         
     
     def GetInputInterface(self):
-        return {"keyMatches":(0,FeatureMatch.KeyMatches),
+        return {"keyMatches":(0,FeatureMatches.KeyMatches),
                 "images":(1,Common.sfmImages)}
     
     def GetOutputInterface(self):
-        return {"bundleFile":BundleAdjustment.BundleFile}
+        return {"bundleFile":BundleFile}
 #    TODO: add the following file outputs
 #        - constraints.txt
 #        - matches.corresp.txt
@@ -166,7 +167,7 @@ class Bundler(Chain.StageBase):
                                                        Common.Utility.Quoted(bundlerOptionsFilePath)),
                             cwd = os.path.split(images.GetImageListPath())[0])
         
-        bundleFile = BundleAdjustment.BundleFile(bundlerOutputFilePath, images.GetImages())
+        bundleFile = BundleFile(bundlerOutputFilePath, images.GetImages())
         
         self.SetOutputValue("bundleFile", bundleFile)
         

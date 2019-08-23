@@ -1,5 +1,6 @@
 # Copyright (c) 2012, Adam J. Rossi. All rights reserved. See README for licensing details.
-import Chain, Common, FeatureMatch, FeatureExtraction
+from catena import Chain, Common, FeatureExtraction
+from KeyMatches import KeyMatches
 import os
 
 class KeyMatch(Chain.StageBase):
@@ -21,7 +22,7 @@ class KeyMatch(Chain.StageBase):
         return {"keypointDescriptors":(0,FeatureExtraction.KeypointDescriptors)}
     
     def GetOutputInterface(self):
-        return {"keyMatches":FeatureMatch.KeyMatches}
+        return {"keyMatches":KeyMatches}
     
     def Execute(self):
         keypointDescriptors = self.GetInputStageValue(0, "keypointDescriptors")
@@ -45,7 +46,7 @@ class KeyMatch(Chain.StageBase):
                             cwd = os.path.split(matchesFile)[0])
             
             
-    	keyMatches = FeatureMatch.KeyMatches(matchesFile, keypointDescriptors, self._properties["Parse Matches"])
+    	keyMatches = KeyMatches(matchesFile, keypointDescriptors, self._properties["Parse Matches"])
         
         self.SetOutputValue("keyMatches", keyMatches)
 

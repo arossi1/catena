@@ -1,5 +1,6 @@
 # Copyright (c) 2012, Adam J. Rossi. All rights reserved. See README for licensing details.
-import Chain, Common
+from catena import Chain
+import sfmImage, sfmImages, Utility
 import os, collections
 
 class ImageProcessStageBase(Chain.StageBase):
@@ -35,16 +36,16 @@ class ImageProcessStageBase(Chain.StageBase):
         
     def GetInputInterface(self):
         if (self.__multipleImages):
-            return {"images":(0,Common.sfmImages)}
+            return {"images":(0,sfmImages)}
         else:
-            return {"image":(0,Common.sfmImage)}
+            return {"image":(0,sfmImage)}
     
     
     def GetOutputInterface(self):
         if (self.__multipleImages):
-            return {"images":Common.sfmImages}
+            return {"images":sfmImages}
         else:
-            return {"image":Common.sfmImage}
+            return {"image":sfmImage}
         
         
     def ProcessImage(self, inputImagePath, outputImagePath):
@@ -76,7 +77,7 @@ class ImageProcessStageBase(Chain.StageBase):
             images = self.GetInputStageValue(0, "images")
         else:
             image = self.GetInputStageValue(0, "image")
-            images = Common.sfmImages(os.path.split(image.GetFilePath())[0],
+            images = sfmImages(os.path.split(image.GetFilePath())[0],
                                       os.path.splitext(image.GetFilePath())[1][1:], 
                                       [image])
         self.StartProcess()
@@ -86,14 +87,14 @@ class ImageProcessStageBase(Chain.StageBase):
             
             outputImagePath = self.GetOutputImagePath(im.GetFilePath())
             
-            if (Common.Utility.ShouldRun(self._properties["Force Run"], outputImagePath)):
+            if (Utility.ShouldRun(self._properties["Force Run"], outputImagePath)):
                 self.ProcessImage(im.GetFilePath(), outputImagePath)
             
-            cImages.append(Common.sfmImage(outputImagePath))
+            cImages.append(sfmImage(outputImagePath))
         
         if (self.__multipleImages):
             self.SetOutputValue("images",
-                                Common.sfmImages(path=self._properties["Output Image Path"],
+                                sfmImages(path=self._properties["Output Image Path"],
                                                  extension=self._properties["Image Extension"],
                                                  images=cImages,
                                                  focalPixelOverride=images.GetFocalPixelOverride()))

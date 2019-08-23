@@ -1,5 +1,5 @@
 # Copyright (c) 2012, Adam J. Rossi. All rights reserved. See README for licensing details.
-import Common, Chain, BundleAdjustment
+from catena import Common, Chain, BundleAdjustment
 import os
 
 class RadialUndistort(Chain.StageBase):

@@ -1,6 +1,6 @@
 # Copyright (c) 2012, Adam J. Rossi. All rights reserved. See README for licensing details.
 
-import Chain
+from catena import Chain
 import glob, os, shutil, sys, stat, time, subprocess, platform, string
 
 def IsWindows():

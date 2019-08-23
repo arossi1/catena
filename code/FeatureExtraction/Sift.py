@@ -1,5 +1,7 @@
 # Copyright (c) 2012, Adam J. Rossi. All rights reserved. See README for licensing details.
-import Chain, Common, FeatureExtraction
+from catena import Chain, Common
+from KeypointDescriptors import KeypointDescriptors
+from KeypointDescriptorFileLowe import KeypointDescriptorFileLowe
 from KeypointDescriptorFileVLFeat import KeypointDescriptorFileVLFeat
 import os, string
 import threading, multiprocessing
@@ -29,7 +31,7 @@ class Sift(Chain.StageBase):
         return {"images":(0,Common.sfmImages)}
     
     def GetOutputInterface(self):
-        return {"keypointDescriptors":FeatureExtraction.KeypointDescriptors}
+        return {"keypointDescriptors":KeypointDescriptors}
     
     
     class Worker(threading.Thread):
@@ -69,11 +71,11 @@ class Sift(Chain.StageBase):
                                              argsPattern % (im.GetFilePath(),keypointDescriptorFile))
                     
                     vlkd = KeypointDescriptorFileVLFeat(keypointDescriptorFile, True)
-                    kd = FeatureExtraction.KeypointDescriptorFileLowe(vlkd)
+                    kd = KeypointDescriptorFileLowe(vlkd)
                     kd.Write(vlkd.GetFilePath())
                     
                 else:
-                    kd = FeatureExtraction.KeypointDescriptorFileLowe(keypointDescriptorFile, 
+                    kd = KeypointDescriptorFileLowe(keypointDescriptorFile, 
                                                                       self.__parent._properties["Parse Descriptors"])
                 return kd
                     
@@ -98,7 +100,7 @@ class Sift(Chain.StageBase):
                     self.__parent.RunCommand(exeName,
                                              argsPattern % (im.GetFilePath(),keypointDescriptorFile))
                 
-                kd = FeatureExtraction.KeypointDescriptorFileLowe(keypointDescriptorFile, 
+                kd = KeypointDescriptorFileLowe(keypointDescriptorFile, 
                                                                   self.__parent._properties["Parse Descriptors"])
                 return kd
                 
@@ -127,5 +129,5 @@ class Sift(Chain.StageBase):
         if (len(errors)>0):
             raise Exception(string.join(errors,"\n"))
         
-        kds = FeatureExtraction.KeypointDescriptors(images.GetPath(), kds)
+        kds = KeypointDescriptors(images.GetPath(), kds)
         self.SetOutputValue("keypointDescriptors", kds)        

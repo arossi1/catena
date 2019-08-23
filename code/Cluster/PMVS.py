@@ -1,5 +1,8 @@
 # Copyright (c) 2012, Adam J. Rossi. All rights reserved. See README for licensing details.
-import Common, Chain, BundleAdjustment, Cluster
+from catena import Common, Chain, BundleAdjustment
+from PlyFile import PlyFile
+from PatchFile import PatchFile
+from PsetFile import PsetFile
 import os, sys, multiprocessing
 
 class PMVS(Chain.StageBase):
@@ -108,9 +111,9 @@ class PMVS(Chain.StageBase):
                 "images":(0,Common.sfmImages)}
     
     def GetOutputInterface(self):
-        return {"model":Cluster.PlyFile,
-                "patch":Cluster.PatchFile,
-                "pset":Cluster.PsetFile}
+        return {"model":PlyFile,
+                "patch":PatchFile,
+                "pset":PsetFile}
                 
         
     def WriteOptionsFile(self, outputPath, numImages):
@@ -174,7 +177,7 @@ class PMVS(Chain.StageBase):
                                                        optionsFileName))
         
         
-        self.SetOutputValue("model", Cluster.PlyFile(modelFile))
-        self.SetOutputValue("patch", Cluster.PatchFile(patchFile))
-        self.SetOutputValue("pset", Cluster.PsetFile(psetFile))
+        self.SetOutputValue("model", PlyFile(modelFile))
+        self.SetOutputValue("patch", PatchFile(patchFile))
+        self.SetOutputValue("pset", PsetFile(psetFile))
 

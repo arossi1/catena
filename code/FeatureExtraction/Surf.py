@@ -1,5 +1,7 @@
 # Copyright (c) 2012, Adam J. Rossi. All rights reserved. See README for licensing details.
-import Chain, Common, FeatureExtraction
+from catena import Chain, Common
+from KeypointDescriptors import KeypointDescriptors
+from KeypointDescriptorFileLowe import KeypointDescriptorFileLowe 
 import os, math
 
 class Surf(Chain.StageBase):
@@ -27,7 +29,7 @@ class Surf(Chain.StageBase):
         return {"images":(0,Common.sfmImages)}
     
     def GetOutputInterface(self):
-        return {"keypointDescriptors":FeatureExtraction.KeypointDescriptors}
+        return {"keypointDescriptors":KeypointDescriptors}
 
     def Execute(self):
         images = self.GetInputStageValue(0, "images")
@@ -56,18 +58,18 @@ class Surf(Chain.StageBase):
                     
                     descr = [int((x-MIN_DESC_VAL)*CONV_FACTOR) for x in descriptor]
 
-                    l.append(FeatureExtraction.KeypointDescriptor(keypoints[i][0][1],
-                                                                  keypoints[i][0][0],
-                                                                  keypoints[i][2],
-                                                                  math.radians(keypoints[i][3]),
-                                                                  descr))
+                    l.append(KeypointDescriptor(keypoints[i][0][1],
+                                                keypoints[i][0][0],
+                                                keypoints[i][2],
+                                                math.radians(keypoints[i][3]),
+                                                descr))
                 
-                kdfl = FeatureExtraction.KeypointDescriptorFileLowe(l)
+                kdfl = KeypointDescriptorFileLowe(l)
                 kdfl.Write(keypointDescriptorFile)
-                kdfl = FeatureExtraction.KeypointDescriptorFileLowe(keypointDescriptorFile, False)
+                kdfl = KeypointDescriptorFileLowe(keypointDescriptorFile, False)
                 kds.append(kdfl)
         
-        kds = FeatureExtraction.KeypointDescriptors(images.GetPath(), kds, False)
+        kds = KeypointDescriptors(images.GetPath(), kds, False)
         self.SetOutputValue("keypointDescriptors", kds)
 
         

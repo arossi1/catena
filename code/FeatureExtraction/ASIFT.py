@@ -1,5 +1,7 @@
 # Copyright (c) 2012, Adam J. Rossi. All rights reserved. See README for licensing details.
-import Chain, Common, FeatureExtraction
+from catena import Chain, Common
+from KeypointDescriptors import KeypointDescriptors
+from KeypointDescriptorFileLowe import KeypointDescriptorFileLowe
 import os
 
 class ASIFT(Chain.StageBase):
@@ -24,7 +26,7 @@ class ASIFT(Chain.StageBase):
         return {"images":(0,Common.sfmImages)}
     
     def GetOutputInterface(self):
-        return {"keypointDescriptors":FeatureExtraction.KeypointDescriptors}
+        return {"keypointDescriptors":KeypointDescriptors}
 
     def Execute(self):
         images = self.GetInputStageValue(0, "images")
@@ -47,11 +49,11 @@ class ASIFT(Chain.StageBase):
                                                            self._properties["Number of Tilts"],
                                                            ds))
             
-            kd = FeatureExtraction.KeypointDescriptorFileLowe(keypointDescriptorFile, False)
+            kd = KeypointDescriptorFileLowe(keypointDescriptorFile, False)
             kds.append(kd)
                 
         
-        kds = FeatureExtraction.KeypointDescriptors(images.GetPath(), kds)
+        kds = KeypointDescriptors(images.GetPath(), kds)
         self.SetOutputValue("keypointDescriptors", kds)
 
         

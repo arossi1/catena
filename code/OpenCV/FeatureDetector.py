@@ -1,5 +1,5 @@
 # Copyright (c) 2014, Adam J. Rossi. All rights reserved. See README for licensing details.
-import Chain, Common
+from catena import Chain, Common
 import Types
 import os, string
 import cv2

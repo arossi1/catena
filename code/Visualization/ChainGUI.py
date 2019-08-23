@@ -2,7 +2,7 @@
 import sys, os, copy, collections, math
 sys.path.append(os.path.abspath("."))
 from PySide import QtCore, QtGui
-import Chain, Sources, Common
+from catena import Chain, Sources, Common
 
     
 ############################################################################### 

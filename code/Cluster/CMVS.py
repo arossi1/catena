@@ -1,5 +1,8 @@
 # Copyright (c) 2012, Adam J. Rossi. All rights reserved. See README for licensing details.
-import Common, Chain, BundleAdjustment, Cluster
+from catena import Common, Chain, BundleAdjustment
+from VisFile import VisFile
+from ClusterFile import ClusterFile
+from PlyFile import PlyFile 
 import os, multiprocessing
 
 class CMVS(Chain.StageBase):
@@ -23,9 +26,9 @@ class CMVS(Chain.StageBase):
     def GetOutputInterface(self):
         return {"bundleFile":BundleAdjustment.BundleFile,
                 "images":Common.sfmImages,
-                "visFile":Cluster.VisFile,
-                "clusterFile":Cluster.ClusterFile,
-                "cameraCentersAll":Cluster.PlyFile}
+                "visFile":VisFile,
+                "clusterFile":ClusterFile,
+                "cameraCentersAll":PlyFile}
 
     def Process(self, pmvsPath, numImages):
         pmvsPathParent, pmvsDir = os.path.split(pmvsPath)
@@ -58,7 +61,7 @@ class CMVS(Chain.StageBase):
         
         self.SetOutputValue("bundleFile", bundleFile)
         self.SetOutputValue("images", images)
-        self.SetOutputValue("visFile", Cluster.VisFile(visFile))
-        self.SetOutputValue("clusterFile", Cluster.ClusterFile(clusterFile))
-        self.SetOutputValue("cameraCentersAll", Cluster.PlyFile(cameraCentersAll))
+        self.SetOutputValue("visFile", VisFile(visFile))
+        self.SetOutputValue("clusterFile", ClusterFile(clusterFile))
+        self.SetOutputValue("cameraCentersAll", PlyFile(cameraCentersAll))
 
