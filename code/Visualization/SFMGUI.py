@@ -2,8 +2,7 @@
 import os, glob
 
 from PyQt4 import QtCore, QtGui, QtXml
-import BundleAdjustment
-import Common
+from catena import BundleAdjustment, Common
 import Dialogs
 
 
