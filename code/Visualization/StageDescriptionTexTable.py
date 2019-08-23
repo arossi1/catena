@@ -1,7 +1,7 @@
 # Copyright (c) 2014, Adam J. Rossi. All rights reserved. See README for licensing details.
 import sys, os
 sys.path.append(os.path.abspath("."))
-import Chain
+from catena import Chain
 
 def typeString(t):
     return str(t)[7:-2]
