@@ -3,8 +3,8 @@ import os, glob, math, thread
 
 from PyQt4 import QtCore, QtGui, QtXml
 from PyQt4.QtCore import pyqtSlot,pyqtSignal
-import Chain # Chain must be imported first, requirement of registry
-import BundleAdjustment, Common
+from catena import Chain # Chain must be imported first, requirement of registry
+from catena import BundleAdjustment, Common
 
 
 def GetAbsImagePath(fileName):
