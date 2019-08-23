@@ -86,7 +86,7 @@ class Bundler(Chain.StageBase):
         
     
     def GetInputInterface(self):
-        return {"keyMatches":(0,FeatureMatches.KeyMatches),
+        return {"keyMatches":(0,FeatureMatch.KeyMatches),
                 "images":(1,Common.sfmImages)}
     
     def GetOutputInterface(self):
