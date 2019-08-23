@@ -4,7 +4,6 @@ import Types
 import os, string
 import cv2
 import numpy
-import numpy.numarray
 
 class FeatureDetector(Chain.StageBase):
 
