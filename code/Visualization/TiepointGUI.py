@@ -2,7 +2,7 @@
 import os, glob
 
 from PyQt4 import QtCore, QtGui, QtXml
-import Common
+from catena import Common
 import Dialogs
 
 
