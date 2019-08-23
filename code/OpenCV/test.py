@@ -1,7 +1,6 @@
 # Copyright (c) 2014, Adam J. Rossi. All rights reserved. See README for licensing details.
 import os
-from catena import Chain
-from catena import Sources, OpenCV
+from catena import Chain, Sources
 
 if __name__=="__main__":
     imagePath = os.path.abspath("../Datasets/ET")
