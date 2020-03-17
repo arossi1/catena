@@ -1,6 +1,7 @@
 # Copyright (c) 2012, Adam J. Rossi. All rights reserved. See README for licensing details.
 import os, glob, string
-import sfmImage, Utility
+from sfmImage import sfmImage
+import Utility
 
 
 class sfmImages:
