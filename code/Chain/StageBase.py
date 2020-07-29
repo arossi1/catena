@@ -67,25 +67,25 @@ class StageBase:
         return self.__stageDoc
         
     def GetPropertyDescription(self, name):
-        if (name in list(self.__parameterDoc.keys())):
+        if (name in self.__parameterDoc.keys()):
             return self.__parameterDoc[name]
         else:
-            raise Exception("Property does not exist: " + name)
+            raise Exception("Property does not exist: {}".format(name))
         
     def SetPropertyDescription(self, name, desc):
         self.__parameterDoc[name] = desc
         
     def GetProperty(self, name):
-        if (name in list(self._properties.keys())):
+        if (name in self._properties.keys()):
             return self._properties[name]
         else:
-            raise Exception("Property does not exist: " + name)
+            raise Exception("Property does not exist: {}".format(name))
         
     def SetProperty(self, name, val):
-        if (name in list(self._properties.keys())):
+        if (name in self._properties.keys()):
             self._properties[name] = val
         else:
-            raise Exception("Property does not exist: " + name)
+            raise Exception("Property does not exist: {}".format(name))
 
     def __GetInputStagesInterfaces(self):
         # return list of dictionaries that represent the input stages' interface
@@ -122,7 +122,7 @@ class StageBase:
         
         myInputInterface = self.GetInputInterface()
         if (myInputInterface != None):
-            for kv in list(myInputInterface.items()):
+            for kv in myInputInterface.items():
                 
                 try:
                     inputName,(inputIndex,inputType) = kv
@@ -168,11 +168,11 @@ class StageBase:
     def __InitializeOutputCache(self):
         self.__outputCache = {}
         if (self.GetOutputInterface()!=None):
-            for k in list(self.GetOutputInterface().keys()):
+            for k in self.GetOutputInterface().keys():
                 self.__outputCache[k] = None
             
     def __ValidateCompleteOutputCache(self):
-        for k,v in list(self.__outputCache.items()):
+        for k,v in self.__outputCache.items():
             if (v==None):
                 raise Exception("[%s::__ValidateCompleteOutputCache] Developer error, output parameter (%s) not filled" % \
                                 (self.__class__.__name__,k))

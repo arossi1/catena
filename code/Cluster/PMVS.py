@@ -125,7 +125,7 @@ class PMVS(Chain.StageBase):
             
         
         # options based on stage properties
-        for propName in list(self._properties.keys()):
+        for propName in self._properties.keys():
             if (propName=="Force Run"):continue
             
             if (self._properties[propName] != None):

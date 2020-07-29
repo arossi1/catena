@@ -175,7 +175,7 @@ class TiepointGUI(QtGui.QMainWindow):
     def loadImageWidgets(self, iwPerRow=DEFAULT_IMAGES_PER_ROW):
 
         # clear existing widgets
-        l = list(self._imageWidgets.values())
+        l = self._imageWidgets.values()
         self._imageWidgets = {}
         while (self._imageWidgetLayout.count() > 0):
             i = self._imageWidgetLayout.takeAt(0)
@@ -200,7 +200,7 @@ class TiepointGUI(QtGui.QMainWindow):
             if (column==0): row+=1
             
     def tiepointChangedSlot(self, point):
-        for iw in list(self._imageWidgets.values()):
+        for iw in self._imageWidgets.values():
             iw.clearHighlight()
             iw.removePoints()
         

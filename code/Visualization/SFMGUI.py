@@ -203,7 +203,7 @@ class SFMgui(QtGui.QMainWindow):
     def loadImageWidgets(self, iwPerRow=DEFAULT_IMAGES_PER_ROW):
 
         # clear existing widgets
-        l = list(self._imageWidgets.values())
+        l = self._imageWidgets.values()
         self._imageWidgets = {}
         while (self._imageWidgetLayout.count() > 0):
             i = self._imageWidgetLayout.takeAt(0)

@@ -65,7 +65,7 @@ class FeatureDetector(Chain.StageBase):
         return props
     
     def __setStageProperties(self, props):
-        for k in list(props.keys()):
+        for k in props.keys():
             self._properties[k] = props[k]
 
     def __intializeOCVProperties(self, d, label):   
@@ -92,7 +92,7 @@ class FeatureDetector(Chain.StageBase):
                 raise Exception("Unknown property type: %s,%s,%d" % (f,p,detect.paramType(p)))
             
     def __setOCVProperties(self, d, label):
-        for k in list(self._properties.keys()):
+        for k in self._properties.keys():
             if (k.startswith(label+":")):
                 propName = k[len(label)+1:]
                 if (self.__ocvPropertyType[k]=="Int"):

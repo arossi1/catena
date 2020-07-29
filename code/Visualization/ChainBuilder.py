@@ -247,7 +247,7 @@ class StageItem(QtGui.QGraphicsPolygonItem):
 ############################################################################### 
 class StageScene(QtGui.QGraphicsScene):
     
-    InsertItem, InsertLine, InsertText, MoveItem  = list(range(4))
+    InsertItem, InsertLine, InsertText, MoveItem  = range(4)
     
     def __init__(self, parent=None):
         QtGui.QGraphicsScene.__init__(self, -400, -400, 800, 800, parent)
@@ -354,7 +354,7 @@ class StageScene(QtGui.QGraphicsScene):
             stages[stage] = si
             
         #link
-        for stage in list(stages.keys()):
+        for stage in stages.keys():
             for outputStage in stage.GetOutputStages():
                 arrow = Arrow(stages[stage], stages[outputStage])
                 arrow.setColor(QtCore.Qt.black)
@@ -506,7 +506,7 @@ class StagePropertyEditor(QtGui.QWidget):
             s += "  (None)\n"
         else:
             inputInterface = []
-            for kv in list(self.__stageObject.GetInputInterface().items()):    
+            for kv in self.__stageObject.GetInputInterface().items():
                 try:
                     inputName,(inputIndex,inputType) = kv
                     inputInterface.append((inputIndex,inputType.__name__))
@@ -523,7 +523,7 @@ class StagePropertyEditor(QtGui.QWidget):
             s += "  (None)\n"
         else:
             outputInterface = []
-            for kv in list(self.__stageObject.GetOutputInterface().items()):    
+            for kv in self.__stageObject.GetOutputInterface().items():
                 try:
                     outputName,outputType = kv
                     outputInterface.append(outputType.__name__)                    

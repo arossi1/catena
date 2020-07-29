@@ -19,7 +19,7 @@ class TapPoint(Chain.StageBase):
             raise Exception("TapPoint stage must have only one input stage")
 
         inputInterface = {}
-        for valName,valType in list(self.GetInputStages()[0].GetOutputInterface().items()):
+        for valName,valType in self.GetInputStages()[0].GetOutputInterface().items():
             inputInterface[valName] = (0,valType)
         return inputInterface
     
@@ -30,14 +30,14 @@ class TapPoint(Chain.StageBase):
 
         # get output values of input stage
         vals = {}
-        for valName,valType in list(self.GetInputStages()[0].GetOutputInterface().items()):
+        for valName,valType in self.GetInputStages()[0].GetOutputInterface().items():
             vals[valName] = self.GetInputStageValue(0,valName)
         
         self.StartProcess()
 
         # write values and set output values (pass-through)
         Chain.Analyze.WriteStatus("")
-        for valName,valType in list(self.GetInputStages()[0].GetOutputInterface().items()):
+        for valName,valType in self.GetInputStages()[0].GetOutputInterface().items():
 
             Chain.Analyze.WriteStatus(valName+"\n")
 
@@ -50,9 +50,4 @@ class TapPoint(Chain.StageBase):
             Chain.Analyze.WriteStatus("")
 
             self.SetOutputValue(valName, vals[valName])
-
-        
-
-        
-
-        
+      

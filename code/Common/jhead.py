@@ -75,7 +75,7 @@ class jheadInfo:
 
     def __str__(self):
         s = ""
-        for k,v in list(self.__dict__.items()):
+        for k,v in self.__dict__.items():
             s += "%s: %s\n" % (k,v)
         return s
 

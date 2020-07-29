@@ -313,10 +313,10 @@ class ImageWidget(QtGui.QGraphicsScene):
         
         oif = stage.GetOutputInterface()
 
-        if ("image" in list(oif.keys())):    
+        if ("image" in oif.keys()):    
             outputName = "image"
             numImages = 1
-        elif ("images" in list(oif.keys())): 
+        elif ("images" in oif.keys()):
             outputName = "images"
             numImages = len(stage.GetOutput()["images"].GetImages())
         else: 
@@ -614,7 +614,7 @@ class PropertyEditor(QtGui.QWidget):
         self.stagePropertiesView.setColumnCount(2)
         
         propWildcards = {}
-        for k in list(self.__propRanges.keys()):
+        for k in self.__propRanges.keys():
             if ("*" in k):
                 propWildcards[k.replace("*","")] = self.__propRanges[k]
         
@@ -628,7 +628,7 @@ class PropertyEditor(QtGui.QWidget):
             if (k in self.__propRanges):
                 propRange = self.__propRanges[k]
             else:
-                for wck in list(propWildcards.keys()):
+                for wck in propWildcards.keys():
                     if (wck in k):
                         propRange = propWildcards[wck]
             
@@ -723,7 +723,7 @@ class PropertyEditor(QtGui.QWidget):
             s += "  (None)\n"
         else:
             inputInterface = []
-            for kv in list(self.__stage.GetInputInterface().items()):    
+            for kv in self.__stage.GetInputInterface().items():
                 try:
                     inputName,(inputIndex,inputType) = kv
                     inputInterface.append((inputIndex,inputType.__name__))
@@ -743,7 +743,7 @@ class PropertyEditor(QtGui.QWidget):
             s += "  (None)\n"
         else:
             outputInterface = []
-            for kv in list(self.__stage.GetOutputInterface().items()):    
+            for kv in self.__stage.GetOutputInterface().items():    
                 try:
                     outputName,outputType = kv
                     outputInterface.append(outputType.__name__)                    
@@ -756,9 +756,9 @@ class PropertyEditor(QtGui.QWidget):
         self.interfaceLabel.setText(s)
         
     def valueChangedSlot(self, name, val):
-        props = list(self.__stage.GetPropertyMap().keys())
+        props = self.__stage.GetPropertyMap().keys()
         self.__stage.SetProperty(name,val)
-        if (props!=list(self.__stage.GetPropertyMap().keys())):
+        if (props!=self.__stage.GetPropertyMap().keys()):
             self.SetProperties()
         self.__propModifiedTimer.start()
         
@@ -939,7 +939,7 @@ class ChainGUI(QtGui.QMainWindow):
             forceRuns = {}
             for stage in Chain.StageRegistry.registry.GetStageInstances():
                 if (len(stage.GetOutputStages())==0): tails.append(stage)
-                if ("Force Run" in list(stage.GetPropertyMap().keys())):
+                if ("Force Run" in stage.GetPropertyMap().keys()):
                     forceRuns[stage] = stage.GetProperty("Force Run")            
             
             try:
@@ -951,7 +951,7 @@ class ChainGUI(QtGui.QMainWindow):
             
             finally:
                 # set all force runs to False as image views are initialized
-                for stage in list(forceRuns.keys()):
+                for stage in forceRuns.keys():
                     stage.SetProperty("Force Run", False)
                 
                 self.initializeVisualizations()
@@ -992,7 +992,7 @@ class ChainGUI(QtGui.QMainWindow):
             try: vis.refresh()
             except: pass
         
-        for pe in list(self.__propertyEditors.values()):
+        for pe in self.__propertyEditors.values():
             pe.SetProperties()
 
 
