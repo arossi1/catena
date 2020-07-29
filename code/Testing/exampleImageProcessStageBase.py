@@ -1,7 +1,7 @@
 # Copyright (c) 2014, Adam J. Rossi. All rights reserved. See README for licensing details.
 import sys, os, shutil
 sys.path.append(os.path.abspath("."))
-import Chain, Common, Sources
+from .. import Chain, Common, Sources
 
 #################################################################################
 class CopyImages(Common.ImageProcessStageBase):
@@ -40,7 +40,7 @@ class CopyImages(Common.ImageProcessStageBase):
         shutil.copy(inputImagePath, outputImagePath)
 
 
-#################################################################################
+################################################################################
         
 # input/output image path
 imagePath = os.path.abspath("../Datasets/ET")

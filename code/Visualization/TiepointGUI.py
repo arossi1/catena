@@ -3,8 +3,8 @@ import sys, os, glob
 sys.path.append(os.path.abspath(".."))
 
 from PyQt4 import QtCore, QtGui, QtXml
-import Common
-from . import Dialogs
+from catena.code import Common
+from catena.code.Visualization import Dialogs
 
 
 ###############################################################################

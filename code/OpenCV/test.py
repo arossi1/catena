@@ -1,8 +1,8 @@
 # Copyright (c) 2014, Adam J. Rossi. All rights reserved. See README for licensing details.
 import sys, os
 sys.path.append(os.path.abspath("."))
-import Chain
-import Sources, OpenCV
+from .. import Chain
+from .. import Sources, OpenCV
 
 imagePath = os.path.abspath("../Datasets/ET")
 imageSource = Sources.ImageSource(imagePath, "jpg")

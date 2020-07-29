@@ -1,8 +1,8 @@
 # Copyright (c) 2012, Adam J. Rossi. All rights reserved. See README for licensing details.
 import sys, os
 sys.path.append(os.path.abspath("."))
-import Chain # Chain must be imported first, requirement of registry
-import Sources, FeatureExtraction, FeatureMatch, BundleAdjustment, Cluster, Common
+from catena.code import Chain # Chain must be imported first, requirement of registry
+from catena.code import Sources, FeatureExtraction, FeatureMatch, BundleAdjustment, Cluster, Common
 
 
 def bundlerChain(imagePath):
@@ -51,9 +51,9 @@ def siftChains(imagePath):
     # SiftWin32 only on windows
     if (Common.Utility.OSName=="Windows"):
         print(Chain.Render(sift,"UnitTest-siftChains-SiftWin32-log.txt"))
-	
-	sift.SetProperty("Sift Method", "VLFeat")
-	print(Chain.Render(sift,"UnitTest-siftChains-VLFeat-log.txt"))
+    
+    sift.SetProperty("Sift Method", "VLFeat")
+    print(Chain.Render(sift,"UnitTest-siftChains-VLFeat-log.txt"))
 
     # daisy only on windows (note: this should not be the last test, as the descriptors are for ROIs)
     if (Common.Utility.OSName=="Windows"):

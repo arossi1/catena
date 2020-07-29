@@ -1,6 +1,6 @@
 # Copyright (c) 2012, Adam J. Rossi. All rights reserved. See README for licensing details.
 import os, glob, string
-import Common
+from .. import Common
 
 
 class sfmImages:

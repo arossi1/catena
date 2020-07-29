@@ -1,6 +1,6 @@
 # Copyright (c) 2014, Adam J. Rossi. All rights reserved. See README for licensing details.
-import Chain
-import Common
+from .. import Chain
+from .. import Common
 import random
 
 class ImageSubset(Chain.StageBase):

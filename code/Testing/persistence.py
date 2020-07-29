@@ -1,8 +1,8 @@
 # Copyright (c) 2012, Adam J. Rossi. All rights reserved. See README for licensing details.
 import sys, os
 sys.path.append(os.path.abspath("."))
-import Chain # Chain must be imported first, requirement of registry
-import Sources, FeatureExtraction, FeatureMatch, BundleAdjustment, Cluster
+from .. import Chain # Chain must be imported first, requirement of registry
+from .. import Sources, FeatureExtraction, FeatureMatch, BundleAdjustment, Cluster
 
 
 def sfmChainBuild(chainFilePath, imagePath):

@@ -1,5 +1,5 @@
 # Copyright (c) 2012, Adam J. Rossi. All rights reserved. See README for licensing details.
-import Chain, Common
+from .. import Chain, Common
 import os, collections
 
 class ImageProcessStageBase(Chain.StageBase):

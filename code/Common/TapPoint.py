@@ -1,5 +1,5 @@
 # Copyright (c) 2012, Adam J. Rossi. All rights reserved. See README for licensing details.
-import Chain
+from .. import Chain
 
 class TapPoint(Chain.StageBase):
 

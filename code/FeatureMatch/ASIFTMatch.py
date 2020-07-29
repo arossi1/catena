@@ -1,5 +1,5 @@
 # Copyright (c) 2012, Adam J. Rossi. All rights reserved. See README for licensing details.
-import Chain, Common, FeatureMatch, FeatureExtraction
+from .. import Chain, Common, FeatureMatch, FeatureExtraction
 import os
 
 class ASIFTMatch(Chain.StageBase):
@@ -35,7 +35,7 @@ class ASIFTMatch(Chain.StageBase):
                                                        Common.Utility.Quoted(matchesFile)),
                             cwd = os.path.split(matchesFile)[0])            
             
-    	keyMatches = FeatureMatch.KeyMatches(matchesFile, keypointDescriptors, self._properties["Parse Matches"])
+        keyMatches = FeatureMatch.KeyMatches(matchesFile, keypointDescriptors, self._properties["Parse Matches"])
         
         self.SetOutputValue("keyMatches", keyMatches)
 

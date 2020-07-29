@@ -1,6 +1,6 @@
 # Copyright (c) 2012, Adam J. Rossi. All rights reserved. See README for licensing details.
 
-import Chain
+from .. import Chain
 import glob, os, shutil, sys, stat, time, subprocess, platform, string
 
 def IsWindows():
@@ -125,7 +125,7 @@ def RunCommand(cmd, cwd=None, shell=True, printStdout=False, captureCout=False):
                          stdin=subprocess.PIPE, 
                          stdout=subprocess.PIPE, 
                          stderr=subprocess.PIPE, 
-                         cwd=cwd, shell=shell)
+                         cwd=cwd, shell=shell, text=True)
     
         
 
@@ -179,7 +179,7 @@ def RunCommand2(cmd, args=None, cwd=None, shell=False, printStdout=False, captur
                          stdin=subprocess.PIPE, 
                          stdout=subprocess.PIPE, 
                          stderr=subprocess.PIPE, 
-                         cwd=cwd, shell=shell)
+                         cwd=cwd, shell=shell, text=True)
 
     if (not captureCout):
         Chain.Analyze.ProcessStart()
