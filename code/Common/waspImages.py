@@ -1,6 +1,6 @@
 # Copyright (c) 2012, Adam J. Rossi. All rights reserved. See README for licensing details.
 import os, shutil, string
-import waspImage
+from . import waspImage
 
 
 class waspImages:
@@ -46,7 +46,7 @@ if __name__=="__main__":
     
     dst = r"C:\Documents and Settings\Adam Rossi\Desktop\thesis\root\Datasets\wasp_downtown_center_250\sets"
     for i,x in enumerate(wi.splitImages(20, 3)):
-        print i
+        print(i)
         dd = os.path.join(dst, str(i))
         if (not os.path.exists(dd)): os.makedirs(dd)
         x.copyImages(dd)

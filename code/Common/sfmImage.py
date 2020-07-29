@@ -1,6 +1,6 @@
 # Copyright (c) 2014, Adam J. Rossi. All rights reserved. See README for licensing details.
 import os
-import jhead, PILinfo
+from . import jhead, PILinfo
 
 
 class sfmImage:

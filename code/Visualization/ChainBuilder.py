@@ -1,5 +1,5 @@
 # Copyright (c) 2012, Adam J. Rossi. All rights reserved. See README for licensing details.
-import sys, os, glob, math, thread
+import sys, os, glob, math, _thread
 sys.path.append(os.path.abspath("."))
 #sys.path.append(os.path.abspath(".."))
 
@@ -247,7 +247,7 @@ class StageItem(QtGui.QGraphicsPolygonItem):
 ############################################################################### 
 class StageScene(QtGui.QGraphicsScene):
     
-    InsertItem, InsertLine, InsertText, MoveItem  = range(4)
+    InsertItem, InsertLine, InsertText, MoveItem  = list(range(4))
     
     def __init__(self, parent=None):
         QtGui.QGraphicsScene.__init__(self, -400, -400, 800, 800, parent)
@@ -354,7 +354,7 @@ class StageScene(QtGui.QGraphicsScene):
             stages[stage] = si
             
         #link
-        for stage in stages.keys():
+        for stage in list(stages.keys()):
             for outputStage in stage.GetOutputStages():
                 arrow = Arrow(stages[stage], stages[outputStage])
                 arrow.setColor(QtCore.Qt.black)
@@ -370,7 +370,7 @@ class StageScene(QtGui.QGraphicsScene):
         pt = self.sceneRect().topLeft()
         pt.setX(pt.x()+PAD)
         pt.setY(pt.y()+PAD)
-        for item in reversed(self.items()):
+        for item in reversed(list(self.items())):
             if (isinstance(item, StageItem)):
                 item.setPos(pt)
                 pt.setX(pt.x()+item.boundingRect().width())
@@ -443,16 +443,16 @@ class StagePropertyEditor(QtGui.QWidget):
     def GetWidgetForType(self, t, initVal, pd):
         if (t==type(0)):
             sb = QtGui.QSpinBox()
-            sb.setMinimum(-sys.maxint)
-            sb.setMaximum(sys.maxint)
+            sb.setMinimum(-sys.maxsize)
+            sb.setMaximum(sys.maxsize)
             sb.setValue(initVal)
             sb.installEventFilter(self)
             QtCore.QObject.connect(sb, QtCore.SIGNAL("valueChanged(int)"), self.valChangedSlot)
             return sb
         elif (t==type(0.0)):
             sb = QtGui.QDoubleSpinBox()
-            sb.setMinimum(-sys.maxint)
-            sb.setMaximum(sys.maxint)
+            sb.setMinimum(-sys.maxsize)
+            sb.setMaximum(sys.maxsize)
             sb.setValue(initVal)
             sb.installEventFilter(self)
             QtCore.QObject.connect(sb, QtCore.SIGNAL("valueChanged(double)"), self.valChangedSlot)
@@ -506,7 +506,7 @@ class StagePropertyEditor(QtGui.QWidget):
             s += "  (None)\n"
         else:
             inputInterface = []
-            for kv in self.__stageObject.GetInputInterface().items():    
+            for kv in list(self.__stageObject.GetInputInterface().items()):    
                 try:
                     inputName,(inputIndex,inputType) = kv
                     inputInterface.append((inputIndex,inputType.__name__))
@@ -523,7 +523,7 @@ class StagePropertyEditor(QtGui.QWidget):
             s += "  (None)\n"
         else:
             outputInterface = []
-            for kv in self.__stageObject.GetOutputInterface().items():    
+            for kv in list(self.__stageObject.GetOutputInterface().items()):    
                 try:
                     outputName,outputType = kv
                     outputInterface.append(outputType.__name__)                    
@@ -573,7 +573,7 @@ class StagePropertyEditor(QtGui.QWidget):
         self.stagePropertiesView.setCurrentCell(0,0)
     
     def propertyItemDataChangedSlot(self, item):
-        print item       
+        print(item)       
 
     
     def itemSelectionChanged(self):
@@ -683,7 +683,7 @@ class ChainBuilderGUI(QtGui.QMainWindow):
         self.stageScene.setMode(self.pointerTypeGroup.checkedId())
         
     def renderGroupClicked(self, i):
-        if (i==0): print "render"
+        if (i==0): print("render")
         elif (i==1): self.stageScene.autoArrangeStages()
 
     def createMenu(self):
@@ -730,11 +730,11 @@ class ChainBuilderGUI(QtGui.QMainWindow):
 
     def renderRequested(self, stageObject):
         self.statusBox.clear()
-        thread.start_new_thread(self.performRender, tuple([stageObject]))
+        _thread.start_new_thread(self.performRender, tuple([stageObject]))
         
     def performRender(self, stageObject):
-        print
-        print Chain.Render(stageObject,"log.txt")
+        print()
+        print(Chain.Render(stageObject,"log.txt"))
 
 
 

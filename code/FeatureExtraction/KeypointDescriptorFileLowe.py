@@ -1,8 +1,8 @@
 # Copyright (c) 2012, Adam J. Rossi. All rights reserved. See README for licensing details.
 
 import string
-from KeypointDescriptorFile import KeypointDescriptorFile
-from KeypointDescriptor import KeypointDescriptor
+from .KeypointDescriptorFile import KeypointDescriptorFile
+from .KeypointDescriptor import KeypointDescriptor
 
 
 class KeypointDescriptorFileLowe(KeypointDescriptorFile):

@@ -43,8 +43,8 @@ def GetFileSize(path):
     return os.stat(path)[stat.ST_SIZE]
 
 def InvalidString(): return ""
-def InvalidInt():    return -sys.maxint
-def InvalidFloat():  return float(-sys.maxint)
+def InvalidInt():    return -sys.maxsize
+def InvalidFloat():  return float(-sys.maxsize)
 
 def Quoted(s):          return "\"%s\""%s    
 def CommandArgs(*args): 
@@ -94,7 +94,7 @@ def GetExePath(moduleFile, exe, checkExistence=True):
         libDir = GetAbsoluteFilePath(moduleFile,
                                      os.path.join(PlatformName,"lib"))
         if (os.path.exists(libDir)):
-            if (not os.environ.has_key("LD_LIBRARY_PATH") or os.environ["LD_LIBRARY_PATH"]==""):
+            if ("LD_LIBRARY_PATH" not in os.environ or os.environ["LD_LIBRARY_PATH"]==""):
                 os.environ["LD_LIBRARY_PATH"] = "."
             
             if (libDir not in os.environ["LD_LIBRARY_PATH"]):
@@ -146,7 +146,7 @@ def RunCommand(cmd, cwd=None, shell=True, printStdout=False, captureCout=False):
         if (captureCout):
             for l in p.stdout.readlines():
                 stdoutLines.append(l.strip())
-                if (printStdout): print l.strip()
+                if (printStdout): print(l.strip())
                 
         else:
             for l in p.stdout.readlines():
@@ -192,7 +192,7 @@ def RunCommand2(cmd, args=None, cwd=None, shell=False, printStdout=False, captur
         if (captureCout):
             for l in p.stdout.readlines():
                 stdoutLines.append(l.strip())
-                if (printStdout): print l.strip()
+                if (printStdout): print(l.strip())
                 
         else:
             for l in p.stdout.readlines():

@@ -36,7 +36,8 @@ class ImageSource(Chain.StageBase):
                                           focalPixelOverride=self._properties["Focal Pixel Override"])
             else:
                 
-                def visit((imageList,ext),dirname,names):
+                def visit(xxx_todo_changeme,dirname,names):
+                    (imageList,ext) = xxx_todo_changeme
                     for n in names:
                         if (os.path.splitext(n)[1][1:]==ext):
                             imageList.append(Common.sfmImage(os.path.join(dirname,n)))

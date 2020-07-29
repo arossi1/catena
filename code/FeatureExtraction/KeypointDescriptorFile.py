@@ -1,6 +1,6 @@
 # Copyright (c) 2012, Adam J. Rossi. All rights reserved. See README for licensing details.
 
-from KeypointDescriptor import KeypointDescriptor
+from .KeypointDescriptor import KeypointDescriptor
 import sys, os, string, copy
 
 class KeypointDescriptorFile:
@@ -45,8 +45,8 @@ class KeypointDescriptorFile:
         matches = []
         
         for kd1 in self._keypointDescriptors:
-            minDistance1 = sys.maxint
-            minDistance2 = sys.maxint
+            minDistance1 = sys.maxsize
+            minDistance2 = sys.maxsize
             
             for kd2 in kdf._keypointDescriptors:
                 d = kd1.DistanceSquared(kd2)

@@ -1,8 +1,8 @@
 # Copyright (c) 2012, Adam J. Rossi. All rights reserved. See README for licensing details.
 
 import struct, array, os
-from KeypointDescriptorFile import KeypointDescriptorFile
-from KeypointDescriptor import KeypointDescriptor
+from .KeypointDescriptorFile import KeypointDescriptorFile
+from .KeypointDescriptor import KeypointDescriptor
 
 
 class DaisyOutput:

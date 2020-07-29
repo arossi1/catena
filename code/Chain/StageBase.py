@@ -1,10 +1,10 @@
 # Copyright (c) 2014, Adam J. Rossi. All rights reserved. See README for licensing details.
 import sys, uuid, string, os
-import Chain, Analyze
+from . import Chain, Analyze
 
 class StageBase:
     
-    MAX_INPUT_STAGES = sys.maxint
+    MAX_INPUT_STAGES = sys.maxsize
     
     def __init__(self, inputStages=None, stageDoc="", parameterDoc=None):
         self.__stageDoc = stageDoc
@@ -18,7 +18,7 @@ class StageBase:
         self._uid = uuid.uuid1()
         if (inputStages!=None):
             self.AddInputStage(inputStages)
-        import StageRegistry
+        from . import StageRegistry
         if ("registry" in dir(StageRegistry) and 
             StageRegistry.registry.IsInitialized()):
             StageRegistry.registry.AddInstance(self)
@@ -67,7 +67,7 @@ class StageBase:
         return self.__stageDoc
         
     def GetPropertyDescription(self, name):
-        if (name in self.__parameterDoc.keys()):
+        if (name in list(self.__parameterDoc.keys())):
             return self.__parameterDoc[name]
         else:
             raise Exception("Property does not exist: " + name)
@@ -76,13 +76,13 @@ class StageBase:
         self.__parameterDoc[name] = desc
         
     def GetProperty(self, name):
-        if (name in self._properties.keys()):
+        if (name in list(self._properties.keys())):
             return self._properties[name]
         else:
             raise Exception("Property does not exist: " + name)
         
     def SetProperty(self, name, val):
-        if (name in self._properties.keys()):
+        if (name in list(self._properties.keys())):
             self._properties[name] = val
         else:
             raise Exception("Property does not exist: " + name)
@@ -122,7 +122,7 @@ class StageBase:
         
         myInputInterface = self.GetInputInterface()
         if (myInputInterface != None):
-            for kv in myInputInterface.items():
+            for kv in list(myInputInterface.items()):
                 
                 try:
                     inputName,(inputIndex,inputType) = kv
@@ -132,7 +132,7 @@ class StageBase:
                 if (isinstance(inputIndex,tuple)):
                     for iIndex in range(inputIndex[0], inputIndex[0]+inputIndex[1]):
                         if (iIndex < self.NumInputStages()):  # check only valid input stage indices
-                            if (not self.__inputStages[iIndex].GetOutputInterface().has_key(inputName)):
+                            if (inputName not in self.__inputStages[iIndex].GetOutputInterface()):
                                 raise Exception("[%s:Prepare] Input stage %d does not include %s:%s" % \
                                                 (self.__class__.__name__,iIndex,inputName,inputType))
                                 
@@ -148,7 +148,7 @@ class StageBase:
                         raise Exception("[%s:Prepare] Expected input stage at index %d" % \
                                         (self.__class__.__name__,inputIndex))
                         
-                    if (not self.__inputStages[inputIndex].GetOutputInterface().has_key(inputName)):
+                    if (inputName not in self.__inputStages[inputIndex].GetOutputInterface()):
                         raise Exception("[%s:Prepare] Input stage %d does not include %s:%s" % \
                                         (self.__class__.__name__,inputIndex,inputName,inputType))
                         
@@ -168,11 +168,11 @@ class StageBase:
     def __InitializeOutputCache(self):
         self.__outputCache = {}
         if (self.GetOutputInterface()!=None):
-            for k in self.GetOutputInterface().keys():
+            for k in list(self.GetOutputInterface().keys()):
                 self.__outputCache[k] = None
             
     def __ValidateCompleteOutputCache(self):
-        for k,v in self.__outputCache.items():
+        for k,v in list(self.__outputCache.items()):
             if (v==None):
                 raise Exception("[%s::__ValidateCompleteOutputCache] Developer error, output parameter (%s) not filled" % \
                                 (self.__class__.__name__,k))
@@ -203,7 +203,7 @@ class StageBase:
     
     def GetOutputByKey(self, key):
         
-        if (not self.__outputCache.has_key(key)):
+        if (key not in self.__outputCache):
             raise Exception("[%s:GetOutputByKey] Invalid output key: %s" % \
                             (self.__class__.__name__,key))
         
@@ -216,14 +216,14 @@ class StageBase:
         
         outputs = self.GetInputStages()[index].GetOutput()
         
-        if (not outputs.has_key(key)):
+        if (key not in outputs):
             raise Exception("[%s:GetInputStageValue] Invalid input stage (%s) key: %s" % \
                             (self.__class__.__name__,self.GetInputStages()[index].__class__.__name__,key))
         
         return outputs[key]
     
     def SetOutputValue(self, key, value):
-        if (not self.__outputCache.has_key(key)):
+        if (key not in self.__outputCache):
             raise Exception("[%s:SetOutputValue] Unknown output parameters: %s" % \
                             (self.__class__.__name__,key))
         

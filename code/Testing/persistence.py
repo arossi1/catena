@@ -27,7 +27,7 @@ def sfmChainRestoreRender(chainFilePath):
     headStages, tailStages = Chain.StageRegistry.Load(chainFilePath)
 
     # render the tail stage (pmvs)
-    print Chain.Render(tailStages[0],"persistence.txt")
+    print(Chain.Render(tailStages[0],"persistence.txt"))
     
     
 if __name__=="__main__":

@@ -22,7 +22,7 @@ class Analyze:
     def WriteStatus(self, s):
         
         if (self._printProgress):
-            print s,
+            print(s, end=' ')
         if (self._log):
             self._log.flush()
             self._log.write(s)

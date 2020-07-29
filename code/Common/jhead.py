@@ -1,6 +1,6 @@
 # Copyright (c) 2012, Adam J. Rossi. All rights reserved. See README for licensing details.
 import os, sys
-import Utility
+from . import Utility
 
 class jheadInfo:
     
@@ -43,11 +43,11 @@ class jheadInfo:
     def GetCCDWidthInMM(self):
         
         try:
-            if (self.__dict__.has_key("CCD width") and
+            if ("CCD width" in self.__dict__ and
                 len(self.__dict__["CCD width"].split("mm"))==2):
                 return float(self.__dict__["CCD width"].split("mm")[0])
             else:
-                import CCDdatabase
+                from . import CCDdatabase
                 makeModel = "%s %s" % (self.GetCameraMake(), self.GetCameraModel())
                 return CCDdatabase.Instance.GetCameraCCDWidth(makeModel)
         except:
@@ -75,7 +75,7 @@ class jheadInfo:
 
     def __str__(self):
         s = ""
-        for k,v in self.__dict__.items():
+        for k,v in list(self.__dict__.items()):
             s += "%s: %s\n" % (k,v)
         return s
 

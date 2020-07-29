@@ -4,7 +4,7 @@ sys.path.append(os.path.abspath(".."))
 
 from PyQt4 import QtCore, QtGui, QtXml
 import Common
-import Dialogs
+from . import Dialogs
 
 
 ###############################################################################
@@ -175,7 +175,7 @@ class TiepointGUI(QtGui.QMainWindow):
     def loadImageWidgets(self, iwPerRow=DEFAULT_IMAGES_PER_ROW):
 
         # clear existing widgets
-        l = self._imageWidgets.values()
+        l = list(self._imageWidgets.values())
         self._imageWidgets = {}
         while (self._imageWidgetLayout.count() > 0):
             i = self._imageWidgetLayout.takeAt(0)
@@ -200,11 +200,11 @@ class TiepointGUI(QtGui.QMainWindow):
             if (column==0): row+=1
             
     def tiepointChangedSlot(self, point):
-        for iw in self._imageWidgets.values():
+        for iw in list(self._imageWidgets.values()):
             iw.clearHighlight()
             iw.removePoints()
         
-        print "(%f,%f) -> (%f,%f)" % tuple(point)
+        print("(%f,%f) -> (%f,%f)" % tuple(point))
         self._imageWidgets[self._images.GetImages()[0]].addPoint((point[0],point[1]))
         #self._imageWidgets[self._images.GetImages()[0]].setHighlight()
         

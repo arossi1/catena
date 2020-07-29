@@ -15,4 +15,4 @@ fm = OpenCV.FeatureMatcher(fd,
                            os.path.join(imagePath,"matches.txt"),
                            forceRun=True)
 
-print(Chain.Render(fm, 'openCV.txt'))
+print((Chain.Render(fm, 'openCV.txt')))

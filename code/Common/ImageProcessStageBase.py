@@ -23,9 +23,9 @@ class ImageProcessStageBase(Chain.StageBase):
         Chain.StageBase.__init__(self, inputStages, stageDoc, parameterDoc)
         
         if (isinstance(inputStages,collections.Iterable)):
-            self.__multipleImages = inputStages[0].GetOutputInterface().has_key("images")
+            self.__multipleImages = "images" in inputStages[0].GetOutputInterface()
         else:
-            self.__multipleImages = inputStages.GetOutputInterface().has_key("images")
+            self.__multipleImages = "images" in inputStages.GetOutputInterface()
         
         self._properties["Output Image Path"] = outputImagePath
         self._properties["Image Extension"] = imageExtension

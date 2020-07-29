@@ -51,4 +51,4 @@ imageSource = Sources.ImageSource(imagePath, "jpg")
 
 imageCopy = CopyImages(imageSource, "test-", imagePathOut, "jpg")
 
-print Chain.Render(imageCopy)
+print(Chain.Render(imageCopy))

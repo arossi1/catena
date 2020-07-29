@@ -26,7 +26,7 @@ def bundlerChain(imagePath):
         pmvs = Cluster.PMVS(prepCmvsPmvs, forceRun=True)
         
     # render chain
-    print Chain.Render(pmvs,"UnitTest-bundlerChain-log.txt")
+    print(Chain.Render(pmvs,"UnitTest-bundlerChain-log.txt"))
 
 
 def keymatchChains(imagePath):
@@ -36,7 +36,7 @@ def keymatchChains(imagePath):
     sift = FeatureExtraction.Sift(imageSource, False, "SiftHess")
     keyMatch = FeatureMatch.KeyMatch(sift, True, "KeyMatchFull", forceRun=True)
     
-    print Chain.Render(keyMatch,"UnitTest-keymatchChains-KeyMatchFull-log.txt")
+    print(Chain.Render(keyMatch,"UnitTest-keymatchChains-KeyMatchFull-log.txt"))
     
 #    keyMatch.SetProperty("Key Match Method", "KeyMatchGPU")
 #    print Chain.Render(keyMatch,"UnitTest-keymatchChains-KeyMatchGPU-log.txt")
@@ -50,19 +50,19 @@ def siftChains(imagePath):
     
     # SiftWin32 only on windows
     if (Common.Utility.OSName=="Windows"):
-        print Chain.Render(sift,"UnitTest-siftChains-SiftWin32-log.txt")
+        print(Chain.Render(sift,"UnitTest-siftChains-SiftWin32-log.txt"))
 	
 	sift.SetProperty("Sift Method", "VLFeat")
-	print Chain.Render(sift,"UnitTest-siftChains-VLFeat-log.txt")
+	print(Chain.Render(sift,"UnitTest-siftChains-VLFeat-log.txt"))
 
     # daisy only on windows (note: this should not be the last test, as the descriptors are for ROIs)
     if (Common.Utility.OSName=="Windows"):
         imageSource = Sources.ImageSource(imagePath, "jpg")
         daisy = FeatureExtraction.Daisy(imageSource, False, roi="0,0,50,50", forceRun=True)
-        print Chain.Render(daisy,"UnitTest-siftChains-daisy-log.txt")    
+        print(Chain.Render(daisy,"UnitTest-siftChains-daisy-log.txt"))    
     
     sift.SetProperty("Sift Method", "SiftHess")
-    print Chain.Render(sift,"UnitTest-siftChains-SiftHess-log.txt")
+    print(Chain.Render(sift,"UnitTest-siftChains-SiftHess-log.txt"))
 
 #    sift.SetProperty("Sift Method", "SiftGPU")
 #    print Chain.Render(sift,"UnitTest-siftChains-SiftGPU-log.txt")
@@ -74,7 +74,7 @@ def imageConvertChain(imagePath):
     
     imageSource = Sources.ImageSource(imagePath, "jpg")
     imageConvert = Sources.ImageConvert(imageSource, imagePath, "pgm")
-    print Chain.Render(imageConvert,"UnitTest-imageConvertChain-log.txt")
+    print(Chain.Render(imageConvert,"UnitTest-imageConvertChain-log.txt"))
 
 if __name__=="__main__":
     
@@ -86,9 +86,9 @@ if __name__=="__main__":
         keymatchChains(imagePath)
         bundlerChain(imagePath)
         
-        print "\n\nUnit Test PASSED"
+        print("\n\nUnit Test PASSED")
     
     except:
-        print "\n\nUnit Test FAILED"
+        print("\n\nUnit Test FAILED")
     
     

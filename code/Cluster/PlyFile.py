@@ -229,12 +229,12 @@ if __name__=="__main__":
         
         ply = PlyFile(r"E:\Adam\Datasets\ETsub\pmvs\models\pmvs_options.txt.ply")
         for en in ply.getElementNames():
-            print "%s, %d elements" % (en,ply.getNumElements(en))
+            print("%s, %d elements" % (en,ply.getNumElements(en)))
             for pn in ply.getPropertyNames(en):
-                print "  %s" % pn
+                print("  %s" % pn)
             
         
-        print ply.getData("vertex", ("x","y"))
+        print(ply.getData("vertex", ("x","y")))
 
     # np.matrix, typical of a column vector representation
     if (True):

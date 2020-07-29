@@ -1,6 +1,6 @@
 # Copyright (c) 2014, Adam J. Rossi. All rights reserved. See README for licensing details.
 import os, time
-import jhead
+from . import jhead
 
 class PILinfo(jhead.jheadInfo):
     

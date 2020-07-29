@@ -1,5 +1,5 @@
 # Copyright (c) 2012, Adam J. Rossi. All rights reserved. See README for licensing details.
-import Analyze
+from . import Analyze
 import traceback, sys
 
 def Render(lastStages, logFilePath=None):
@@ -16,7 +16,7 @@ def Render(lastStages, logFilePath=None):
         
         Analyze.PrintResults()
         return out
-    except Exception, e:
+    except Exception as e:
 #            exc_type, exc_value, exc_traceback = sys.exc_info()
         Analyze.WriteStatus(traceback.format_exc())            
 #            traceback.print_exception(exc_type, exc_value, exc_traceback, file=Analyze.GetLog())

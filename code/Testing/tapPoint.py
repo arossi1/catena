@@ -19,5 +19,5 @@ tap = Common.TapPoint(tap)
 sift = FeatureExtraction.Sift(tap, False, "SiftHess")
 
 # render chain
-print Chain.Render(sift,"tapPoint.txt")
+print(Chain.Render(sift,"tapPoint.txt"))
 

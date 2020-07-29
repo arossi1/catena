@@ -19,4 +19,4 @@ cmvs = Cluster.CMVS(prepCmvsPmvs)
 pmvs = Cluster.PMVS(cmvs)
 
 # render chain
-print Chain.Render(pmvs, "sfm.txt")
+print(Chain.Render(pmvs, "sfm.txt"))

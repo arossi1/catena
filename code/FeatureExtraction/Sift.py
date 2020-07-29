@@ -1,6 +1,6 @@
 # Copyright (c) 2012, Adam J. Rossi. All rights reserved. See README for licensing details.
 import Chain, Common, FeatureExtraction
-from KeypointDescriptorFileVLFeat import KeypointDescriptorFileVLFeat
+from .KeypointDescriptorFileVLFeat import KeypointDescriptorFileVLFeat
 import os, string
 import threading, multiprocessing
 
@@ -49,7 +49,7 @@ class Sift(Chain.StageBase):
                     i,im = self.__Q.get_nowait()                    
                     try:
                         self.__outputList[i] = self.process(im)
-                    except Exception,e:
+                    except Exception as e:
                         self.__errors.append(str(e))
                 except:
                     break

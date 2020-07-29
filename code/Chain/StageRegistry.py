@@ -38,7 +38,7 @@ class StageRegistry:
         stageObject.RemoveConnections()
         del self.__stageInstances[stageObject._uid]
         
-    def GetStageInstances(self): return self.__stageInstances.values()
+    def GetStageInstances(self): return list(self.__stageInstances.values())
         
     def IsInitialized(self): return self.__initialized
     
@@ -48,7 +48,7 @@ class StageRegistry:
         #  - dictionary of uid-> (<input stage uid's>)
         d1 = {}
         d2 = {}
-        for uidKey in self.__stageInstances.keys():
+        for uidKey in list(self.__stageInstances.keys()):
             d1[uidKey] = (self.__stageInstances[uidKey].GetPackageName(),
                           self.__stageInstances[uidKey].GetStageName(),
                           self.__stageInstances[uidKey]._properties)
@@ -71,17 +71,17 @@ class StageRegistry:
         
         # create instances
         stageInstances = {}
-        for uidKey in d1.keys():
+        for uidKey in list(d1.keys()):
             o = self.CreateInstance(d1[uidKey][0], d1[uidKey][1])
             o._uid = uidKey
-            for propName in d1[uidKey][2].keys():
+            for propName in list(d1[uidKey][2].keys()):
                 o.SetProperty(propName, d1[uidKey][2][propName])
             stageInstances[o._uid] = o
             
         self.__stageInstances = stageInstances
         
         # link
-        for uidKey in d2.keys():
+        for uidKey in list(d2.keys()):
             stageInstances[uidKey].AddInputStage([stageInstances[uid] for uid in d2[uidKey]])
             
         
@@ -92,7 +92,7 @@ class StageRegistry:
     def GetHeadTailStages(self):
         headStages = []
         tailStages = []
-        for stage in self.__stageInstances.values():
+        for stage in list(self.__stageInstances.values()):
             if (len(stage.GetInputStages())==0):
                 headStages.append(stage)
             if (len(stage.GetOutputStages())==0):
@@ -102,17 +102,17 @@ class StageRegistry:
     
     def __print(self):
         for package in self.GetPackages():
-            print "%s" % package
+            print("%s" % package)
             for stage in self.GetStages(package):
-                print " %s" % stage
+                print(" %s" % stage)
                 for property in sorted(self.GetStagePropertyMap(package, stage).keys()):
-                    print "  %s: %s (%s)" % (property, 
+                    print("  %s: %s (%s)" % (property, 
                                              self.GetStagePropertyDescription(package,stage,property), 
-                                             str(self.GetStagePropertyType(package,stage,property)))
+                                             str(self.GetStagePropertyType(package,stage,property))))
         
     def __populate(self):
         
-        from StageBase import StageBase
+        from .StageBase import StageBase
         import os
         
         #curPath = os.path.abspath(".")
@@ -128,10 +128,10 @@ class StageRegistry:
                         try:
                             co = getattr(mod, className)
                             if (issubclass(co, StageBase) and co!=StageBase):
-                                if (not self.__regDict.has_key(packageName)): self.__regDict[packageName] = {}
+                                if (packageName not in self.__regDict): self.__regDict[packageName] = {}
                                 o = co()
                                 self.__regDict[packageName][o.GetStageName()] = (o,co)
-                        except Exception,e:
+                        except Exception as e:
                             pass
                 except:
                     pass                

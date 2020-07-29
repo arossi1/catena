@@ -2,8 +2,8 @@
 import PackagePath
 from StageBase import StageBase
 from sfmImages import sfmImages
-from KeypointDescriptors import KeypointDescriptors
-from KeypointDescriptorFileLowe import KeypointDescriptorFileLowe
+from .KeypointDescriptors import KeypointDescriptors
+from .KeypointDescriptorFileLowe import KeypointDescriptorFileLowe
 
 import Utility
 import os

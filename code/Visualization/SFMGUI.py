@@ -5,7 +5,7 @@ sys.path.append(os.path.abspath(".."))
 from PyQt4 import QtCore, QtGui, QtXml
 import BundleAdjustment
 import Common
-import Dialogs
+from . import Dialogs
 
 
 ###############################################################################
@@ -203,7 +203,7 @@ class SFMgui(QtGui.QMainWindow):
     def loadImageWidgets(self, iwPerRow=DEFAULT_IMAGES_PER_ROW):
 
         # clear existing widgets
-        l = self._imageWidgets.values()
+        l = list(self._imageWidgets.values())
         self._imageWidgets = {}
         while (self._imageWidgetLayout.count() > 0):
             i = self._imageWidgetLayout.takeAt(0)
@@ -228,17 +228,17 @@ class SFMgui(QtGui.QMainWindow):
             if (column==0): row+=1
             
     def cameraChangedSlot(self, camera):
-        print camera
+        print(camera)
 
     def pointChangedSlot(self, point):
-        for iw in self._imageWidgets.values():
+        for iw in list(self._imageWidgets.values()):
             iw.clearHighlight()
             iw.removePoints()
             
         for point2D in point.Get2DPoints():
             self._imageWidgets[point2D.GetImage()].addPoint(point2D.GetCoordinateImage())
             self._imageWidgets[point2D.GetImage()].setHighlight()
-            print point2D
+            print(point2D)
 
 
 

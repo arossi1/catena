@@ -1,1 +1,1 @@
-import ChainGUI
+from . import ChainGUI

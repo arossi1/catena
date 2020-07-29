@@ -1,5 +1,5 @@
 # Copyright (c) 2012, Adam J. Rossi. All rights reserved. See README for licensing details.
-import Utility
+from . import Utility
 
 class CCDdatabase:
     
@@ -13,7 +13,7 @@ class CCDdatabase:
             self._db[v[0]] = float(v[1])
     
     def GetCameraCCDWidth(self, camera):
-        if (self._db.has_key(camera)): return self._db[camera]
+        if (camera in self._db): return self._db[camera]
         else: return None
 
 CCD_DB_FILE = "ccdwidths.csv"

@@ -200,9 +200,9 @@ class CorrespondenceWidget(QtGui.QGraphicsScene):
             self.setSceneRect(self.itemsBoundingRect())
             if (self.__autoZoom): self.views()[0].autoZoom()
         
-        except Exception, e:
-            print "Exception refreshing correspondence widget:" + str(e)
-            print
+        except Exception as e:
+            print("Exception refreshing correspondence widget:" + str(e))
+            print()
     
 
 ###############################################################################
@@ -285,9 +285,9 @@ class FeatureWidget(QtGui.QGraphicsScene):
             self.setSceneRect(self.itemsBoundingRect())
             if (self.__autoZoom): self.views()[0].autoZoom()
         
-        except Exception, e:
-            print "Exception refreshing feature widget:" + str(e)
-            print
+        except Exception as e:
+            print("Exception refreshing feature widget:" + str(e))
+            print()
     
 ############################################################################### 
 class ImageWidget(QtGui.QGraphicsScene):
@@ -313,10 +313,10 @@ class ImageWidget(QtGui.QGraphicsScene):
         
         oif = stage.GetOutputInterface()
 
-        if ("image" in oif.keys()):    
+        if ("image" in list(oif.keys())):    
             outputName = "image"
             numImages = 1
-        elif ("images" in oif.keys()): 
+        elif ("images" in list(oif.keys())): 
             outputName = "images"
             numImages = len(stage.GetOutput()["images"].GetImages())
         else: 
@@ -377,9 +377,9 @@ class ImageWidget(QtGui.QGraphicsScene):
             else:
                 imagePath = self.__stage.GetOutput()[self.__outputName].GetImages()[self.__index].GetFilePath()
         
-        except Exception, e:
-            print "Exception refreshing image widget:" + str(e)
-            print            
+        except Exception as e:
+            print("Exception refreshing image widget:" + str(e))
+            print()            
             
         self.__pixmapItem.setPixmap(QtGui.QPixmap())
         self.__pixmapItem.setPixmap(QtGui.QPixmap(imagePath))
@@ -614,7 +614,7 @@ class PropertyEditor(QtGui.QWidget):
         self.stagePropertiesView.setColumnCount(2)
         
         propWildcards = {}
-        for k in self.__propRanges.keys():
+        for k in list(self.__propRanges.keys()):
             if ("*" in k):
                 propWildcards[k.replace("*","")] = self.__propRanges[k]
         
@@ -625,10 +625,10 @@ class PropertyEditor(QtGui.QWidget):
             self.stagePropertiesView.setItem(i,0,label)
             
             propRange = None
-            if (self.__propRanges.has_key(k)):
+            if (k in self.__propRanges):
                 propRange = self.__propRanges[k]
             else:
-                for wck in propWildcards.keys():
+                for wck in list(propWildcards.keys()):
                     if (wck in k):
                         propRange = propWildcards[wck]
             
@@ -678,8 +678,8 @@ class PropertyEditor(QtGui.QWidget):
                 sb = cgDoubleSpinBoxSlider(name, initVal, *pRange)
             else:
                 sb = cgDoubleSpinBox(name)
-                sb.setMinimum(-sys.maxint)
-                sb.setMaximum(sys.maxint)
+                sb.setMinimum(-sys.maxsize)
+                sb.setMaximum(sys.maxsize)
                 sb.setValue(initVal)
                 
             sb.installEventFilter(self)
@@ -710,9 +710,9 @@ class PropertyEditor(QtGui.QWidget):
                 le.installEventFilter(self)
                 QtCore.QObject.connect(le, QtCore.SIGNAL("valueChangedSignal(object,object)"), self.valueChangedSlot)
                 return le
-            except Exception,e:
-                print "WARNING: Unable to create property widget for: " + name
-                print e
+            except Exception as e:
+                print("WARNING: Unable to create property widget for: " + name)
+                print(e)
                 return QtGui.QFrame()
     
     def SetInterfaceDescription(self):
@@ -723,7 +723,7 @@ class PropertyEditor(QtGui.QWidget):
             s += "  (None)\n"
         else:
             inputInterface = []
-            for kv in self.__stage.GetInputInterface().items():    
+            for kv in list(self.__stage.GetInputInterface().items()):    
                 try:
                     inputName,(inputIndex,inputType) = kv
                     inputInterface.append((inputIndex,inputType.__name__))
@@ -743,7 +743,7 @@ class PropertyEditor(QtGui.QWidget):
             s += "  (None)\n"
         else:
             outputInterface = []
-            for kv in self.__stage.GetOutputInterface().items():    
+            for kv in list(self.__stage.GetOutputInterface().items()):    
                 try:
                     outputName,outputType = kv
                     outputInterface.append(outputType.__name__)                    
@@ -756,9 +756,9 @@ class PropertyEditor(QtGui.QWidget):
         self.interfaceLabel.setText(s)
         
     def valueChangedSlot(self, name, val):
-        props = self.__stage.GetPropertyMap().keys()
+        props = list(self.__stage.GetPropertyMap().keys())
         self.__stage.SetProperty(name,val)
-        if (props!=self.__stage.GetPropertyMap().keys()):
+        if (props!=list(self.__stage.GetPropertyMap().keys())):
             self.SetProperties()
         self.__propModifiedTimer.start()
         
@@ -829,7 +829,7 @@ class ChainGUI(QtGui.QMainWindow):
                 raise Exception("Incorrect stage display property definition")
             
             propRanges = {}
-            if (stagesPropertyRanges.has_key(stage)):
+            if (stage in stagesPropertyRanges):
                 propRanges = stagesPropertyRanges[stage]
             
             pe = PropertyEditor(stage, propNames, propRanges)
@@ -910,7 +910,7 @@ class ChainGUI(QtGui.QMainWindow):
                         stages = [stages]
                         
                     for s in stages:
-                        if (self.__propertyEditors.has_key(s)):
+                        if (s in self.__propertyEditors):
                             QtCore.QObject.connect(self.__propertyEditors[s],
                                                    QtCore.SIGNAL("propertyChangedSignal(object,object,object)"),
                                                    w.propertyChangedSlot)
@@ -939,7 +939,7 @@ class ChainGUI(QtGui.QMainWindow):
             forceRuns = {}
             for stage in Chain.StageRegistry.registry.GetStageInstances():
                 if (len(stage.GetOutputStages())==0): tails.append(stage)
-                if ("Force Run" in stage.GetPropertyMap().keys()):
+                if ("Force Run" in list(stage.GetPropertyMap().keys())):
                     forceRuns[stage] = stage.GetProperty("Force Run")            
             
             try:
@@ -951,7 +951,7 @@ class ChainGUI(QtGui.QMainWindow):
             
             finally:
                 # set all force runs to False as image views are initialized
-                for stage in forceRuns.keys():
+                for stage in list(forceRuns.keys()):
                     stage.SetProperty("Force Run", False)
                 
                 self.initializeVisualizations()
@@ -962,7 +962,7 @@ class ChainGUI(QtGui.QMainWindow):
                     except: pass
     
                 # revert force runs
-                for stage,fr in forceRuns.iteritems():
+                for stage,fr in forceRuns.items():
                     stage.SetProperty("Force Run", fr)
 
         else:
@@ -992,7 +992,7 @@ class ChainGUI(QtGui.QMainWindow):
             try: vis.refresh()
             except: pass
         
-        for pe in self.__propertyEditors.values():
+        for pe in list(self.__propertyEditors.values()):
             pe.SetProperties()
 
 
