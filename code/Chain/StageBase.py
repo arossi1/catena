@@ -234,11 +234,11 @@ class StageBase:
         name = self.__class__.__name__
         if (len(self._properties)>0):
             sargs = ["%s = %s" %(str(x),self._properties[x]) for x in sorted(self._properties.keys())]
-            name = "%s [%s]" % (name, string.join(sargs,", "))
+            name = "%s [%s]" % (name, ", ".join(sargs))
         Analyze.StartProcess(name)
         
     def RunCommand(self, exe, args="", cwd=None, shell=True, captureCout=False):
-        import Common
+        from .. import Common
         
         # find executable for given platform
         exe = Common.Utility.GetExePath(sys.modules[self.__class__.__module__].__file__, exe)

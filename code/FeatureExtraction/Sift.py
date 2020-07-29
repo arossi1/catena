@@ -125,7 +125,7 @@ class Sift(Chain.StageBase):
             errors.extend(w.getErrors())
             
         if (len(errors)>0):
-            raise Exception(string.join(errors,"\n"))
+            raise Exception("\n".join(errors))
         
         kds = FeatureExtraction.KeypointDescriptors(images.GetPath(), kds)
         self.SetOutputValue("keypointDescriptors", kds)        
