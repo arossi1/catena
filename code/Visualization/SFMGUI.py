@@ -3,9 +3,9 @@ import sys, os, glob
 sys.path.append(os.path.abspath(".."))
 
 from PyQt4 import QtCore, QtGui, QtXml
-from catena.code import BundleAdjustment
-from catena.code import Common
-from catena.code.Visualization import Dialogs
+from catena import BundleAdjustment
+from catena import Common
+from catena.Visualization import Dialogs
 
 
 ###############################################################################

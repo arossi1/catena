@@ -5,8 +5,8 @@ sys.path.append(os.path.abspath("."))
 
 from PyQt4 import QtCore, QtGui, QtXml
 from PyQt4.QtCore import pyqtSlot,pyqtSignal
-from catena.code import Chain # Chain must be imported first, requirement of registry
-from catena.code import BundleAdjustment, Common
+from catena import Chain # Chain must be imported first, requirement of registry
+from catena import BundleAdjustment, Common
 
 
 def GetAbsImagePath(fileName):
