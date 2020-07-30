@@ -1,6 +1,6 @@
 # Copyright (c) 2012, Adam J. Rossi. All rights reserved. See README for licensing details.
 import os, sys
-from catena.StageBase import StageBase
+from catena.Chain.StageBase import StageBase
 from catena.Chain import Chain
 
 ###############################################################################
