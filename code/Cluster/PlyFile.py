@@ -1,6 +1,6 @@
 # Copyright (c) 2012, Adam J. Rossi. All rights reserved. See README for licensing details.
 
-import os, string
+import os
 
 class PlyFile:
     
@@ -194,7 +194,7 @@ class PlyFile:
         f.write("end_header\n")
         
         for i,elements in enumerate(data):
-            formatString = string.join(formatStrings[i]) + "\n"
+            formatString = "".join(formatStrings[i]) + "\n"
             for element in elements:                
                 f.write(formatString % tuple(element))
         

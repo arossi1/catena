@@ -2,6 +2,7 @@
 from . import Analyze
 import traceback, sys
 
+
 def Render(lastStages, logFilePath=None):
     try:
         if (not isinstance(lastStages,list)):

@@ -24,7 +24,6 @@ class jheadInfo:
     def GetFocalLength(self):   return self.__dict__["Focal length"]
     def GetCameraMake(self):    return self.__dict__["Camera make"]
     def GetDateTime(self):      return self.__dict__["Date/Time"]
-    def GetCameraMake(self):    return self.__dict__["Camera make"]
     def GetFileName(self):      return self.__dict__["File name"]
     def GetFileDate(self):      return self.__dict__["File date"]
     def GetFocusDistance(self): return self.__dict__["Focus dist."]

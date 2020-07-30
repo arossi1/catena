@@ -1,7 +1,7 @@
 # Copyright (c) 2012, Adam J. Rossi. All rights reserved. See README for licensing details.
 
 from .KeypointDescriptor import KeypointDescriptor
-import sys, os, string, copy
+import sys, os, copy
 
 class KeypointDescriptorFile:
 
@@ -74,7 +74,7 @@ class KeypointDescriptorFile:
                 numVals = min(20,len(v))
                 vals = v[:numVals]
                 v = v[numVals:]
-                f.write((string.join(["%d"]*numVals," ")+"\n") % tuple(vals))
+                f.write((" ".join(["%d"]*numVals)+"\n") % tuple(vals))
         f.close()
 
 

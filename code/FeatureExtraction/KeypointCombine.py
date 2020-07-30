@@ -1,6 +1,6 @@
 # Copyright (c) 2012, Adam J. Rossi. All rights reserved. See README for licensing details.
-from StageBase import StageBase
-from sfmImages import sfmImages
+from ..Chain.StageBase import StageBase
+from ..Common.sfmImages import sfmImages
 from .KeypointDescriptors import KeypointDescriptors
 from .KeypointDescriptorFileLowe import KeypointDescriptorFileLowe
 

@@ -1,7 +1,7 @@
 # Copyright (c) 2012, Adam J. Rossi. All rights reserved. See README for licensing details.
 
 from .. import Chain
-import glob, os, shutil, sys, stat, time, subprocess, platform, string
+import glob, os, shutil, sys, stat, time, subprocess, platform
 
 def IsWindows():
     return (sys.platform=="win32")
@@ -48,7 +48,7 @@ def InvalidFloat():  return float(-sys.maxsize)
 
 def Quoted(s):          return "\"%s\""%s    
 def CommandArgs(*args): 
-    return string.join([str(a) for a in args], " ")
+    return " ".join([str(a) for a in args])
 
 def ShouldRun(forceRun, *args):
     if (forceRun): return True

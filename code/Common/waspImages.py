@@ -1,5 +1,5 @@
 # Copyright (c) 2012, Adam J. Rossi. All rights reserved. See README for licensing details.
-import os, shutil, string
+import os, shutil
 from . import waspImage
 
 
@@ -36,7 +36,7 @@ class waspImages:
             wi._dirPath = destDir            
     
     def __str__(self):
-        return string.join([str(x) for x in self._images], "\n")
+        return "\n".join([str(x) for x in self._images])
 
 
 

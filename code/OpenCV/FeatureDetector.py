@@ -1,10 +1,9 @@
 # Copyright (c) 2014, Adam J. Rossi. All rights reserved. See README for licensing details.
 from .. import Chain, Common
 from . import Types
-import os, string
+import os
 import cv2
-import numpy
-import numpy.numarray
+
 
 class FeatureDetector(Chain.StageBase):
 
@@ -28,8 +27,8 @@ class FeatureDetector(Chain.StageBase):
         Chain.StageBase.__init__(self,
                                  inputStages,
                                  "Generates features for images",
-                                 {"Detector":"Detector type {"+string.join(FeatureDetector.FEATURE_DETECTORS,", ")+"}",
-                                  "Descriptor": 'Descriptor type{'+string.join(FeatureDetector.FEATURE_DESCRIPTORS,", ")+'}',
+                                 {"Detector":"Detector type {"+", ".join(FeatureDetector.FEATURE_DETECTORS)+"}",
+                                  "Descriptor": 'Descriptor type{'+", ".join(FeatureDetector.FEATURE_DESCRIPTORS)+'}',
                                   "Force Run":"Force run if outputs already exist"})
         
         self.__setStageProperties({"Detector":detector,
@@ -89,7 +88,7 @@ class FeatureDetector(Chain.StageBase):
                 self.SetPropertyDescription(propName, "Algorithm")
                 self.__ocvPropertyType[propName] = "Algorithm"
             else:
-                raise Exception("Unknown property type: %s,%s,%d" % (f,p,detect.paramType(p)))
+                raise Exception("Unknown property type: %s,%s,%d" % (propName,p,d.paramType(p)))
             
     def __setOCVProperties(self, d, label):
         for k in self._properties.keys():

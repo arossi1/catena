@@ -2,7 +2,7 @@
 from ..import Chain, Common
 from . import Types
 import FeatureMatch
-import os, string
+import os
 import numpy, cv2
 
 class FeatureMatcher(Chain.StageBase):
@@ -18,7 +18,7 @@ class FeatureMatcher(Chain.StageBase):
         Chain.StageBase.__init__(self,
                                  inputStages,
                                  "Generates features for images",
-                                 {"Matcher":"Matcher type {"+string.join(FeatureMatcher.FEATURE_MATCHERS,", ")+"}",
+                                 {"Matcher":"Matcher type {"+", ".join(FeatureMatcher.FEATURE_MATCHERS)+"}",
                                   "Matches Path":"Path to matches output file",
                                   "Distance Threshold":"Threshold as a percentage of mean distance",
                                   "Force Run":"Force run if outputs already exist"})
