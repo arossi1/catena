@@ -1,7 +1,7 @@
 # Copyright (c) 2012, Adam J. Rossi. All rights reserved. See README for licensing details.
 import os, sys
-from .StageBase import StageBase
-from .Chain import Chain
+from catena.code.StageBase import StageBase
+from catena.code.Chain import Chain
 
 ###############################################################################
 class StringSource(StageBase):
