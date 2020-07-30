@@ -1,7 +1,7 @@
 # Copyright (c) 2012, Adam J. Rossi. All rights reserved. See README for licensing details.
 from .. import Chain, Common, FeatureExtraction
 from .DaisyKeypointDescriptorFile import DaisyKeypointDescriptorFile
-import string, os
+import os
 
 class Daisy(Chain.StageBase):
     

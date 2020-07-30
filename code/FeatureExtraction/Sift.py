@@ -1,7 +1,7 @@
 # Copyright (c) 2012, Adam J. Rossi. All rights reserved. See README for licensing details.
 from .. import Chain, Common, FeatureExtraction
 from .KeypointDescriptorFileVLFeat import KeypointDescriptorFileVLFeat
-import os, string
+import os
 import threading, multiprocessing
 
 class Sift(Chain.StageBase):
