@@ -1,7 +1,8 @@
 # Copyright (c) 2014, Adam J. Rossi. All rights reserved. See README for licensing details.
 from ..import Chain, Common
+from .. import FeatureMatch
 from . import Types
-import FeatureMatch
+
 import os
 import numpy, cv2
 
