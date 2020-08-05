@@ -1,6 +1,7 @@
 # Copyright (c) 2014, Adam J. Rossi. All rights reserved. See README for licensing details.
 from .. import Chain, Common
 from . import Types
+from itertools import product
 import os
 import cv2
 
@@ -10,7 +11,7 @@ class FeatureDetector(Chain.StageBase):
     #GENERATE DETECTOR LIST AND INPUT DATA
     DETECTORS = ("FAST","STAR","SIFT","SURF","ORB","BRISK","MSER","GFTT","HARRIS","Dense","SimpleBlob")
     DETECTOR_ADAPTERS = ("","Grid")  # these don't work: "Pyramid"    
-    FEATURE_DETECTORS = tuple([str(a)+str(d) for a in DETECTOR_ADAPTERS for d in DETECTORS])
+    FEATURE_DETECTORS = tuple([str(a)+str(d) for a, d in product(DETECTOR_ADAPTERS, DETECTORS)])
 
     #GENERATE DESCRIPTOR LIST AND INPUT DATA
     DESCRIPTORS = ("SIFT","SURF","ORB","BRISK","BRIEF")
