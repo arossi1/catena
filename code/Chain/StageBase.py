@@ -1,5 +1,5 @@
 # Copyright (c) 2014, Adam J. Rossi. All rights reserved. See README for licensing details.
-import sys, uuid, string, os
+import sys, uuid, os
 from . import Chain, Analyze
 
 class StageBase:
