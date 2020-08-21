@@ -231,18 +231,18 @@ class FeatureDetector(Chain.StageBase):
                 descriptor = self._properties["Descriptor"]
 
                 if descriptor == "AKAZE" and detector not in ["AKAZE","KAZE"]:
-        		    raise Exception("AKAZE descriptors can only be used with KAZE or AKAZE keypoints")
+                    raise Exception("AKAZE descriptors can only be used with KAZE or AKAZE keypoints")
 
                 d = self.__createFeatureDetector(self._properties["Detector"])
                 de = self.__createFeatureDescriptor(self._properties["Descriptor"])
                 # Constructors tha create detector and descriptors
                 if descriptor == detector and detector in ["AKAZE","BRISK","KAZE","SIFT","SURF","ORB"]:
                     # Provides better performance, when using detect followed by compute scale space pyramid is computed twice
-        		    keypoints, descriptors = d.detectAndCompute(cvim,None)
+                    keypoints, descriptors = d.detectAndCompute(cvim,None)
                 else:
-        		    #TODO: there are combinations that might not work together like LUCId descriptor only works with grayscale, surround with try-catch??????
-        		    keypoints = d.detect(cvim,None)
-        		    keypoints, descriptors = de.compute(cvim,keypoints)
+                    #TODO: there are combinations that might not work together like LUCId descriptor only works with grayscale, surround with try-catch??????
+                    keypoints = d.detect(cvim,None)
+                    keypoints, descriptors = de.compute(cvim,keypoints)
                 
                 ifs = Types.ImageFeatures.FromOCVFeatures(im.GetFilePath(),
                                                                   keypoints,descriptors)
