@@ -18,7 +18,8 @@ class FeatureDetector(Chain.StageBase):
     DESCRIPTOR_ADAPTERS = ("")  # these don't work: "Opponent"
     FEATURE_DESCRIPTORS = DESCRIPTORS
     # FEATURE_DESCRIPTORS = tuple([str(a)+str(d) for a in DESCRIPTOR_ADAPTERS for d in DESCRIPTORS])
-    DESCRIPTORS_DATATYPES = {"BoostDesc": int,"Brief": int,"DAISY": int,"FREAK": int,"LATCH": int,"LUCID": int,"VGG": int}
+    DESCRIPTORS_DATATYPES = {"SIFT": float,"SURF": float,"ORB": int,"BRISK": int,"AKAZE": int,"KAZE": float,
+                             "BoostDesc": int,"Brief": int,"DAISY": float,"FREAK": int,"LATCH": int,"LUCID": int,"VGG": float}
 
     def __init__(self,
                  inputStages=None,
@@ -177,6 +178,8 @@ class FeatureDetector(Chain.StageBase):
             featureDetector = cv2.xfeatures2d.StarDetector_create(**ocvProperties)
         elif d == "SURF":
             featureDetector = cv2.xfeatures2d.SURF_create(**ocvProperties)
+        elif d == "SIFT":
+            featureDetector = cv2.xfeatures2d.SIFT_create(**ocvProperties)
         else:
             raise Exception("Unknown feature detector: {}".format(d))
         return featureDetector
@@ -220,9 +223,9 @@ class FeatureDetector(Chain.StageBase):
 
                 bands = cv2.imread(im.GetFilePath()).shape[2]
                 if (bands==1):
-                    cvim = cv2.imread(im.GetFilePath(), cv2.CV_LOAD_IMAGE_GRAYSCALE)
+                    cvim = cv2.imread(im.GetFilePath(), cv2.IMREAD_GRAYSCALE)
                 elif (bands==3):
-                    cvim = cv2.imread(im.GetFilePath(), cv2.CV_LOAD_IMAGE_COLOR)
+                    cvim = cv2.imread(im.GetFilePath(), cv2.IMREAD_COLOR)
                     cvim = cv2.cvtColor(cvim, cv2.COLOR_RGB2GRAY)
                 else:
                     raise Exception("Unhandled number of bands (%d) for image: %s"%(bands,im.GetFilePath()))
@@ -234,12 +237,13 @@ class FeatureDetector(Chain.StageBase):
                     raise Exception("AKAZE descriptors can only be used with KAZE or AKAZE keypoints")
 
                 d = self.__createFeatureDetector(self._properties["Detector"])
-                de = self.__createFeatureDescriptor(self._properties["Descriptor"])
+                
                 # Constructors tha create detector and descriptors
                 if descriptor == detector and detector in ["AKAZE","BRISK","KAZE","SIFT","SURF","ORB"]:
                     # Provides better performance, when using detect followed by compute scale space pyramid is computed twice
                     keypoints, descriptors = d.detectAndCompute(cvim,None)
                 else:
+                    de = self.__createFeatureDescriptor(self._properties["Descriptor"])
                     #TODO: there are combinations that might not work together like LUCId descriptor only works with grayscale, surround with try-catch??????
                     keypoints = d.detect(cvim,None)
                     keypoints, descriptors = de.compute(cvim,keypoints)

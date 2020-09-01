@@ -1,6 +1,7 @@
 # Copyright (c) 2014, Adam J. Rossi. All rights reserved. See README for licensing details.
 import os
 from . import jhead, PILinfo
+from PIL import Image as PILImage
 
 
 class sfmImage:
@@ -16,14 +17,12 @@ class sfmImage:
     def GetYResolution(self):   return self._getMetadata().GetYResolution()    
     
     def ConvertToPGM(self, outputPath):
-        from PIL import Image as PILImage
         pgmFilePath = os.path.join(outputPath, os.path.splitext(os.path.split(self._filePath)[1])[0] + ".pgm")
         if (not os.path.exists(pgmFilePath)):
             PILImage.open(self._filePath).convert("L").save(pgmFilePath)
         return sfmImage(pgmFilePath, self._getMetadata())
     
     def Convert(self, outputPath, type):
-        from PIL import Image as PILImage
         outputFilePath = os.path.join(outputPath, os.path.splitext(os.path.split(self._filePath)[1])[0] + "." + type)
         if (not os.path.exists(outputFilePath)):
             PILImage.open(self._filePath).save(outputFilePath)
