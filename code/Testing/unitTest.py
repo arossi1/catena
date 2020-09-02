@@ -1,6 +1,6 @@
 # Copyright (c) 2012, Adam J. Rossi. All rights reserved. See README for licensing details.
-import sys, os
-sys.path.append(os.path.abspath("."))
+import os
+
 from catena import Chain # Chain must be imported first, requirement of registry
 from catena import Sources, FeatureExtraction, FeatureMatch, BundleAdjustment, Cluster, Common
 
@@ -79,7 +79,8 @@ def imageConvertChain(imagePath):
 if __name__=="__main__":
     
     try:
-        imagePath = os.path.abspath("../Datasets/ET")
+        imagePath = os.path.abspath(os.path.join(os.path.dirname(__file__), 
+                                                 "../Datasets/ET"))
         
         imageConvertChain(imagePath)
         siftChains(imagePath)

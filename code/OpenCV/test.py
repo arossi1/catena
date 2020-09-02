@@ -1,10 +1,11 @@
 # Copyright (c) 2014, Adam J. Rossi. All rights reserved. See README for licensing details.
-import sys, os
-sys.path.append(os.path.abspath("."))
+import os
+
 from .. import Chain
 from .. import Sources, OpenCV
 
-imagePath = os.path.abspath("../Datasets/ET")
+imagePath = os.path.abspath(os.path.join(os.path.dirname(__file__), 
+                                         "../Datasets/ET"))
 imageSource = Sources.ImageSource(imagePath, "jpg")
 
 fd = OpenCV.FeatureDetector(imageSource,

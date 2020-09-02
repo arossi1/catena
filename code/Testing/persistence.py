@@ -1,6 +1,6 @@
 # Copyright (c) 2012, Adam J. Rossi. All rights reserved. See README for licensing details.
-import sys, os
-sys.path.append(os.path.abspath("."))
+import os
+
 from .. import Chain # Chain must be imported first, requirement of registry
 from .. import Sources, FeatureExtraction, FeatureMatch, BundleAdjustment, Cluster
 
@@ -32,7 +32,8 @@ def sfmChainRestoreRender(chainFilePath):
     
 if __name__=="__main__":
 
-    imagePath = os.path.abspath("../Datasets/ET")
+    imagePath = os.path.abspath(os.path.join(os.path.dirname(__file__), 
+                                             "../Datasets/ET"))
     sfmChainBuild("sfmChain.dat", imagePath)
     sfmChainRestoreRender("sfmChain.dat")
 

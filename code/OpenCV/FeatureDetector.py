@@ -238,13 +238,13 @@ class FeatureDetector(Chain.StageBase):
 
                 d = self.__createFeatureDetector(self._properties["Detector"])
                 
-                # Constructors tha create detector and descriptors
+                # Constructors that create detector and descriptors
                 if descriptor == detector and detector in ["AKAZE","BRISK","KAZE","SIFT","SURF","ORB"]:
                     # Provides better performance, when using detect followed by compute scale space pyramid is computed twice
                     keypoints, descriptors = d.detectAndCompute(cvim,None)
                 else:
                     de = self.__createFeatureDescriptor(self._properties["Descriptor"])
-                    #TODO: there are combinations that might not work together like LUCId descriptor only works with grayscale, surround with try-catch??????
+                    # There are combinations that might not work together like LUCId descriptor only works with grayscale
                     keypoints = d.detect(cvim,None)
                     keypoints, descriptors = de.compute(cvim,keypoints)
                 
