@@ -3,10 +3,10 @@ import sys, os, glob, math, _thread
 sys.path.append(os.path.abspath("."))
 #sys.path.append(os.path.abspath(".."))
 
-from PyQt4 import QtCore, QtGui, QtXml
-from PyQt4.QtCore import pyqtSlot,pyqtSignal
-from catena import Chain # Chain must be imported first, requirement of registry
-from catena import BundleAdjustment, Common
+from PySide2 import QtCore, QtGui, QtXml, QtWidgets
+from PySide2.QtCore import Slot,Signal
+from catena.code import Chain # Chain must be imported first, requirement of registry
+from catena.code import BundleAdjustment, Common
 
 
 def GetAbsImagePath(fileName):
@@ -14,7 +14,7 @@ def GetAbsImagePath(fileName):
 
 class Manager(QtCore.QObject):
     
-    renderRequestSignal = QtCore.pyqtSignal(object)
+    renderRequestSignal = QtCore.Signal(object)
     
     def __init__(self):
         QtCore.QObject.__init__(self)
@@ -29,12 +29,12 @@ class ContextHandlerChain(QtCore.QObject):
     
     def __init__(self):
         QtCore.QObject.__init__(self)        
-        self._menu = QtGui.QMenu()        
+        self._menu = QtWidgets.QMenu()        
         self._actionMap = {}
         for package in Chain.StageRegistry.registry.GetPackages():
             menu = self._menu.addMenu(package)
             for stage in Chain.StageRegistry.registry.GetStages(package):
-                action = QtGui.QAction(stage, self)
+                action = QtWidgets.QAction(stage, self)
                 stageDesc = Chain.StageRegistry.registry.GetStageDescription(package,stage)
                 action.setToolTip(stageDesc)
                 action.setStatusTip(stageDesc)
@@ -53,10 +53,10 @@ class ContextHandlerStage(QtCore.QObject):
     
     def __init__(self):
         QtCore.QObject.__init__(self)        
-        self._menu = QtGui.QMenu()      
+        self._menu = QtWidgets.QMenu()      
         
         self._actionMap = {}        
-        action = QtGui.QAction("Render Stage", self)
+        action = QtWidgets.QAction("Render Stage", self)
         self._actionMap[action] = "Render"
         self._menu.addAction(action)
                     
@@ -68,7 +68,7 @@ class ContextHandlerStage(QtCore.QObject):
     
 
 ############################################################################### 
-class Arrow(QtGui.QGraphicsLineItem):
+class Arrow(QtWidgets.QGraphicsLineItem):
     def __init__(self, startItem, endItem, parent=None, scene=None):
         super(Arrow, self).__init__(parent, scene)
 
@@ -76,7 +76,7 @@ class Arrow(QtGui.QGraphicsLineItem):
 
         self.myStartItem = startItem
         self.myEndItem = endItem
-        self.setFlag(QtGui.QGraphicsItem.ItemIsSelectable, True)
+        self.setFlag(QtWidgets.QGraphicsItem.ItemIsSelectable, True)
         self.myColor = QtCore.Qt.black
         self.setPen(QtGui.QPen(self.myColor, 2, QtCore.Qt.SolidLine,
                 QtCore.Qt.RoundCap, QtCore.Qt.RoundJoin))
@@ -166,17 +166,17 @@ class Arrow(QtGui.QGraphicsLineItem):
 
 
 ############################################################################### 
-class StageItem(QtGui.QGraphicsPolygonItem):
+class StageItem(QtWidgets.QGraphicsPolygonItem):
     
     def __init__(self, stageObject, parent=None):
         super(StageItem, self).__init__(parent)
         #QtGui.QGraphicsPolygonItem.__init__(self, parent)
-        self.setFlag(QtGui.QGraphicsItem.ItemIsMovable)
-        self.setFlag(QtGui.QGraphicsItem.ItemIsSelectable)
-        self.setFlag(QtGui.QGraphicsItem.ItemIsFocusable)
+        self.setFlag(QtWidgets.QGraphicsItem.ItemIsMovable)
+        self.setFlag(QtWidgets.QGraphicsItem.ItemIsSelectable)
+        self.setFlag(QtWidgets.QGraphicsItem.ItemIsFocusable)
         self.__stageObject = stageObject
         self.arrows = []
-        label = QtGui.QGraphicsTextItem(stageObject.GetStageName(), self)
+        label = QtWidgets.QGraphicsTextItem(stageObject.GetStageName(), self)
         font = label.font()
         font.setBold(True)
         font.setPointSize(12)
@@ -224,7 +224,7 @@ class StageItem(QtGui.QGraphicsPolygonItem):
         self.arrows.append(arrow)
         
     def itemChange(self, change, value):
-        if change == QtGui.QGraphicsItem.ItemPositionChange:
+        if change == QtWidgets.QGraphicsItem.ItemPositionChange:
             for arrow in self.arrows:
                 arrow.updatePosition()
 
@@ -245,12 +245,12 @@ class StageItem(QtGui.QGraphicsPolygonItem):
 
 
 ############################################################################### 
-class StageScene(QtGui.QGraphicsScene):
+class StageScene(QtWidgets.QGraphicsScene):
     
     InsertItem, InsertLine, InsertText, MoveItem  = range(4)
     
     def __init__(self, parent=None):
-        QtGui.QGraphicsScene.__init__(self, -400, -400, 800, 800, parent)
+        QtWidgets.QGraphicsScene.__init__(self, -400, -400, 800, 800, parent)
         
         self.myMode = self.MoveItem
         self.line = None
@@ -258,6 +258,7 @@ class StageScene(QtGui.QGraphicsScene):
     
     def selectionChangedSlot(self):
         if (len(self.selectedItems())==1):
+            print('g')
             self.emit(QtCore.SIGNAL("stageSelectedSignal(PyQt_PyObject)"), self.selectedItems()[0])
     
     def setMode(self, mode):
@@ -266,7 +267,7 @@ class StageScene(QtGui.QGraphicsScene):
     def mousePressEvent(self, mouseEvent):
         if (mouseEvent.button() == QtCore.Qt.LeftButton):
             if self.myMode == self.InsertLine:
-                self.line = QtGui.QGraphicsLineItem(QtCore.QLineF(mouseEvent.scenePos(),
+                self.line = QtWidgets.QGraphicsLineItem(QtCore.QLineF(mouseEvent.scenePos(),
                                                                   mouseEvent.scenePos()))
                 self.line.setPen(QtGui.QPen(QtCore.Qt.black, 2))
                 self.addItem(self.line)
@@ -340,7 +341,7 @@ class StageScene(QtGui.QGraphicsScene):
                 self.addItem(si)
         
     def keyPressEvent(self, event):
-        return QtGui.QGraphicsScene.keyPressEvent(self,event)    
+        return QtWidgets.QGraphicsScene.keyPressEvent(self,event)    
 
 
     def loadFromRegistry(self):
@@ -381,14 +382,14 @@ class StageScene(QtGui.QGraphicsScene):
 
 
 ############################################################################### 
-class StageView(QtGui.QGraphicsView):
+class StageView(QtWidgets.QGraphicsView):
     def __init__(self, graphicsScene=None):
-        QtGui.QGraphicsView.__init__(self, graphicsScene)
-        #self.rubberBandSelectionMode(QtGui.QGraphicsView.IntersectsItemBoundingRect)
-        self.setDragMode(QtGui.QGraphicsView.RubberBandDrag)
+        QtWidgets.QGraphicsView.__init__(self, graphicsScene)
+        #self.rubberBandSelectionMode(QtWidgets.QGraphicsView.IntersectsItemBoundingRect)
+        self.setDragMode(QtWidgets.QGraphicsView.RubberBandDrag)
 
         # note: background (grids) do not update without this setting
-        self.setViewportUpdateMode(QtGui.QGraphicsView.FullViewportUpdate)
+        self.setViewportUpdateMode(QtWidgets.QGraphicsView.FullViewportUpdate)
         
         #TODO: background
         self.scene().setBackgroundBrush(QtGui.QBrush(QtGui.QPixmap(GetAbsImagePath("graybg.png"))))
@@ -408,32 +409,32 @@ class StageView(QtGui.QGraphicsView):
 
 
 ###############################################################################
-class StagePropertyEditor(QtGui.QWidget):
+class StagePropertyEditor(QtWidgets.QWidget):
     def __init__(self, parent=None):
-        QtGui.QWidget.__init__(self, parent)    
+        QtWidgets.QWidget.__init__(self, parent)    
             
-        self.stagePropertiesView = QtGui.QTableWidget(self)
+        self.stagePropertiesView = QtWidgets.QTableWidget(self)
         p = self.stagePropertiesView.palette()
         p.setColor(QtGui.QPalette.Normal, QtGui.QPalette.Highlight, QtGui.QColor(0,0,220,120))
         self.stagePropertiesView.setPalette(p)
         self.stagePropertiesView.verticalHeader().setVisible(False)
-        self.stagePropertiesView.setSelectionMode(QtGui.QAbstractItemView.SingleSelection)
-        self.stagePropertiesView.setSelectionBehavior(QtGui.QAbstractItemView.SelectRows)
+        self.stagePropertiesView.setSelectionMode(QtWidgets.QAbstractItemView.SingleSelection)
+        self.stagePropertiesView.setSelectionBehavior(QtWidgets.QAbstractItemView.SelectRows)
                 
-        self.propertyLabel = QtGui.QLabel(self)
+        self.propertyLabel = QtWidgets.QLabel(self)
         self.propertyLabel.setWordWrap(True)
-        self.propertyLabel.setFrameStyle(QtGui.QFrame.StyledPanel | QtGui.QFrame.Raised);
+        self.propertyLabel.setFrameStyle(QtWidgets.QFrame.StyledPanel | QtWidgets.QFrame.Raised);
         self.propertyLabel.setLineWidth(2);
         self.propertyLabel.setAlignment(QtCore.Qt.AlignTop)
         
-        self.interfaceLabel = QtGui.QLabel(self)
+        self.interfaceLabel = QtWidgets.QLabel(self)
         self.interfaceLabel.setWordWrap(True)
-        self.interfaceLabel.setFrameStyle(QtGui.QFrame.StyledPanel | QtGui.QFrame.Raised);
+        self.interfaceLabel.setFrameStyle(QtWidgets.QFrame.StyledPanel | QtWidgets.QFrame.Raised);
         self.interfaceLabel.setLineWidth(2);
         self.interfaceLabel.setAlignment(QtCore.Qt.AlignTop)
         
-        layout = QtGui.QVBoxLayout()
-        splitter = QtGui.QSplitter(QtCore.Qt.Vertical)
+        layout = QtWidgets.QVBoxLayout()
+        splitter = QtWidgets.QSplitter(QtCore.Qt.Vertical)
         splitter.addWidget(self.stagePropertiesView)
         splitter.addWidget(self.propertyLabel)
         splitter.addWidget(self.interfaceLabel)
@@ -442,7 +443,7 @@ class StagePropertyEditor(QtGui.QWidget):
     
     def GetWidgetForType(self, t, initVal, pd):
         if (t==type(0)):
-            sb = QtGui.QSpinBox()
+            sb = QtWidgets.QSpinBox()
             sb.setMinimum(-sys.maxsize)
             sb.setMaximum(sys.maxsize)
             sb.setValue(initVal)
@@ -450,7 +451,7 @@ class StagePropertyEditor(QtGui.QWidget):
             QtCore.QObject.connect(sb, QtCore.SIGNAL("valueChanged(int)"), self.valChangedSlot)
             return sb
         elif (t==type(0.0)):
-            sb = QtGui.QDoubleSpinBox()
+            sb = QtWidgets.QDoubleSpinBox()
             sb.setMinimum(-sys.maxsize)
             sb.setMaximum(sys.maxsize)
             sb.setValue(initVal)
@@ -458,24 +459,24 @@ class StagePropertyEditor(QtGui.QWidget):
             QtCore.QObject.connect(sb, QtCore.SIGNAL("valueChanged(double)"), self.valChangedSlot)
             return sb
         elif (t==type(True)):
-            cb = QtGui.QCheckBox()
+            cb = QtWidgets.QCheckBox()
             cb.setChecked(initVal)
             cb.installEventFilter(self)
             QtCore.QObject.connect(cb, QtCore.SIGNAL("stateChanged(int)"), self.valChangedBoolSlot)
-            frame = QtGui.QFrame()
-            layout = QtGui.QHBoxLayout()
+            frame = QtWidgets.QFrame()
+            layout = QtWidgets.QHBoxLayout()
             layout.addWidget(cb)
             frame.setLayout(layout)
             return frame, cb
         elif ((t==type("")) and ("{" in pd) and ("}" in pd)):
-            cb = QtGui.QComboBox()
+            cb = QtWidgets.QComboBox()
             cb.installEventFilter(self)
             cb.addItems([x.strip() for x in pd[pd.find("{")+1:pd.find("}")].split(",")])
             cb.setCurrentIndex(cb.findText(initVal))
             QtCore.QObject.connect(cb, QtCore.SIGNAL("currentIndexChanged(const QString&)"), self.valChangedSlot)                
             return cb
         else:
-            le = QtGui.QLineEdit()
+            le = QtWidgets.QLineEdit()
             le.setText(initVal)
             le.installEventFilter(self)
             QtCore.QObject.connect(le, QtCore.SIGNAL("textChanged(const QString&)"), self.valChangedSlot)            
@@ -550,7 +551,7 @@ class StagePropertyEditor(QtGui.QWidget):
         self.stagePropertiesView.setRowCount(len(propMap))
         self.stagePropertiesView.setColumnCount(2)
         for i,k in enumerate(sorted(propMap.keys())):
-            label = QtGui.QTableWidgetItem(k)
+            label = QtWidgets.QTableWidgetItem(k)
             label.setFlags(label.flags() or QtCore.Qt.ItemIsSelectable)
             self.stagePropertiesView.setItem(i,0,label)
             w = self.GetWidgetForType(propMap[k], self.__stageObject.GetProperty(k), self.__stageObject.GetPropertyDescription(k))
@@ -585,52 +586,51 @@ class StagePropertyEditor(QtGui.QWidget):
     
 
 ###############################################################################
-class ChainBuilderGUI(QtGui.QMainWindow):
+class ChainBuilderGUI(QtWidgets.QMainWindow):
     
-    statusSignal = pyqtSignal(str)
+    statusSignal = Signal(str)
     
     def __init__(self, parent=None):
 
         # initial setup
-        QtGui.QMainWindow.__init__(self, parent, QtCore.Qt.WindowMinMaxButtonsHint)
+        QtWidgets.QMainWindow.__init__(self, parent, QtCore.Qt.WindowMinMaxButtonsHint)
         self.setWindowTitle("Chain Builder")
         self.setMinimumSize(700,700)
-        self.setDockOptions(QtGui.QMainWindow.AllowTabbedDocks)
+        self.setDockOptions(QtWidgets.QMainWindow.AllowTabbedDocks)
         self.setAnimated(True)
         self.createMenu()
         self.setWindowIcon(QtGui.QIcon(GetAbsImagePath("chain.png")))
-        #self.setStatusBar(QtGui.QStatusBar(self))
-        
+        #self.setStatusBar(QtWidgets.QStatusBar(self))
         self.stageScene = StageScene(self)
         _manager.renderRequestSignal.connect(self.renderRequested)
+        print('here')
         QtCore.QObject.connect(self.stageScene, QtCore.SIGNAL("stageSelectedSignal(PyQt_PyObject)"), self.stageSelectedSlot)
         self.stageView = StageView(self.stageScene)
         self.stagePropertiesEditor = StagePropertyEditor()
         
-        self.statusBox = QtGui.QTextEdit()
+        self.statusBox = QtWidgets.QTextEdit()
         Chain.Analyze.SetStatusObject(self)
         self.statusSignal.connect(self.appendStatusSlot)
         
-        viewFrame = QtGui.QFrame()
-        layout = QtGui.QVBoxLayout()
+        viewFrame = QtWidgets.QFrame()
+        layout = QtWidgets.QVBoxLayout()
         layout.addWidget(self.stageView)
         viewFrame.setLayout(layout)
         self.setCentralWidget(viewFrame)
                 
         
-        stagePropertiesDock = QtGui.QDockWidget("Stage Properties")
+        stagePropertiesDock = QtWidgets.QDockWidget("Stage Properties")
         stagePropertiesDock.setObjectName("Stage Properties")
         stagePropertiesDock.setWidget(self.stagePropertiesEditor)
         self.addDockWidget(QtCore.Qt.RightDockWidgetArea, stagePropertiesDock)
         #self.tabifiedDockWidgets(stagePropertiesDock)
         
-        dock = QtGui.QDockWidget("Status")
+        dock = QtWidgets.QDockWidget("Status")
         dock.setObjectName("Status")
         dock.setWidget(self.statusBox)
         self.addDockWidget(QtCore.Qt.BottomDockWidgetArea, dock)
         
         self.addToolbar()
-    
     
     
     def stageSelectedSlot(self, stage):        
@@ -639,17 +639,17 @@ class ChainBuilderGUI(QtGui.QMainWindow):
         
         
     def addToolbar(self):
-        pointerButton = QtGui.QToolButton()
+        pointerButton = QtWidgets.QToolButton()
         pointerButton.setCheckable(True)
         pointerButton.setChecked(True)
         pointerButton.setToolTip("Stage Selection")
         pointerButton.setIcon(QtGui.QIcon(GetAbsImagePath("pointer.png")))
-        linePointerButton = QtGui.QToolButton()
+        linePointerButton = QtWidgets.QToolButton()
         linePointerButton.setCheckable(True)
         linePointerButton.setToolTip("Stage Connector")
         linePointerButton.setIcon(QtGui.QIcon(GetAbsImagePath("linepointer.png")))
 
-        self.pointerTypeGroup = QtGui.QButtonGroup()
+        self.pointerTypeGroup = QtWidgets.QButtonGroup()
         self.pointerTypeGroup.addButton(pointerButton, StageScene.MoveItem)
         self.pointerTypeGroup.addButton(linePointerButton,
                 StageScene.InsertLine)
@@ -661,16 +661,16 @@ class ChainBuilderGUI(QtGui.QMainWindow):
         
         
         
-        renderButton = QtGui.QToolButton()
+        renderButton = QtWidgets.QToolButton()
         renderButton.setCheckable(False)
         renderButton.setIcon(QtGui.QIcon(GetAbsImagePath("render.png")))
         
-        aaButton = QtGui.QToolButton()
+        aaButton = QtWidgets.QToolButton()
         aaButton.setCheckable(False)
         aaButton.setToolTip("Auto Arrange")
         aaButton.setIcon(QtGui.QIcon(GetAbsImagePath("sendtoback.png")))
         
-        self.chainGroup = QtGui.QButtonGroup()
+        self.chainGroup = QtWidgets.QButtonGroup()
         self.chainGroup.addButton(renderButton, 0)
         self.chainGroup.addButton(aaButton, 1)
         self.chainGroup.buttonClicked[int].connect(self.renderGroupClicked)
@@ -687,41 +687,41 @@ class ChainBuilderGUI(QtGui.QMainWindow):
         elif (i==1): self.stageScene.autoArrangeStages()
 
     def createMenu(self):
-#        openBundleAct = QtGui.QAction("&Open Bundle File And Images...", self)
+#        openBundleAct = QtWidgets.QAction("&Open Bundle File And Images...", self)
 #        self.connect(openBundleAct, QtCore.SIGNAL("triggered()"), self.openBundleFile)
 
         fileMenu = self.menuBar().addMenu("&File")
         
-        action = QtGui.QAction(self.tr("&Load..."), self)
+        action = QtWidgets.QAction(self.tr("&Load..."), self)
         self.connect(action, QtCore.SIGNAL("triggered()"), self.loadChain)
         fileMenu.addAction(action)
         
-        action = QtGui.QAction(self.tr("&Save..."), self)
+        action = QtWidgets.QAction(self.tr("&Save..."), self)
         self.connect(action, QtCore.SIGNAL("triggered()"), self.saveChain)
         fileMenu.addAction(action)
         
         fileMenu.addSeparator()
         
-        action = QtGui.QAction(self.tr("&Exit"), self)
+        action = QtWidgets.QAction(self.tr("&Exit"), self)
         self.connect(action, QtCore.SIGNAL("triggered()"), self.close)
         fileMenu.addAction(action)
         
         
     def loadChain(self):
-        ret = QtGui.QFileDialog.getOpenFileName(self, "Load Chain File", ".")
+        ret = QtWidgets.QFileDialog.getOpenFileName(self, "Load Chain File", ".")
         if (ret != ""):
             Chain.StageRegistry.Load(ret)
             self.stageScene.loadFromRegistry()
         
     def saveChain(self):
-        ret = QtGui.QFileDialog.getSaveFileName(self, "Save Chain File", ".")
+        ret = QtWidgets.QFileDialog.getSaveFileName(self, "Save Chain File", ".")
         if (ret != ""):
             Chain.StageRegistry.Save(ret)
     
     def appendStatus(self, s):
         self.statusSignal.emit(s)
 
-    @pyqtSlot(str)
+    @Slot(str)
     def appendStatusSlot(self, s):
         self.statusBox.append(s)
         c = self.statusBox.textCursor()
@@ -740,7 +740,7 @@ class ChainBuilderGUI(QtGui.QMainWindow):
 
 ###############################################################################
 if __name__=="__main__":    
-    app = QtGui.QApplication(sys.argv)
+    app = QtWidgets.QApplication(sys.argv)
     gui = ChainBuilderGUI()
     gui.show()
     sys.exit(app.exec_())

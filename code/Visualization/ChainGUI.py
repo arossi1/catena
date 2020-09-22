@@ -1,27 +1,27 @@
 # Copyright (c) 2014, Adam J. Rossi. All rights reserved. See README for licensing details.
 import sys, os, copy, collections, math
 sys.path.append(os.path.abspath("."))
-from PySide import QtCore, QtGui
+from PySide2 import QtCore, QtGui, QtWidgets
 from catena import Chain, Sources, Common
 
     
 ############################################################################### 
-class WidgetFrame(QtGui.QFrame):
+class WidgetFrame(QtWidgets.QFrame):
     def refresh(self):
         self.emit(QtCore.SIGNAL("refresh()"))
         
     def resizeEvent(self, event):
-        QtGui.QFrame.resizeEvent(self, event)
+        QtWidgets.QFrame.resizeEvent(self, event)
         self.emit(QtCore.SIGNAL("resize()"))
         
     def propertyChangedSlot(self, stage, name, val):
         self.emit(QtCore.SIGNAL("propertyChangedSignal(object,object,object)"), stage, name, val)
 
 ############################################################################### 
-class CorrespondenceWidget(QtGui.QGraphicsScene):
+class CorrespondenceWidget(QtWidgets.QGraphicsScene):
     
     def __init__(self, stages, parent=None):
-        QtGui.QGraphicsScene.__init__(self, -400, -400, 800, 800, parent)        
+        QtWidgets.QGraphicsScene.__init__(self, -400, -400, 800, 800, parent)        
 
         self.__stages = stages
         self.__xTestPosCoeff = 1.0
@@ -68,44 +68,44 @@ class CorrespondenceWidget(QtGui.QGraphicsScene):
         QtCore.QObject.connect(frame, QtCore.SIGNAL("refresh()"), cw.refresh)
         QtCore.QObject.connect(frame, QtCore.SIGNAL("resize()"), cw.resize)
         
-        layout = QtGui.QVBoxLayout()
-        blayout = QtGui.QHBoxLayout()
+        layout = QtWidgets.QVBoxLayout()
+        blayout = QtWidgets.QHBoxLayout()
         
-        autoZoom = QtGui.QCheckBox("Auto Zoom")
+        autoZoom = QtWidgets.QCheckBox("Auto Zoom")
         autoZoom.setCheckState(QtCore.Qt.Checked)
         blayout.addWidget(autoZoom, 1, QtCore.Qt.AlignLeft)
         QtCore.QObject.connect(autoZoom, QtCore.SIGNAL("stateChanged(int)"), cw.autoZoomSlot)
         
-        cw._sbPair = QtGui.QSpinBox()
+        cw._sbPair = QtWidgets.QSpinBox()
         cw._sbPair.setRange(0,len(matches.GetKeyMatchFiles()))
         cw._sbPair.setValue(0)
         QtCore.QObject.connect(cw._sbPair, QtCore.SIGNAL("valueChanged(int)"), cw.pairIndexChangedSlot)
-        blayout.addWidget(QtGui.QLabel("Pair Index:"))
+        blayout.addWidget(QtWidgets.QLabel("Pair Index:"))
         blayout.addWidget(cw._sbPair, 1, QtCore.Qt.AlignLeft)
         
-        cw._sbMatch = QtGui.QSpinBox()
+        cw._sbMatch = QtWidgets.QSpinBox()
         cw._sbMatch.setRange(-1,0)
         cw._sbMatch.setValue(-1)
         QtCore.QObject.connect(cw._sbMatch, QtCore.SIGNAL("valueChanged(int)"), cw.matchIndexChangedSlot)
-        blayout.addWidget(QtGui.QLabel("Match Index:"))
+        blayout.addWidget(QtWidgets.QLabel("Match Index:"))
         blayout.addWidget(cw._sbMatch, 1, QtCore.Qt.AlignLeft)
         
-        fliplayout = QtGui.QHBoxLayout()
+        fliplayout = QtWidgets.QHBoxLayout()
         fliplayout.setContentsMargins(0,0,0,0)
         
-        horizontal = QtGui.QPushButton("Horizontal Flip")
+        horizontal = QtWidgets.QPushButton("Horizontal Flip")
         QtCore.QObject.connect(horizontal, QtCore.SIGNAL("clicked()"), cw.horizontalSlot)
         fliplayout.addWidget(horizontal)
         
-        vertical = QtGui.QPushButton("Vertical Flip")
+        vertical = QtWidgets.QPushButton("Vertical Flip")
         QtCore.QObject.connect(vertical, QtCore.SIGNAL("clicked()"), cw.verticalSlot)
         fliplayout.addWidget(vertical)
         
-        flipFrame = QtGui.QFrame()
+        flipFrame = QtWidgets.QFrame()
         flipFrame.setLayout(fliplayout)
         blayout.addWidget(flipFrame, 1, QtCore.Qt.AlignLeft)
         
-        cw._pairLabel = QtGui.QLabel("")
+        cw._pairLabel = QtWidgets.QLabel("")
         blayout.addWidget(cw._pairLabel)
         
         iv = ImageView(cw)
@@ -118,11 +118,11 @@ class CorrespondenceWidget(QtGui.QGraphicsScene):
         return QtGui.QPixmap(imagePath)
     
     def createFeaturePoint(self, coord, parent=None, scene=None):
-        pt = QtGui.QGraphicsEllipseItem(-2.0,-2.0, 4.0,4.0, 
+        pt = QtWidgets.QGraphicsEllipseItem(-2.0,-2.0, 4.0,4.0, 
                                         parent,scene)
-        pt.setFlag(QtGui.QGraphicsItem.ItemIsMovable, False)
-        pt.setFlag(QtGui.QGraphicsItem.ItemIsSelectable, False)
-        pt.setFlag(QtGui.QGraphicsItem.ItemIsFocusable, False)
+        pt.setFlag(QtWidgets.QGraphicsItem.ItemIsMovable, False)
+        pt.setFlag(QtWidgets.QGraphicsItem.ItemIsSelectable, False)
+        pt.setFlag(QtWidgets.QGraphicsItem.ItemIsFocusable, False)
         pt.setBrush(QtGui.QBrush(QtGui.QColor(250,250,10,150)))
         pt.setPos(coord[0],coord[1])
         return pt
@@ -151,15 +151,15 @@ class CorrespondenceWidget(QtGui.QGraphicsScene):
                 self.__pmTest = self.createPixmap(images.GetImages()[imagePair[1]].GetFilePath())
             
             
-            tiRef = QtGui.QGraphicsPixmapItem(self.__pmRef)
-            tiRef.setFlag(QtGui.QGraphicsItem.ItemIsMovable, False)
-            tiRef.setFlag(QtGui.QGraphicsItem.ItemIsSelectable, False)
-            tiRef.setFlag(QtGui.QGraphicsItem.ItemIsFocusable, False)
+            tiRef = QtWidgets.QGraphicsPixmapItem(self.__pmRef)
+            tiRef.setFlag(QtWidgets.QGraphicsItem.ItemIsMovable, False)
+            tiRef.setFlag(QtWidgets.QGraphicsItem.ItemIsSelectable, False)
+            tiRef.setFlag(QtWidgets.QGraphicsItem.ItemIsFocusable, False)
     
-            tiTest = QtGui.QGraphicsPixmapItem(self.__pmTest)
-            tiTest.setFlag(QtGui.QGraphicsItem.ItemIsMovable, False)
-            tiTest.setFlag(QtGui.QGraphicsItem.ItemIsSelectable, False)
-            tiTest.setFlag(QtGui.QGraphicsItem.ItemIsFocusable, False)        
+            tiTest = QtWidgets.QGraphicsPixmapItem(self.__pmTest)
+            tiTest.setFlag(QtWidgets.QGraphicsItem.ItemIsMovable, False)
+            tiTest.setFlag(QtWidgets.QGraphicsItem.ItemIsSelectable, False)
+            tiTest.setFlag(QtWidgets.QGraphicsItem.ItemIsFocusable, False)        
             
             self.addItem(tiRef)
             self.addItem(tiTest)
@@ -187,7 +187,7 @@ class CorrespondenceWidget(QtGui.QGraphicsScene):
                 
                 pointRef = tiRef.mapToScene(match[1][0], match[1][1])
                 pointTest = tiTest.mapToScene(match[0][0], match[0][1])
-                li = QtGui.QGraphicsLineItem(pointRef.x(),pointRef.y(),
+                li = QtWidgets.QGraphicsLineItem(pointRef.x(),pointRef.y(),
                                              pointTest.x(),pointTest.y(),
                                              scene=self)
                 li.setPen(QtGui.QPen(colors[i%len(colors)], 1))
@@ -206,10 +206,10 @@ class CorrespondenceWidget(QtGui.QGraphicsScene):
     
 
 ###############################################################################
-class FeatureWidget(QtGui.QGraphicsScene):
+class FeatureWidget(QtWidgets.QGraphicsScene):
     
     def __init__(self, stages, index, parent=None):
-        QtGui.QGraphicsScene.__init__(self, -400, -400, 800, 800, parent)        
+        QtWidgets.QGraphicsScene.__init__(self, -400, -400, 800, 800, parent)        
 
         self.__stages = stages
         self.__index = index
@@ -227,15 +227,15 @@ class FeatureWidget(QtGui.QGraphicsScene):
             QtCore.QObject.connect(frame, QtCore.SIGNAL("refresh()"), w.refresh)
             QtCore.QObject.connect(frame, QtCore.SIGNAL("resize()"), w.resize)
             
-            layout = QtGui.QVBoxLayout()
-            blayout = QtGui.QHBoxLayout()
+            layout = QtWidgets.QVBoxLayout()
+            blayout = QtWidgets.QHBoxLayout()
             
-            autoZoom = QtGui.QCheckBox("Auto Zoom")
+            autoZoom = QtWidgets.QCheckBox("Auto Zoom")
             autoZoom.setCheckState(QtCore.Qt.Checked)
             blayout.addWidget(autoZoom, 1, QtCore.Qt.AlignLeft)
             QtCore.QObject.connect(autoZoom, QtCore.SIGNAL("stateChanged(int)"), w.autoZoomSlot)
             
-            blayout.addWidget(QtGui.QLabel(stages[0].GetOutput()["images"].GetImages()[i].GetFileName()))                
+            blayout.addWidget(QtWidgets.QLabel(stages[0].GetOutput()["images"].GetImages()[i].GetFileName()))                
             
             layout.addLayout(blayout)
             layout.addWidget(iv)
@@ -246,18 +246,18 @@ class FeatureWidget(QtGui.QGraphicsScene):
         return ivs
     
     def createPixmap(self, imagePath):
-        pm = QtGui.QGraphicsPixmapItem(QtGui.QPixmap(imagePath))
-        pm.setFlag(QtGui.QGraphicsItem.ItemIsMovable, False)
-        pm.setFlag(QtGui.QGraphicsItem.ItemIsSelectable, False)
-        pm.setFlag(QtGui.QGraphicsItem.ItemIsFocusable, False)
+        pm = QtWidgets.QGraphicsPixmapItem(QtGui.QPixmap(imagePath))
+        pm.setFlag(QtWidgets.QGraphicsItem.ItemIsMovable, False)
+        pm.setFlag(QtWidgets.QGraphicsItem.ItemIsSelectable, False)
+        pm.setFlag(QtWidgets.QGraphicsItem.ItemIsFocusable, False)
         return pm
     
     def createFeaturePoint(self, coord, parent=None, scene=None):
-        pt = QtGui.QGraphicsEllipseItem(-2.0,-2.0, 4.0,4.0, 
+        pt = QtWidgets.QGraphicsEllipseItem(-2.0,-2.0, 4.0,4.0, 
                                         parent,scene)
-        pt.setFlag(QtGui.QGraphicsItem.ItemIsMovable, False)
-        pt.setFlag(QtGui.QGraphicsItem.ItemIsSelectable, False)
-        pt.setFlag(QtGui.QGraphicsItem.ItemIsFocusable, False)
+        pt.setFlag(QtWidgets.QGraphicsItem.ItemIsMovable, False)
+        pt.setFlag(QtWidgets.QGraphicsItem.ItemIsSelectable, False)
+        pt.setFlag(QtWidgets.QGraphicsItem.ItemIsFocusable, False)
         pt.setBrush(QtGui.QBrush(QtGui.QColor(250,250,10,150)))
         pt.setPos(coord[0],coord[1])
         return pt
@@ -290,17 +290,17 @@ class FeatureWidget(QtGui.QGraphicsScene):
             print()
     
 ############################################################################### 
-class ImageWidget(QtGui.QGraphicsScene):
+class ImageWidget(QtWidgets.QGraphicsScene):
     
     def __init__(self, stage, outputName, index=-1, parent=None):
-        QtGui.QGraphicsScene.__init__(self, 0,0, 800,800, parent)        
+        QtWidgets.QGraphicsScene.__init__(self, 0,0, 800,800, parent)        
         self.__stage = stage
         self.__outputName = outputName
         self.__index = index
-        self.__pixmapItem = QtGui.QGraphicsPixmapItem(QtGui.QPixmap())
-        self.__pixmapItem.setFlag(QtGui.QGraphicsItem.ItemIsMovable, True) #False)
-        self.__pixmapItem.setFlag(QtGui.QGraphicsItem.ItemIsSelectable, False)
-        self.__pixmapItem.setFlag(QtGui.QGraphicsItem.ItemIsFocusable, False)
+        self.__pixmapItem = QtWidgets.QGraphicsPixmapItem(QtGui.QPixmap())
+        self.__pixmapItem.setFlag(QtWidgets.QGraphicsItem.ItemIsMovable, True) #False)
+        self.__pixmapItem.setFlag(QtWidgets.QGraphicsItem.ItemIsSelectable, False)
+        self.__pixmapItem.setFlag(QtWidgets.QGraphicsItem.ItemIsFocusable, False)
         self.__pixmapItem.setTransformationMode(QtCore.Qt.SmoothTransformation)
         self.addItem(self.__pixmapItem)
         self.__loaded = False
@@ -335,18 +335,18 @@ class ImageWidget(QtGui.QGraphicsScene):
             QtCore.QObject.connect(frame, QtCore.SIGNAL("refresh()"), w.refresh)
             QtCore.QObject.connect(frame, QtCore.SIGNAL("resize()"), w.resize)
             
-            layout = QtGui.QVBoxLayout()
-            blayout = QtGui.QHBoxLayout()
+            layout = QtWidgets.QVBoxLayout()
+            blayout = QtWidgets.QHBoxLayout()
             
-            autoZoom = QtGui.QCheckBox("Auto Zoom")
+            autoZoom = QtWidgets.QCheckBox("Auto Zoom")
             autoZoom.setCheckState(QtCore.Qt.Checked)
             blayout.addWidget(autoZoom, 1, QtCore.Qt.AlignLeft)
             QtCore.QObject.connect(autoZoom, QtCore.SIGNAL("stateChanged(int)"), w.autoZoomSlot)
             
             if (index<0):
-                blayout.addWidget(QtGui.QLabel(stage.GetOutput()[outputName].GetFileName()))
+                blayout.addWidget(QtWidgets.QLabel(stage.GetOutput()[outputName].GetFileName()))
             else:
-                blayout.addWidget(QtGui.QLabel(stage.GetOutput()[outputName].GetImages()[index].GetFileName()))
+                blayout.addWidget(QtWidgets.QLabel(stage.GetOutput()[outputName].GetImages()[index].GetFileName()))
                 
             layout.addLayout(blayout)
             layout.addWidget(iv)
@@ -390,11 +390,11 @@ class ImageWidget(QtGui.QGraphicsScene):
 
             
 ############################################################################### 
-class ImageView(QtGui.QGraphicsView):
+class ImageView(QtWidgets.QGraphicsView):
     def __init__(self, graphicsScene=None):
-        QtGui.QGraphicsView.__init__(self, graphicsScene)
-        self.setDragMode(QtGui.QGraphicsView.ScrollHandDrag)
-        self.setViewportUpdateMode(QtGui.QGraphicsView.FullViewportUpdate)
+        QtWidgets.QGraphicsView.__init__(self, graphicsScene)
+        self.setDragMode(QtWidgets.QGraphicsView.ScrollHandDrag)
+        self.setViewportUpdateMode(QtWidgets.QGraphicsView.FullViewportUpdate)
         self.setRenderHint(QtGui.QPainter.Antialiasing)
         self.setRenderHint(QtGui.QPainter.TextAntialiasing)
         self.setRenderHint(QtGui.QPainter.SmoothPixmapTransform)
@@ -416,29 +416,29 @@ class ImageView(QtGui.QGraphicsView):
         self.fitInView(self.__graphicsScene.itemsBoundingRect(), QtCore.Qt.KeepAspectRatio)
         
     def mouseMoveEvent(self, e):
-        QtGui.QGraphicsView.mouseMoveEvent(self,e)
+        QtWidgets.QGraphicsView.mouseMoveEvent(self,e)
         self.emit(QtCore.SIGNAL("mouseMoveSignal(object)"), e)
         
     def mousePressEvent(self, e):
-        QtGui.QGraphicsView.mousePressEvent(self,e)
+        QtWidgets.QGraphicsView.mousePressEvent(self,e)
         self.emit(QtCore.SIGNAL("mousePressSignal(object)"), e)
 
     def mouseReleaseEvent(self, e):
-        QtGui.QGraphicsView.mouseReleaseEvent(self,e)
+        QtWidgets.QGraphicsView.mouseReleaseEvent(self,e)
         self.emit(QtCore.SIGNAL("mouseReleaseSignal(object)"), e)
         
     def mouseDoubleClickEvent(self, e):
-        QtGui.QGraphicsView.mouseDoubleClickEvent(self,e)
+        QtWidgets.QGraphicsView.mouseDoubleClickEvent(self,e)
         self.emit(QtCore.SIGNAL("mouseDoubleClickSignal(object)"), e)
         
 
 ###############################################################################
-class cgSpinBoxSlider(QtGui.QFrame):
+class cgSpinBoxSlider(QtWidgets.QFrame):
     def __init__(self, name, initVal, minVal, maxVal):
-        QtGui.QFrame.__init__(self)
+        QtWidgets.QFrame.__init__(self)
         self.__disableSliderSlot = False
         
-        self.__slider = QtGui.QSlider(QtCore.Qt.Horizontal, self)
+        self.__slider = QtWidgets.QSlider(QtCore.Qt.Horizontal, self)
         self.__slider.setRange(0,100)
         self.__slider.setSingleStep(1)
         self.__slider.setPageStep(10)
@@ -447,7 +447,7 @@ class cgSpinBoxSlider(QtGui.QFrame):
         self.__spinbox.setMinimum(minVal)
         self.__spinbox.setMaximum(maxVal)
 
-        layout = QtGui.QHBoxLayout()
+        layout = QtWidgets.QHBoxLayout()
         layout.setContentsMargins(0,0,5,0)
         layout.addWidget(self.__slider)
         layout.addWidget(self.__spinbox)
@@ -477,12 +477,12 @@ class cgSpinBoxSlider(QtGui.QFrame):
     def getMinimum(self): return self.__spinbox.minimum()
     def getMaximum(self): return self.__spinbox.maximum()
         
-class cgDoubleSpinBoxSlider(QtGui.QFrame):
+class cgDoubleSpinBoxSlider(QtWidgets.QFrame):
     def __init__(self, name, initVal, minVal, maxVal):
-        QtGui.QFrame.__init__(self)
+        QtWidgets.QFrame.__init__(self)
         self.__disableSliderSlot = False
         
-        self.__slider = QtGui.QSlider(QtCore.Qt.Horizontal, self)
+        self.__slider = QtWidgets.QSlider(QtCore.Qt.Horizontal, self)
         self.__slider.setRange(0,100)
         self.__slider.setSingleStep(1)
         self.__slider.setPageStep(10)
@@ -491,7 +491,7 @@ class cgDoubleSpinBoxSlider(QtGui.QFrame):
         self.__spinbox.setMinimum(minVal)
         self.__spinbox.setMaximum(maxVal)
 
-        layout = QtGui.QHBoxLayout()
+        layout = QtWidgets.QHBoxLayout()
         layout.setContentsMargins(0,0,5,0)
         layout.addWidget(self.__slider)
         layout.addWidget(self.__spinbox)
@@ -514,74 +514,74 @@ class cgDoubleSpinBoxSlider(QtGui.QFrame):
         sbVal = (self.__spinbox.maximum() - self.__spinbox.minimum()) * (val/100.0) + self.__spinbox.minimum()
         self.__spinbox.setValue(sbVal)
 
-class cgSpinBox(QtGui.QSpinBox):
+class cgSpinBox(QtWidgets.QSpinBox):
     def __init__(self, name):
-        QtGui.QSpinBox.__init__(self)
+        QtWidgets.QSpinBox.__init__(self)
         self.__name = name
         QtCore.QObject.connect(self, QtCore.SIGNAL("valueChanged(int)"), self.valChangedSlot)
     def valChangedSlot(self, val):
         self.emit(QtCore.SIGNAL("valueChangedSignal(object,object)"), self.__name, val)
 
-class cgDoubleSpinBox(QtGui.QDoubleSpinBox):
+class cgDoubleSpinBox(QtWidgets.QDoubleSpinBox):
     def __init__(self, name):
-        QtGui.QDoubleSpinBox.__init__(self)
+        QtWidgets.QDoubleSpinBox.__init__(self)
         self.__name = name
         QtCore.QObject.connect(self, QtCore.SIGNAL("valueChanged(double)"), self.valChangedSlot)
     def valChangedSlot(self, val):
         self.emit(QtCore.SIGNAL("valueChangedSignal(object,object)"), self.__name, val)
 
-class cgCheckBox(QtGui.QCheckBox):
+class cgCheckBox(QtWidgets.QCheckBox):
     def __init__(self, name):
-        QtGui.QCheckBox.__init__(self)
+        QtWidgets.QCheckBox.__init__(self)
         self.__name = name
         QtCore.QObject.connect(self, QtCore.SIGNAL("stateChanged(int)"), self.valChangedSlot)
     def valChangedSlot(self, val):
         self.emit(QtCore.SIGNAL("valueChangedSignal(object,object)"), self.__name, (val!=0))
 
-class cgComboBox(QtGui.QComboBox):
+class cgComboBox(QtWidgets.QComboBox):
     def __init__(self, name):
-        QtGui.QComboBox.__init__(self)
+        QtWidgets.QComboBox.__init__(self)
         self.__name = name
         QtCore.QObject.connect(self, QtCore.SIGNAL("currentIndexChanged(const QString&)"), self.valChangedSlot)
     def valChangedSlot(self, val):
         self.emit(QtCore.SIGNAL("valueChangedSignal(object,object)"), self.__name, str(val))
 
-class cgLineEdit(QtGui.QLineEdit):
+class cgLineEdit(QtWidgets.QLineEdit):
     def __init__(self, name):
-        QtGui.QLineEdit.__init__(self)
+        QtWidgets.QLineEdit.__init__(self)
         self.__name = name
         QtCore.QObject.connect(self, QtCore.SIGNAL("textChanged(const QString&)"), self.valChangedSlot)
     def valChangedSlot(self, val):
         self.emit(QtCore.SIGNAL("valueChangedSignal(object,object)"), self.__name, str(val))
                          
 ###############################################################################
-class PropertyEditor(QtGui.QWidget):
+class PropertyEditor(QtWidgets.QWidget):
     
     def __init__(self, stage, propNames, propRanges, parent=None):
-        QtGui.QWidget.__init__(self, parent)
+        QtWidgets.QWidget.__init__(self, parent)
         
-        self.stagePropertiesView = QtGui.QTableWidget(self)
+        self.stagePropertiesView = QtWidgets.QTableWidget(self)
         p = self.stagePropertiesView.palette()
         p.setColor(QtGui.QPalette.Normal, QtGui.QPalette.Highlight, QtGui.QColor(0,0,220,120))
         self.stagePropertiesView.setPalette(p)
         self.stagePropertiesView.verticalHeader().setVisible(False)
-        self.stagePropertiesView.setSelectionMode(QtGui.QAbstractItemView.SingleSelection)
-        self.stagePropertiesView.setSelectionBehavior(QtGui.QAbstractItemView.SelectRows)
+        self.stagePropertiesView.setSelectionMode(QtWidgets.QAbstractItemView.SingleSelection)
+        self.stagePropertiesView.setSelectionBehavior(QtWidgets.QAbstractItemView.SelectRows)
                 
-        self.propertyLabel = QtGui.QLabel(self)
+        self.propertyLabel = QtWidgets.QLabel(self)
         self.propertyLabel.setWordWrap(True)
-        self.propertyLabel.setFrameStyle(QtGui.QFrame.StyledPanel | QtGui.QFrame.Raised);
+        self.propertyLabel.setFrameStyle(QtWidgets.QFrame.StyledPanel | QtWidgets.QFrame.Raised);
         self.propertyLabel.setLineWidth(2);
         self.propertyLabel.setAlignment(QtCore.Qt.AlignTop)
         
-        self.interfaceLabel = QtGui.QLabel(self)
+        self.interfaceLabel = QtWidgets.QLabel(self)
         self.interfaceLabel.setWordWrap(True)
-        self.interfaceLabel.setFrameStyle(QtGui.QFrame.StyledPanel | QtGui.QFrame.Raised);
+        self.interfaceLabel.setFrameStyle(QtWidgets.QFrame.StyledPanel | QtWidgets.QFrame.Raised);
         self.interfaceLabel.setLineWidth(2);
         self.interfaceLabel.setAlignment(QtCore.Qt.AlignTop)
         
-        layout = QtGui.QVBoxLayout()
-        splitter = QtGui.QSplitter(QtCore.Qt.Vertical)
+        layout = QtWidgets.QVBoxLayout()
+        splitter = QtWidgets.QSplitter(QtCore.Qt.Vertical)
         splitter.addWidget(self.stagePropertiesView)
         splitter.addWidget(self.propertyLabel)
         splitter.addWidget(self.interfaceLabel)
@@ -620,7 +620,7 @@ class PropertyEditor(QtGui.QWidget):
         
         for i,k in enumerate(self.__propNames):
             
-            label = QtGui.QTableWidgetItem(k)
+            label = QtWidgets.QTableWidgetItem(k)
             label.setFlags(label.flags() or QtCore.Qt.ItemIsSelectable)
             self.stagePropertiesView.setItem(i,0,label)
             
@@ -690,8 +690,8 @@ class PropertyEditor(QtGui.QWidget):
             cb.setChecked(initVal)
             cb.installEventFilter(self)
             QtCore.QObject.connect(cb, QtCore.SIGNAL("valueChangedSignal(object,object)"), self.valueChangedSlot)
-            frame = QtGui.QFrame()
-            layout = QtGui.QHBoxLayout()
+            frame = QtWidgets.QFrame()
+            layout = QtWidgets.QHBoxLayout()
             layout.setContentsMargins(5,0,0,0)
             layout.addWidget(cb)
             frame.setLayout(layout)
@@ -713,7 +713,7 @@ class PropertyEditor(QtGui.QWidget):
             except Exception as e:
                 print("WARNING: Unable to create property widget for: " + name)
                 print(e)
-                return QtGui.QFrame()
+                return QtWidgets.QFrame()
     
     def SetInterfaceDescription(self):
         
@@ -781,17 +781,17 @@ class PropertyEditor(QtGui.QWidget):
                  
 
 ###############################################################################
-class ChainGUI(QtGui.QMainWindow):
+class ChainGUI(QtWidgets.QMainWindow):
     
     def __init__(self,
                  stagesVisualizations,          # stages with outputs to visualize [(stage,label,visualization widget), ...]
                  stagesDisplayProperty,         # stages that have properties that need manipulating [(stage,stageLabel,[property name,...]), ...]
                  stagesPropertyRanges={}):      # property ranges {stage:{property name:(min, max),...}, ...}
         # QMainWindow setup
-        QtGui.QMainWindow.__init__(self, None, QtCore.Qt.WindowMinMaxButtonsHint)
+        QtWidgets.QMainWindow.__init__(self, None, QtCore.Qt.WindowMinMaxButtonsHint)
         self.setWindowTitle("Chain GUI")
         self.setMinimumSize(700,700)
-        self.setDockOptions(QtGui.QMainWindow.AllowTabbedDocks)
+        self.setDockOptions(QtWidgets.QMainWindow.AllowTabbedDocks)
         self.setAnimated(True)
         self.createMenu()
         
@@ -802,11 +802,11 @@ class ChainGUI(QtGui.QMainWindow):
         self.initalizePropertyEditors(stagesDisplayProperty, stagesPropertyRanges)
 
         # create status box
-        self.statusBox = QtGui.QTextEdit()
+        self.statusBox = QtWidgets.QTextEdit()
         self.statusBox.setMaximumHeight(200)
         Chain.Analyze.SetStatusObject(self)
         QtCore.QObject.connect(self, QtCore.SIGNAL("statusSignal(object)"), self.appendStatusSlot)        
-        dock = QtGui.QDockWidget("Status")
+        dock = QtWidgets.QDockWidget("Status")
         dock.setObjectName("Status")
         dock.setWidget(self.statusBox)
         self.addDockWidget(QtCore.Qt.BottomDockWidgetArea, dock)
@@ -835,7 +835,7 @@ class ChainGUI(QtGui.QMainWindow):
             pe = PropertyEditor(stage, propNames, propRanges)
             self.__propertyEditors[stage] = pe
             QtCore.QObject.connect(pe, QtCore.SIGNAL("propertyModifiedSignal()"), self.propertyModifiedSlot)
-            dw = QtGui.QDockWidget(stageLabel)
+            dw = QtWidgets.QDockWidget(stageLabel)
             dw.setObjectName(stageLabel)
             dw.setWidget(pe)
             self.addDockWidget(QtCore.Qt.RightDockWidgetArea, dw)
@@ -847,11 +847,11 @@ class ChainGUI(QtGui.QMainWindow):
     def addToolbar(self):
         
         toolbar = self.addToolBar("Shortcuts")
-        self.buttonGroup = QtGui.QButtonGroup()
+        self.buttonGroup = QtWidgets.QButtonGroup()
        
         for i, cmd in enumerate(["Render Chain",
                                  "Save Screenshot"]):
-            button = QtGui.QToolButton()
+            button = QtWidgets.QToolButton()
             button.setText(cmd)
             button.setCheckable(False)
             self.buttonGroup.addButton(button, i)
@@ -861,7 +861,7 @@ class ChainGUI(QtGui.QMainWindow):
         
         toolbar.addSeparator()
         self.__autoRender = False
-        ar = QtGui.QCheckBox("Auto Render")
+        ar = QtWidgets.QCheckBox("Auto Render")
         QtCore.QObject.connect(ar, QtCore.SIGNAL("stateChanged(int)"), self.autoRenderSlot)
         toolbar.addWidget(ar) 
         
@@ -875,12 +875,12 @@ class ChainGUI(QtGui.QMainWindow):
         fMap = [self.renderChain,
                 self.saveImage]
         try:
-            QtGui.QApplication.setOverrideCursor(QtGui.QCursor(QtCore.Qt.WaitCursor))
+            QtWidgets.QApplication.setOverrideCursor(QtGui.QCursor(QtCore.Qt.WaitCursor))
             fMap[i]()
         except:
             raise
         finally:
-            QtGui.QApplication.restoreOverrideCursor()
+            QtWidgets.QApplication.restoreOverrideCursor()
             
     def initializeVisualizations(self):
         
@@ -918,7 +918,7 @@ class ChainGUI(QtGui.QMainWindow):
                 # dock the widget
                 sl = stageLabel
                 if (len(widgets)>1): sl+=" (%d)"%i
-                dw = QtGui.QDockWidget(sl)
+                dw = QtWidgets.QDockWidget(sl)
                 dw.setObjectName(sl)
                 dw.setWidget(w)
                 self.addDockWidget(QtCore.Qt.LeftDockWidgetArea, dw)
@@ -1010,7 +1010,7 @@ class ChainGUI(QtGui.QMainWindow):
         
         fileMenu.addSeparator()
         
-        action = QtGui.QAction(self.tr("&Exit"), self)
+        action = QtWidgets.QAction(self.tr("&Exit"), self)
         self.connect(action, QtCore.SIGNAL("triggered()"), self.close)
         fileMenu.addAction(action)
                
@@ -1026,8 +1026,8 @@ class ChainGUI(QtGui.QMainWindow):
 def display(stagesVisualizations,          # stages with outputs to visualize [(stage,label,visualization widget), ...]
             stagesDisplayProperty,         # stages that have properties that need manipulating [(stage,stageLabel,[property name,...]), ...]
             stagesPropertyRanges={}):      # property ranges {stage:{property name:(min, max),...}, ...}
-    app = QtGui.QApplication.instance()
-    if app is None: app = QtGui.QApplication(sys.argv)
+    app = QtWidgets.QApplication.instance()
+    if app is None: app = QtWidgets.QApplication(sys.argv)
     gui = ChainGUI(stagesVisualizations, stagesDisplayProperty, stagesPropertyRanges)
     gui.show()
     return app.exec_()
