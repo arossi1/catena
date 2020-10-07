@@ -1,8 +1,8 @@
 # Copyright (c) 2012, Adam J. Rossi. All rights reserved. See README for licensing details.
 import os, unittest, tempfile, shutil
 
-from catena.code import Chain # Chain must be imported first, requirement of registry
-from catena.code import Sources, FeatureExtraction, FeatureMatch, BundleAdjustment, Cluster, Common
+from catena import Chain # Chain must be imported first, requirement of registry
+from catena import Sources, FeatureExtraction, FeatureMatch, BundleAdjustment, Cluster, Common
 
 
 class ChainTester(unittest.TestCase):
