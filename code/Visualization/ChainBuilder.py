@@ -1,12 +1,11 @@
 # Copyright (c) 2012, Adam J. Rossi. All rights reserved. See README for licensing details.
-import sys, os, glob, math, _thread
+import sys, os, math, _thread
 sys.path.append(os.path.abspath("."))
 #sys.path.append(os.path.abspath(".."))
 
-from PySide2 import QtCore, QtGui, QtXml, QtWidgets
+from PySide2 import QtCore, QtGui,  QtWidgets
 from PySide2.QtCore import Slot,Signal
 from catena.code import Chain # Chain must be imported first, requirement of registry
-from catena.code import BundleAdjustment, Common
 
 
 def GetAbsImagePath(fileName):
@@ -249,12 +248,13 @@ class StageScene(QtWidgets.QGraphicsScene):
     
     InsertItem, InsertLine, InsertText, MoveItem  = range(4)
     
+    
     def __init__(self, parent=None):
         QtWidgets.QGraphicsScene.__init__(self, -400, -400, 800, 800, parent)
         
         self.myMode = self.MoveItem
         self.line = None
-        QtCore.QObject.connect(self, QtCore.SIGNAL("selectionChanged ()"), self.selectionChangedSlot)    
+        self.selectionChanged.connect(self.selectionChangedSlot)    
     
     def selectionChangedSlot(self):
         if (len(self.selectedItems())==1):
@@ -604,7 +604,7 @@ class ChainBuilderGUI(QtWidgets.QMainWindow):
         self.stageScene = StageScene(self)
         _manager.renderRequestSignal.connect(self.renderRequested)
         print('here')
-        QtCore.QObject.connect(self.stageScene, QtCore.SIGNAL("stageSelectedSignal(PyQt_PyObject)"), self.stageSelectedSlot)
+        self.connect(self.stageScene, QtCore.SIGNAL("stageSelectedSignal(PyQt_PyObject)"), self.stageSelectedSlot)
         self.stageView = StageView(self.stageScene)
         self.stagePropertiesEditor = StagePropertyEditor()
         

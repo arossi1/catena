@@ -1,5 +1,5 @@
 # Copyright (c) 2012, Adam J. Rossi. All rights reserved. See README for licensing details.
-from PySide2 import QtCore, QtGui, QtXml, QtWidgets
+from PySide2 import QtCore, QtWidgets
 import traceback
 
 def ShowWarning(text):

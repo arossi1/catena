@@ -1,8 +1,8 @@
 # Copyright (c) 2012, Adam J. Rossi. All rights reserved. See README for licensing details.
-import sys, os, glob
+import sys, os
 sys.path.append(os.path.abspath(".."))
 
-from PySide2 import QtCore, QtGui, QtXml, QtWidgets
+from PySide2 import QtCore, QtGui, QtWidgets
 from catena import Common
 from catena.Visualization import Dialogs
 

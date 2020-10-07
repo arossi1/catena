@@ -2,7 +2,7 @@
 import sys, os, glob
 sys.path.append(os.path.abspath(".."))
 
-from PySide2 import QtCore, QtGui, QtXml, QtWidgets
+from PySide2 import QtCore, QtGui, QtWidgets
 from catena import BundleAdjustment
 from catena import Common
 from catena.Visualization import Dialogs
