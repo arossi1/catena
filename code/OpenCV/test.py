@@ -4,16 +4,17 @@ import os
 from .. import Chain
 from .. import Sources, OpenCV
 
-imagePath = os.path.abspath(os.path.join(os.path.dirname(__file__), 
-                                         "../Datasets/ET"))
-imageSource = Sources.ImageSource(imagePath, "jpg")
+if __name__=="__main__":
+  imagePath = os.path.abspath(os.path.join(os.path.dirname(__file__), 
+                                           "../Datasets/ET"))
+  imageSource = Sources.ImageSource(imagePath, "jpg")
 
-fd = OpenCV.FeatureDetector(imageSource,
-                            forceRun=True)
+  fd = OpenCV.FeatureDetector(imageSource,
+                              forceRun=True)
 
-fm = OpenCV.FeatureMatcher(fd,
-                           "BruteForce",
-                           os.path.join(imagePath,"matches.txt"),
-                           forceRun=True)
+  fm = OpenCV.FeatureMatcher(fd,
+                             "BruteForce",
+                             os.path.join(imagePath,"matches.txt"),
+                             forceRun=True)
 
-print((Chain.Render(fm, 'openCV.txt')))
+  print((Chain.Render(fm, 'openCV.txt')))
