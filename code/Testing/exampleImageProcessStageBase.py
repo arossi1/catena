@@ -1,7 +1,7 @@
 # Copyright (c) 2014, Adam J. Rossi. All rights reserved. See README for licensing details.
-import sys, os, shutil
-sys.path.append(os.path.abspath("."))
-import Chain, Common, Sources
+import os, shutil
+
+from .. import Chain, Common, Sources
 
 #################################################################################
 class CopyImages(Common.ImageProcessStageBase):
@@ -40,10 +40,11 @@ class CopyImages(Common.ImageProcessStageBase):
         shutil.copy(inputImagePath, outputImagePath)
 
 
-#################################################################################
+################################################################################
         
 # input/output image path
-imagePath = os.path.abspath("../Datasets/ET")
+imagePath = os.path.abspath(os.path.join(os.path.dirname(__file__), 
+                                         "../Datasets/ET"))
 imagePathOut = os.path.join(imagePath, "test")
 Common.Utility.MakeDir(imagePathOut)
 
@@ -51,4 +52,4 @@ imageSource = Sources.ImageSource(imagePath, "jpg")
 
 imageCopy = CopyImages(imageSource, "test-", imagePathOut, "jpg")
 
-print Chain.Render(imageCopy)
+print(Chain.Render(imageCopy))

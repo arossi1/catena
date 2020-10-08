@@ -1,5 +1,5 @@
 # Copyright (c) 2012, Adam J. Rossi. All rights reserved. See README for licensing details.
-import os, glob, string
+import os, glob
 
 
 
@@ -38,6 +38,6 @@ class waspImage:
     
     def __str__(self):
         p = (self._id, self._event, self._time, self._easting, self._northing, self._orthometricHeight, self._omega, self._phi, self._kappa, self._lat, self._long)
-        return string.join(p, ", ")
+        return ", ".join(p)
     
     

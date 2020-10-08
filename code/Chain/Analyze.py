@@ -1,5 +1,6 @@
 # Copyright (c) 2014, Adam J. Rossi. All rights reserved. See README for licensing details.
-import os, time
+import time
+
 
 class Analyze:
     
@@ -22,7 +23,7 @@ class Analyze:
     def WriteStatus(self, s):
         
         if (self._printProgress):
-            print s,
+            print(s, end=' ')
         if (self._log):
             self._log.flush()
             self._log.write(s)

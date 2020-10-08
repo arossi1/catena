@@ -102,17 +102,17 @@ class StageRegistry:
     
     def __print(self):
         for package in self.GetPackages():
-            print "%s" % package
+            print("%s" % package)
             for stage in self.GetStages(package):
-                print " %s" % stage
+                print(" %s" % stage)
                 for property in sorted(self.GetStagePropertyMap(package, stage).keys()):
-                    print "  %s: %s (%s)" % (property, 
+                    print("  %s: %s (%s)" % (property, 
                                              self.GetStagePropertyDescription(package,stage,property), 
-                                             str(self.GetStagePropertyType(package,stage,property)))
+                                             str(self.GetStagePropertyType(package,stage,property))))
         
     def __populate(self):
         
-        from StageBase import StageBase
+        from .StageBase import StageBase
         import os
         
         #curPath = os.path.abspath(".")
@@ -128,10 +128,10 @@ class StageRegistry:
                         try:
                             co = getattr(mod, className)
                             if (issubclass(co, StageBase) and co!=StageBase):
-                                if (not self.__regDict.has_key(packageName)): self.__regDict[packageName] = {}
+                                if (packageName not in self.__regDict): self.__regDict[packageName] = {}
                                 o = co()
                                 self.__regDict[packageName][o.GetStageName()] = (o,co)
-                        except Exception,e:
+                        except Exception:
                             pass
                 except:
                     pass                

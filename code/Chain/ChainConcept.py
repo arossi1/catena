@@ -1,7 +1,7 @@
 # Copyright (c) 2012, Adam J. Rossi. All rights reserved. See README for licensing details.
 import os, sys
-from StageBase import StageBase
-from Chain import Chain
+from catena.Chain.StageBase import StageBase
+from catena.Chain import Chain
 
 ###############################################################################
 class StringSource(StageBase):
@@ -87,7 +87,7 @@ class IntSink(StageBase):
         
         self.StartProcess()
         
-        print "Result = %d" % input
+        print("Result = %d" % input)
         
         
         

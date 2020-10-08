@@ -1,7 +1,7 @@
 # Copyright (c) 2012, Adam J. Rossi. All rights reserved. See README for licensing details.
-import Chain, Common, FeatureExtraction
-from KeypointDescriptorFileVLFeat import KeypointDescriptorFileVLFeat
-import os, string
+from .. import Chain, Common, FeatureExtraction
+from .KeypointDescriptorFileVLFeat import KeypointDescriptorFileVLFeat
+import os
 import threading, multiprocessing
 
 class Sift(Chain.StageBase):
@@ -49,7 +49,7 @@ class Sift(Chain.StageBase):
                     i,im = self.__Q.get_nowait()                    
                     try:
                         self.__outputList[i] = self.process(im)
-                    except Exception,e:
+                    except Exception as e:
                         self.__errors.append(str(e))
                 except:
                     break
@@ -125,7 +125,7 @@ class Sift(Chain.StageBase):
             errors.extend(w.getErrors())
             
         if (len(errors)>0):
-            raise Exception(string.join(errors,"\n"))
+            raise Exception("\n".join(errors))
         
         kds = FeatureExtraction.KeypointDescriptors(images.GetPath(), kds)
         self.SetOutputValue("keypointDescriptors", kds)        

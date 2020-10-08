@@ -18,7 +18,7 @@ class Patch:
     def BadImageIndices(self): return self.__badImageIndices
 
     def __str__(self):
-        print self.__point3d+self.__normal3d+self.__scores+[str(self.__goodImageIndices),str(self.__badImageIndices)]
+        print(self.__point3d+self.__normal3d+self.__scores+[str(self.__goodImageIndices),str(self.__badImageIndices)])
         return "(%f,%f,%f,%f)\n  [normal=(%f,%f,%f,%f)]\n  [scores=(%f,%f,%f)] [good indices=[%s]\n  [bad indices=[%s]" % \
             tuple(self.__point3d+self.__normal3d+self.__scores+[str(self.__goodImageIndices),str(self.__badImageIndices)])
         

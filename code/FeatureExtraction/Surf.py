@@ -1,5 +1,5 @@
 # Copyright (c) 2012, Adam J. Rossi. All rights reserved. See README for licensing details.
-import Chain, Common, FeatureExtraction
+from .. import Chain, Common, FeatureExtraction
 import os, math
 
 class Surf(Chain.StageBase):

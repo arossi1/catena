@@ -92,7 +92,7 @@ class BundleFile:
     """Bundle file version"""
     
     def __init__(self, bundleFilePath, images):
-	"""init method"""
+        """init method"""
         self._bundleFilePath = bundleFilePath
         self._images = images
         self._parse()

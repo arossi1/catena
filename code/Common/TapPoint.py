@@ -1,5 +1,5 @@
 # Copyright (c) 2012, Adam J. Rossi. All rights reserved. See README for licensing details.
-import Chain
+from .. import Chain
 
 class TapPoint(Chain.StageBase):
 
@@ -42,7 +42,7 @@ class TapPoint(Chain.StageBase):
             Chain.Analyze.WriteStatus(valName+"\n")
 
             # use print function for type if provided
-            if (self._properties["Print Functions"].has_key(valType)):
+            if (valType in self._properties["Print Functions"]):
                 Chain.Analyze.WriteStatus(str(self._properties["Print Functions"][valType](vals[valName])))
             else:
                 Chain.Analyze.WriteStatus(str(vals[valName]))
@@ -50,9 +50,4 @@ class TapPoint(Chain.StageBase):
             Chain.Analyze.WriteStatus("")
 
             self.SetOutputValue(valName, vals[valName])
-
-        
-
-        
-
-        
+      

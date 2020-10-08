@@ -2,27 +2,27 @@
 import sys, os, glob
 sys.path.append(os.path.abspath(".."))
 
-from PyQt4 import QtCore, QtGui, QtXml
-import BundleAdjustment
-import Common
-import Dialogs
+from PySide2 import QtCore, QtGui, QtWidgets
+from catena import BundleAdjustment
+from catena import Common
+from catena.Visualization import Dialogs
 
 
 ###############################################################################
-class TiePoint(QtGui.QGraphicsEllipseItem):
+class TiePoint(QtWidgets.QGraphicsEllipseItem):
     def __init__(self, setNumber=None, parent=None):
-        QtGui.QGraphicsEllipseItem.__init__(self, parent)
+        QtWidgets.QGraphicsEllipseItem.__init__(self, parent)
         self.setZValue(10)
-        self.setFlag(QtGui.QGraphicsItem.ItemIsMovable)
-        #self.setFlag(QtGui.QGraphicsItem.ItemIsSelectable)
-        self.setFlag(QtGui.QGraphicsItem.ItemIsFocusable)
+        self.setFlag(QtWidgets.QGraphicsItem.ItemIsMovable)
+        #self.setFlag(QtWidgets.QGraphicsItem.ItemIsSelectable)
+        self.setFlag(QtWidgets.QGraphicsItem.ItemIsFocusable)
         
         self.setBrush(QtGui.QBrush(QtGui.QColor(250,250,10,150)))
         self.setRect(-5,-5, 10,10)
 
         # label
         if (setNumber!=None):
-            label = QtGui.QGraphicsTextItem(str(setNumber), self)
+            label = QtWidgets.QGraphicsTextItem(str(setNumber), self)
             label.setPos(0,0)
 
     def getCoordinate(self):
@@ -30,18 +30,18 @@ class TiePoint(QtGui.QGraphicsEllipseItem):
 
 
 ###############################################################################
-class KeyPoints(QtGui.QGroupBox):
+class KeyPoints(QtWidgets.QGroupBox):
     
     def __init__(self, bundleFile, parent=None):
-        QtGui.QGroupBox.__init__(self, "Cameras / Key Points", parent)
+        QtWidgets.QGroupBox.__init__(self, "Cameras / Key Points", parent)
         
-        formLayout = QtGui.QFormLayout()
+        formLayout = QtWidgets.QFormLayout()
 
-        self._cameraComboBox = QtGui.QComboBox()
+        self._cameraComboBox = QtWidgets.QComboBox()
         formLayout.addRow("Cameras", self._cameraComboBox)
         self.connect(self._cameraComboBox, QtCore.SIGNAL("currentIndexChanged(int)"), self.cameraChangedSlot) 
         
-        self._3DPointComboBox = QtGui.QComboBox()
+        self._3DPointComboBox = QtWidgets.QComboBox()
         formLayout.addRow("3D Points", self._3DPointComboBox)
         self.connect(self._3DPointComboBox, QtCore.SIGNAL("currentIndexChanged(int)"), self.pointChangedSlot) 
         
@@ -84,18 +84,18 @@ class KeyPoints(QtGui.QGroupBox):
 
 
 ###############################################################################
-class ImageWidget(QtGui.QGroupBox):
+class ImageWidget(QtWidgets.QGroupBox):
     
     def __init__(self, image, parent=None):
-        QtGui.QGroupBox.__init__(self, image.GetFileName(), parent)
+        QtWidgets.QGroupBox.__init__(self, image.GetFileName(), parent)
         
-        self._gs = QtGui.QGraphicsScene()
-        self._gv = QtGui.QGraphicsView(self._gs)
-        self._gv.setDragMode(QtGui.QGraphicsView.ScrollHandDrag)
-        self._pixmap = QtGui.QGraphicsPixmapItem(QtGui.QPixmap(image.GetFilePath()))
+        self._gs = QtWidgets.QGraphicsScene()
+        self._gv = QtWidgets.QGraphicsView(self._gs)
+        self._gv.setDragMode(QtWidgets.QGraphicsView.ScrollHandDrag)
+        self._pixmap = QtWidgets.QGraphicsPixmapItem(QtGui.QPixmap(image.GetFilePath()))
         self._gs.addItem(self._pixmap)
         
-        layout = QtGui.QVBoxLayout()
+        layout = QtWidgets.QVBoxLayout()
         layout.addWidget(self._gv)
         self.setLayout(layout)
         
@@ -129,17 +129,17 @@ class ImageWidget(QtGui.QGroupBox):
             
 
 ###############################################################################
-class SFMgui(QtGui.QMainWindow):
+class SFMgui(QtWidgets.QMainWindow):
     
     DEFAULT_IMAGES_PER_ROW = 4
     
     def __init__(self, parent=None):
 
         # initial setup
-        QtGui.QMainWindow.__init__(self, parent, QtCore.Qt.WindowMinMaxButtonsHint)
+        QtWidgets.QMainWindow.__init__(self, parent, QtCore.Qt.WindowMinMaxButtonsHint)
         self.setWindowTitle("SFM")
         self.setMinimumSize(500,500)
-        self.setDockOptions(QtGui.QMainWindow.AllowTabbedDocks)
+        self.setDockOptions(QtWidgets.QMainWindow.AllowTabbedDocks)
         self.setAnimated(True)
         self.createMenu()
         
@@ -149,20 +149,20 @@ class SFMgui(QtGui.QMainWindow):
         self.connect(self._keypointGroupBox, QtCore.SIGNAL("cameraChangedSignal(PyQt_PyObject)"), self.cameraChangedSlot)
         self.connect(self._keypointGroupBox, QtCore.SIGNAL("pointChangedSignal(PyQt_PyObject)"), self.pointChangedSlot)        
 
-        self._imageWidgetLayout = QtGui.QGridLayout()
+        self._imageWidgetLayout = QtWidgets.QGridLayout()
         
-        optionsGroupBox = QtGui.QGroupBox("Options")
-        imPerRowLayout = QtGui.QFormLayout()
-        self._imPerRow = QtGui.QSpinBox()
+        optionsGroupBox = QtWidgets.QGroupBox("Options")
+        imPerRowLayout = QtWidgets.QFormLayout()
+        self._imPerRow = QtWidgets.QSpinBox()
         self._imPerRow.setRange(1,10)
         imPerRowLayout.addRow("Images Per Row", self._imPerRow)
         self._imPerRow.setValue(SFMgui.DEFAULT_IMAGES_PER_ROW)
         self.connect(self._imPerRow, QtCore.SIGNAL("valueChanged (int)"), self.imPerRowChangedSlot)
         optionsGroupBox.setLayout(imPerRowLayout)
         
-        self._viewFrame = QtGui.QFrame()
-        self._mainLayout = QtGui.QGridLayout()
-        kpAndIW = QtGui.QHBoxLayout()
+        self._viewFrame = QtWidgets.QFrame()
+        self._mainLayout = QtWidgets.QGridLayout()
+        kpAndIW = QtWidgets.QHBoxLayout()
         kpAndIW.addWidget(self._keypointGroupBox)
         kpAndIW.addWidget(optionsGroupBox)
         self._mainLayout.addLayout(kpAndIW, 0,0)        
@@ -171,10 +171,10 @@ class SFMgui(QtGui.QMainWindow):
         self.setCentralWidget(self._viewFrame)
 
     def createMenu(self):
-        openBundleAct = QtGui.QAction("&Open Bundle File And Images...", self)
+        openBundleAct = QtWidgets.QAction("&Open Bundle File And Images...", self)
         self.connect(openBundleAct, QtCore.SIGNAL("triggered()"), self.openBundleFile)
         
-        exitAct = QtGui.QAction(self.tr("&Exit"), self)
+        exitAct = QtWidgets.QAction(self.tr("&Exit"), self)
         self.connect(exitAct, QtCore.SIGNAL("triggered()"), self.close)
         
         fileMenu = self.menuBar().addMenu("&File")
@@ -215,7 +215,7 @@ class SFMgui(QtGui.QMainWindow):
 
         self._mainLayout.removeItem(self._imageWidgetLayout)
         del self._imageWidgetLayout
-        self._imageWidgetLayout = QtGui.QGridLayout()
+        self._imageWidgetLayout = QtWidgets.QGridLayout()
         self._mainLayout.addLayout(self._imageWidgetLayout, 1,0)
 
         # fill grid...
@@ -228,23 +228,23 @@ class SFMgui(QtGui.QMainWindow):
             if (column==0): row+=1
             
     def cameraChangedSlot(self, camera):
-        print camera
+        print(camera)
 
     def pointChangedSlot(self, point):
-        for iw in self._imageWidgets.values():
+        for iw in list(self._imageWidgets.values()):
             iw.clearHighlight()
             iw.removePoints()
             
         for point2D in point.Get2DPoints():
             self._imageWidgets[point2D.GetImage()].addPoint(point2D.GetCoordinateImage())
             self._imageWidgets[point2D.GetImage()].setHighlight()
-            print point2D
+            print(point2D)
 
 
 
 ###############################################################################
 if __name__=="__main__":    
-    app = QtGui.QApplication(sys.argv)
+    app = QtWidgets.QApplication(sys.argv)
     gui = SFMgui()
     gui.show()
     sys.exit(app.exec_())

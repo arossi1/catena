@@ -1,6 +1,6 @@
 # Copyright (c) 2012, Adam J. Rossi. All rights reserved. See README for licensing details.
 import os, sys
-import Utility
+from . import Utility
 
 class jheadInfo:
     
@@ -24,7 +24,6 @@ class jheadInfo:
     def GetFocalLength(self):   return self.__dict__["Focal length"]
     def GetCameraMake(self):    return self.__dict__["Camera make"]
     def GetDateTime(self):      return self.__dict__["Date/Time"]
-    def GetCameraMake(self):    return self.__dict__["Camera make"]
     def GetFileName(self):      return self.__dict__["File name"]
     def GetFileDate(self):      return self.__dict__["File date"]
     def GetFocusDistance(self): return self.__dict__["Focus dist."]
@@ -43,11 +42,11 @@ class jheadInfo:
     def GetCCDWidthInMM(self):
         
         try:
-            if (self.__dict__.has_key("CCD width") and
+            if ("CCD width" in self.__dict__ and
                 len(self.__dict__["CCD width"].split("mm"))==2):
                 return float(self.__dict__["CCD width"].split("mm")[0])
             else:
-                import CCDdatabase
+                from . import CCDdatabase
                 makeModel = "%s %s" % (self.GetCameraMake(), self.GetCameraModel())
                 return CCDdatabase.Instance.GetCameraCCDWidth(makeModel)
         except:

@@ -1,6 +1,7 @@
 # Copyright (c) 2014, Adam J. Rossi. All rights reserved. See README for licensing details.
 import os
-import jhead, PILinfo
+from . import jhead, PILinfo
+from PIL import Image as PILImage
 
 
 class sfmImage:
@@ -16,17 +17,17 @@ class sfmImage:
     def GetYResolution(self):   return self._getMetadata().GetYResolution()    
     
     def ConvertToPGM(self, outputPath):
-        import Image as PILImage
         pgmFilePath = os.path.join(outputPath, os.path.splitext(os.path.split(self._filePath)[1])[0] + ".pgm")
         if (not os.path.exists(pgmFilePath)):
-            PILImage.open(self._filePath).convert("L").save(pgmFilePath)
+            with PILImage.open(self._filePath) as im:
+                im.convert("L").save(pgmFilePath)
         return sfmImage(pgmFilePath, self._getMetadata())
     
     def Convert(self, outputPath, type):
-        import Image as PILImage
         outputFilePath = os.path.join(outputPath, os.path.splitext(os.path.split(self._filePath)[1])[0] + "." + type)
         if (not os.path.exists(outputFilePath)):
-            PILImage.open(self._filePath).save(outputFilePath)
+            with PILImage.open(self._filePath) as im:
+                im.save(outputFilePath)
         return sfmImage(outputFilePath) #, self._getMetadata())
     
     def SplitTiles(self, outputPath, dim=512):
@@ -37,6 +38,7 @@ class sfmImage:
             tilePath = os.path.join(outputPath, self.GetTileFileName(tdims))
             im.crop(tdims).save(tilePath) # left, upper, right, and lower pixel coordinate
             tiles.append(tilePath)
+        im.close()
         return tiles
     
     def GetTileFileName(self, tdims):
@@ -45,12 +47,14 @@ class sfmImage:
     
     def GetTileDims(self, dim=512):
         tiles = []
-        w,h = PILImage.open(self._filePath).size
+        im = PILImage.open(self._filePath)
+        w,h = im.size
         for ty in range(0,h,dim):
             th = min(ty+dim, h)
             for tx in range(0,w,dim):
                 tw = min(tx+dim, w)
-                tiles.append((tx,ty,tw,th))                
+                tiles.append((tx,ty,tw,th))
+        im.close()                
         return tiles
     
     def _getMetadata(self):

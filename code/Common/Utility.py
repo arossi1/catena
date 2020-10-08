@@ -1,7 +1,7 @@
 # Copyright (c) 2012, Adam J. Rossi. All rights reserved. See README for licensing details.
 
-import Chain
-import glob, os, shutil, sys, stat, time, subprocess, platform, string
+from .. import Chain
+import glob, os, shutil, sys, stat, time, subprocess, platform
 
 def IsWindows():
     return (sys.platform=="win32")
@@ -43,12 +43,12 @@ def GetFileSize(path):
     return os.stat(path)[stat.ST_SIZE]
 
 def InvalidString(): return ""
-def InvalidInt():    return -sys.maxint
-def InvalidFloat():  return float(-sys.maxint)
+def InvalidInt():    return -sys.maxsize
+def InvalidFloat():  return float(-sys.maxsize)
 
 def Quoted(s):          return "\"%s\""%s    
 def CommandArgs(*args): 
-    return string.join([str(a) for a in args], " ")
+    return " ".join([str(a) for a in args])
 
 def ShouldRun(forceRun, *args):
     if (forceRun): return True
@@ -94,7 +94,7 @@ def GetExePath(moduleFile, exe, checkExistence=True):
         libDir = GetAbsoluteFilePath(moduleFile,
                                      os.path.join(PlatformName,"lib"))
         if (os.path.exists(libDir)):
-            if (not os.environ.has_key("LD_LIBRARY_PATH") or os.environ["LD_LIBRARY_PATH"]==""):
+            if ("LD_LIBRARY_PATH" not in os.environ or os.environ["LD_LIBRARY_PATH"]==""):
                 os.environ["LD_LIBRARY_PATH"] = "."
             
             if (libDir not in os.environ["LD_LIBRARY_PATH"]):
@@ -120,12 +120,11 @@ def RunCommand(cmd, cwd=None, shell=True, printStdout=False, captureCout=False):
 #                             stdout=log, 
 #                             stderr=log, 
 #                             cwd=cwd, shell=shell)
-        
     p = subprocess.Popen(cmd, 
                          stdin=subprocess.PIPE, 
                          stdout=subprocess.PIPE, 
                          stderr=subprocess.PIPE, 
-                         cwd=cwd, shell=shell)
+                         cwd=cwd, shell=shell, text=True)
     
         
 
@@ -134,33 +133,26 @@ def RunCommand(cmd, cwd=None, shell=True, printStdout=False, captureCout=False):
 #    if (ret!=0):
 #        for l in p.stdout.readlines(): print l.strip()
 #        raise Exception("[Return Code = %d] Failed to execute: %s" % (ret, cmd))
-
     if (not captureCout):
         Chain.Analyze.ProcessStart()
-    
+   
     stdoutLines = []
-#    stderrLines = []
-    while (True):
-        p.poll()
-        
-        if (captureCout):
-            for l in p.stdout.readlines():
-                stdoutLines.append(l.strip())
-                if (printStdout): print l.strip()
-                
-        else:
-            for l in p.stdout.readlines():
-                Chain.Analyze.WriteStatus(l.strip())
-            for l in p.stderr.readlines():
-                Chain.Analyze.WriteStatus(l.strip())
-#        
-#        if (p.stderr!=None):
-#            for l in p.stderr.readlines():
-#                stderrLines.append(l.strip())
-#                if (printStdout): print l.strip()
-        
-        if (p.returncode!=None): break
-        time.sleep(0.2)
+    #stderrLines = []
+    (stdout, stderr) = p.communicate()
+    
+    if (captureCout):
+        for l in stdout.splitlines():
+            stdoutLines.append(l.strip())
+            if (printStdout): print(l.strip())
+ 
+       # for l in stderr.splitlines():
+       #     stderrorLines.append(l.strip())
+       #     if (printStderror): print(l.strip())               
+    else:
+        for l in stdout.splitlines():
+            Chain.Analyze.WriteStatus(l.strip())
+        for l in stderr.splitlines():
+            Chain.Analyze.WriteStatus(l.strip())
         
     if (p.returncode!=0):
         raise Exception("[Return Code = %d] Failed to execute: %s" % (p.returncode, cmd))
@@ -179,29 +171,29 @@ def RunCommand2(cmd, args=None, cwd=None, shell=False, printStdout=False, captur
                          stdin=subprocess.PIPE, 
                          stdout=subprocess.PIPE, 
                          stderr=subprocess.PIPE, 
-                         cwd=cwd, shell=shell)
+                         cwd=cwd, shell=shell, text=True)
 
     if (not captureCout):
         Chain.Analyze.ProcessStart()
     
     stdoutLines = []
-    
-    while (True):
-        p.poll()
+    #stderrLines = []
+    (stdout, stderr) = p.communicate()
+
+    if (captureCout):
+        for l in stdout.splitlines():
+            stdoutLines.append(l.strip())
+            if (printStdout): print(l.strip())
+
+        #for l in stderr.splitlines():
+        #    stderrorLines.append(l.strip())
+        #    if (printStderror): print(l.strip())
+    else:
+        for l in stdout.splitlines():
+            Chain.Analyze.WriteStatus(l.strip())
+        for l in stderr.splitlines():
+            Chain.Analyze.WriteStatus(l.strip())
         
-        if (captureCout):
-            for l in p.stdout.readlines():
-                stdoutLines.append(l.strip())
-                if (printStdout): print l.strip()
-                
-        else:
-            for l in p.stdout.readlines():
-                Chain.Analyze.WriteStatus(l.strip())
-            for l in p.stderr.readlines():
-                Chain.Analyze.WriteStatus(l.strip())
-        
-        if (p.returncode!=None): break
-        time.sleep(0.2)
         
     if (p.returncode!=0):
         raise Exception("[Return Code = %d] Failed to execute: %s" % (p.returncode, cmd))

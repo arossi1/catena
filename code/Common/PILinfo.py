@@ -1,6 +1,7 @@
 # Copyright (c) 2014, Adam J. Rossi. All rights reserved. See README for licensing details.
 import os, time
-import jhead
+from . import jhead
+from PIL import Image
 
 class PILinfo(jhead.jheadInfo):
     
@@ -8,7 +9,6 @@ class PILinfo(jhead.jheadInfo):
         jhead.jheadInfo.__init__(self, imagePath)
         
     def _fillInfo(self):
-        from PIL import Image
         im = Image.open(self._imagePath)
         
         self.__dict__["Date/Time"] = None
@@ -19,5 +19,5 @@ class PILinfo(jhead.jheadInfo):
         self.__dict__["XResolution"] = im.size[0]
         self.__dict__["YResolution"] = im.size[1]
         
+        im.close()
         im = None
-

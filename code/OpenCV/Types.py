@@ -1,7 +1,8 @@
 # Copyright (c) 2014, Adam J. Rossi. All rights reserved. See README for licensing details.
-import copy, string, os
+import copy, os
 import numpy
-import FeatureExtraction
+
+from .. import FeatureExtraction
 
 class ImagesFeatures(FeatureExtraction.KeypointDescriptors):
     
@@ -55,7 +56,7 @@ class ImageFeatures:
             while (idx<dLength):
                 numVals = min(20,dLength-idx)
                 
-                f.write((string.join([dfmt]*numVals," ")+"\n") % \
+                f.write((" ".join([dfmt]*numVals)+"\n") % \
                         tuple(feature.Descriptor()[idx:idx+numVals]))
                 
                 idx+=numVals

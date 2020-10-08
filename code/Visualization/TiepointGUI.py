@@ -1,27 +1,27 @@
 # Copyright (c) 2012, Adam J. Rossi. All rights reserved. See README for licensing details.
-import sys, os, glob
+import sys, os
 sys.path.append(os.path.abspath(".."))
 
-from PyQt4 import QtCore, QtGui, QtXml
-import Common
-import Dialogs
+from PySide2 import QtCore, QtGui, QtWidgets
+from catena import Common
+from catena.Visualization import Dialogs
 
 
 ###############################################################################
-class TiePoint(QtGui.QGraphicsEllipseItem):
+class TiePoint(QtWidgets.QGraphicsEllipseItem):
     def __init__(self, setNumber=None, parent=None):
-        QtGui.QGraphicsEllipseItem.__init__(self, parent)
+        QtWidgets.QGraphicsEllipseItem.__init__(self, parent)
         self.setZValue(10)
-        self.setFlag(QtGui.QGraphicsItem.ItemIsMovable)
-        #self.setFlag(QtGui.QGraphicsItem.ItemIsSelectable)
-        self.setFlag(QtGui.QGraphicsItem.ItemIsFocusable)
+        self.setFlag(QtWidgets.QGraphicsItem.ItemIsMovable)
+        #self.setFlag(QtWidgets.QGraphicsItem.ItemIsSelectable)
+        self.setFlag(QtWidgets.QGraphicsItem.ItemIsFocusable)
         
         self.setBrush(QtGui.QBrush(QtGui.QColor(250,250,10,150)))
         self.setRect(-5,-5, 10,10)
 
         # label
         if (setNumber!=None):
-            label = QtGui.QGraphicsTextItem(str(setNumber), self)
+            label = QtWidgets.QGraphicsTextItem(str(setNumber), self)
             label.setPos(0,0)
 
     def getCoordinate(self):
@@ -29,14 +29,14 @@ class TiePoint(QtGui.QGraphicsEllipseItem):
 
 
 ###############################################################################
-class TiePoints(QtGui.QGroupBox):
+class TiePoints(QtWidgets.QGroupBox):
     
     def __init__(self, tiepointsFile, parent=None):
-        QtGui.QGroupBox.__init__(self, "Tie Points", parent)
+        QtWidgets.QGroupBox.__init__(self, "Tie Points", parent)
         
-        formLayout = QtGui.QFormLayout()
+        formLayout = QtWidgets.QFormLayout()
 
-        self._tiepointsComboBox = QtGui.QComboBox()
+        self._tiepointsComboBox = QtWidgets.QComboBox()
         formLayout.addRow("Tiepoints", self._tiepointsComboBox)
         self.connect(self._tiepointsComboBox, QtCore.SIGNAL("currentIndexChanged(int)"), self.tiepointChangedSlot) 
         
@@ -72,18 +72,18 @@ class TiePoints(QtGui.QGroupBox):
 
 
 ###############################################################################
-class ImageWidget(QtGui.QGroupBox):
+class ImageWidget(QtWidgets.QGroupBox):
     
     def __init__(self, image, parent=None):
-        QtGui.QGroupBox.__init__(self, image.GetFileName(), parent)
+        QtWidgets.QGroupBox.__init__(self, image.GetFileName(), parent)
         
-        self._gs = QtGui.QGraphicsScene()
-        self._gv = QtGui.QGraphicsView(self._gs)
-        self._gv.setDragMode(QtGui.QGraphicsView.ScrollHandDrag)
-        self._pixmap = QtGui.QGraphicsPixmapItem(QtGui.QPixmap(image.GetFilePath()))
+        self._gs = QtWidgets.QGraphicsScene()
+        self._gv = QtWidgets.QGraphicsView(self._gs)
+        self._gv.setDragMode(QtWidgets.QGraphicsView.ScrollHandDrag)
+        self._pixmap = QtWidgets.QGraphicsPixmapItem(QtGui.QPixmap(image.GetFilePath()))
         self._gs.addItem(self._pixmap)
         
-        layout = QtGui.QVBoxLayout()
+        layout = QtWidgets.QVBoxLayout()
         layout.addWidget(self._gv)
         self.setLayout(layout)
         
@@ -117,17 +117,17 @@ class ImageWidget(QtGui.QGroupBox):
             
 
 ###############################################################################
-class TiepointGUI(QtGui.QMainWindow):
+class TiepointGUI(QtWidgets.QMainWindow):
     
     DEFAULT_IMAGES_PER_ROW = 2
     
     def __init__(self, parent=None):
 
         # initial setup
-        QtGui.QMainWindow.__init__(self, parent, QtCore.Qt.WindowMinMaxButtonsHint)
+        QtWidgets.QMainWindow.__init__(self, parent, QtCore.Qt.WindowMinMaxButtonsHint)
         self.setWindowTitle("Tiepoint Viewer")
         self.setMinimumSize(500,500)
-        self.setDockOptions(QtGui.QMainWindow.AllowTabbedDocks)
+        self.setDockOptions(QtWidgets.QMainWindow.AllowTabbedDocks)
         self.setAnimated(True)
         self.createMenu()
         
@@ -136,11 +136,11 @@ class TiepointGUI(QtGui.QMainWindow):
         self._tiepointGroupBox = TiePoints(None, self)
         self.connect(self._tiepointGroupBox, QtCore.SIGNAL("tiepointChangedSignal(PyQt_PyObject)"), self.tiepointChangedSlot)        
 
-        self._imageWidgetLayout = QtGui.QGridLayout()
+        self._imageWidgetLayout = QtWidgets.QGridLayout()
         
-        self._viewFrame = QtGui.QFrame()
-        self._mainLayout = QtGui.QGridLayout()
-        kpAndIW = QtGui.QHBoxLayout()
+        self._viewFrame = QtWidgets.QFrame()
+        self._mainLayout = QtWidgets.QGridLayout()
+        kpAndIW = QtWidgets.QHBoxLayout()
         kpAndIW.addWidget(self._tiepointGroupBox)
         self._mainLayout.addLayout(kpAndIW, 0,0)        
         self._mainLayout.addLayout(self._imageWidgetLayout, 1,0)
@@ -148,10 +148,10 @@ class TiepointGUI(QtGui.QMainWindow):
         self.setCentralWidget(self._viewFrame)
 
     def createMenu(self):
-        openBundleAct = QtGui.QAction("&Open Images and Tiepoints...", self)
+        openBundleAct = QtWidgets.QAction("&Open Images and Tiepoints...", self)
         self.connect(openBundleAct, QtCore.SIGNAL("triggered()"), self.openTiepointsFile)
         
-        exitAct = QtGui.QAction(self.tr("&Exit"), self)
+        exitAct = QtWidgets.QAction(self.tr("&Exit"), self)
         self.connect(exitAct, QtCore.SIGNAL("triggered()"), self.close)
         
         fileMenu = self.menuBar().addMenu("&File")
@@ -187,7 +187,7 @@ class TiepointGUI(QtGui.QMainWindow):
 
         self._mainLayout.removeItem(self._imageWidgetLayout)
         del self._imageWidgetLayout
-        self._imageWidgetLayout = QtGui.QGridLayout()
+        self._imageWidgetLayout = QtWidgets.QGridLayout()
         self._mainLayout.addLayout(self._imageWidgetLayout, 1,0)
 
         # fill grid...
@@ -204,7 +204,7 @@ class TiepointGUI(QtGui.QMainWindow):
             iw.clearHighlight()
             iw.removePoints()
         
-        print "(%f,%f) -> (%f,%f)" % tuple(point)
+        print("(%f,%f) -> (%f,%f)" % tuple(point))
         self._imageWidgets[self._images.GetImages()[0]].addPoint((point[0],point[1]))
         #self._imageWidgets[self._images.GetImages()[0]].setHighlight()
         
@@ -215,7 +215,7 @@ class TiepointGUI(QtGui.QMainWindow):
 
 ###############################################################################
 if __name__=="__main__":    
-    app = QtGui.QApplication(sys.argv)
+    app = QtWidgets.QApplication(sys.argv)
     gui = TiepointGUI()
     gui.show()
     sys.exit(app.exec_())

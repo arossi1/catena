@@ -1,5 +1,5 @@
 # Copyright (c) 2012, Adam J. Rossi. All rights reserved. See README for licensing details.
-import Common, Chain, BundleAdjustment, Cluster
+from .. import Common, Chain, BundleAdjustment, Cluster
 import os, multiprocessing
 
 class CMVS(Chain.StageBase):

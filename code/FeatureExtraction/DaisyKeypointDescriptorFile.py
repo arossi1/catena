@@ -1,8 +1,8 @@
 # Copyright (c) 2012, Adam J. Rossi. All rights reserved. See README for licensing details.
 
 import struct, array, os
-from KeypointDescriptorFile import KeypointDescriptorFile
-from KeypointDescriptor import KeypointDescriptor
+from .KeypointDescriptorFile import KeypointDescriptorFile
+from .KeypointDescriptor import KeypointDescriptor
 
 
 class DaisyOutput:
@@ -40,7 +40,7 @@ class DaisyOutput:
         elif (self._dataType==DaisyOutput.DATA_TYPE_FLOAT):  self._formatChar = "f"
         elif (self._dataType==DaisyOutput.DATA_TYPE_DOUBLE): self._formatChar = "d"
         elif (self._dataType==DaisyOutput.DATA_TYPE_INT):    self._formatChar = "i"
-        else: raise Exception("Unknown data type: %d" % dataType)
+        else: raise Exception("Unknown data type: %d" % self._dataType)
         
     def readNextElement(self):
         if (self._f):
